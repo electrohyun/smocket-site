@@ -17,7 +17,6 @@ export default function Footer() {
                 {link.label}
               </a>
             ) : (
-              // npm 링크는 실배포 전 (지시서 §3-8)
               <span key={link.label} className="todo">
                 {link.todo}
               </span>

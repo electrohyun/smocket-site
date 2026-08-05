@@ -4,7 +4,6 @@ import { hero, REPO_URL, SITE_URL } from '@/content/landing';
 import ReadingProgress from './components/ReadingProgress';
 import './globals.css';
 
-// 코드/데이터 폰트: JetBrains Mono (지시서 §1). 본문은 시스템 산세리프.
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   display: 'swap',
@@ -44,7 +43,6 @@ export const metadata: Metadata = {
     title,
     description: hero.sub,
     locale: 'en_US',
-    // 이미지는 app/opengraph-image.tsx 에서 자동 생성
   },
   twitter: {
     card: 'summary_large_image',
@@ -56,7 +54,6 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true, 'max-image-preview': 'large' },
   },
-  // 파비콘·apple 아이콘은 app/favicon.ico · app/icon.png · app/apple-icon.png 규약으로 자동
 };
 
 export const viewport: Viewport = {

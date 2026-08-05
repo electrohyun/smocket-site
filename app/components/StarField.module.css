@@ -1,4 +1,3 @@
-/* wrapper: 마우스 역-패럴랙스 (깊이감). */
 .field {
   position: absolute;
   inset: 0;
@@ -9,11 +8,9 @@
   transition: transform 0.3s ease-out;
 }
 
-/* stream: 타일을 반복해 좌하향으로 seamless 스크롤 → 로켓이 발사되는 느낌.
-   background-position 을 한 타일(300px)만큼 이동시키면 이음매 없이 반복된다. */
 .stream {
   position: absolute;
-  inset: -15%; /* 패럴랙스로 가장자리가 비지 않게 여유 */
+  inset: -15%;
   background: url('/star-tile.svg') repeat;
   background-size: 300px 300px;
   animation: stream 7s linear infinite;
@@ -24,7 +21,7 @@
     background-position: 0 0;
   }
   to {
-    background-position: -300px 300px; /* 왼쪽(-x) + 아래(+y) */
+    background-position: -300px 300px;
   }
 }
 

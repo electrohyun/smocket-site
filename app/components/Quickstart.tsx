@@ -25,7 +25,6 @@ export default function Quickstart() {
                 <h3 className={styles.title}>{step.title}</h3>
               </div>
               <div className={styles.codeWrap}>
-                {/* 복사 버튼: 실제 코드 스텝에만. TODO 자리는 복사할 실물이 없음 */}
                 {!step.isTodo && (
                   <div className={styles.copy}>
                     <CopyButton text={step.code} />

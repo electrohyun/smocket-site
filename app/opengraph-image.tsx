@@ -3,7 +3,6 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { hero } from '@/content/landing';
 
-// 브랜드 OG 카드 (1200×630) — 크림 배경 + 로켓 + 워드마크 + 헤드라인.
 export const alt = 'smocket · Test socket.io without a server.';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
@@ -53,7 +52,6 @@ export default async function OpengraphImage() {
           </div>
         </div>
 
-        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={rocketSrc} width={400} height={430} alt="" style={{ marginLeft: 24 }} />
       </div>
     ),

@@ -6,7 +6,6 @@
   align-items: center;
 }
 
-/* 박스 없음 — 로켓이 크림 위에 자유롭게 뜬다. 넓게 쓰려고 overflow 허용. */
 .scene {
   width: 100%;
   max-width: 500px;
@@ -23,13 +22,11 @@
   transform-style: preserve-3d;
   transition: transform 0.25s ease-out;
 
-  /* 배기 부스러기 색 */
-  --tw: #fdf7ec; /* 마시멜로 */
-  --tc: #6b4a2f; /* 초콜릿 */
-  --tg: #cf9a55; /* 그레이엄 */
+  --tw: #fdf7ec;
+  --tc: #6b4a2f;
+  --tg: #cf9a55;
 }
 
-/* 은은한 따뜻한 오라 (네온 아님) */
 .aura {
   position: absolute;
   inset: -6%;
@@ -45,8 +42,6 @@
   animation: auraPulse 2.6s ease-in-out infinite;
 }
 
-/* 로켓: 세 축을 각각 다른 주기의 부드러운 사인으로 분리. 각 레이어는 2-keyframe
-   ease-in-out(=사인)이라 모서리가 없고, 주기가 달라 전체는 멈추거나 반전하지 않는다. */
 .floatZ,
 .floatY,
 .floatX {
@@ -58,13 +53,13 @@
 }
 .floatZ {
   animation: floatZ 6.7s ease-in-out infinite;
-} /* 깊이(카메라) */
+}
 .floatY {
   animation: floatY 8.3s ease-in-out infinite;
-} /* 상하 */
+}
 .floatX {
   animation: floatX 5.9s ease-in-out infinite;
-} /* 좌우 */
+}
 
 .rocket {
   width: 84%;
@@ -74,7 +69,6 @@
   will-change: transform;
 }
 
-/* 배기 부스러기 */
 .trail {
   position: absolute;
   inset: 0;
@@ -89,7 +83,6 @@
   animation: drift 2.6s ease-in infinite;
 }
 
-/* 궤도를 도는 작은 별 */
 .orbit {
   position: absolute;
   inset: 0;

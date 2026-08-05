@@ -13,7 +13,6 @@ export default function Features() {
         <h2 id="features-title" className="srOnly">
           Features
         </h2>
-        {/* 카드 4개, 2×2. 아이콘 없음 (지시서 §3-4) */}
         <ul className={styles.grid}>
           {features.cards.map((card) => (
             <li key={card.title} className={styles.card}>

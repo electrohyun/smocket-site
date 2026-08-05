@@ -3,11 +3,10 @@
   right: 20px;
   bottom: 26px;
   z-index: 60;
-  pointer-events: none; /* 장식 오버레이 — 클릭 통과 */
+  pointer-events: none;
   user-select: none;
 }
 
-/* 좌: % / 중: 튜브+로켓 / 우: 스모어 스택 을 절대배치로 정렬 */
 .gauge {
   position: relative;
   width: 74px;
@@ -51,10 +50,10 @@
 
 .rocket {
   position: absolute;
-  left: 26px; /* 튜브(중심 38) 위에 겹쳐 */
+  left: 26px;
   width: 24px;
   height: 24px;
-  transform: rotate(-45deg); /* 코가 위로 */
+  transform: rotate(-45deg);
   transition: bottom 0.12s linear;
   filter: drop-shadow(0 3px 4px rgba(36, 22, 8, 0.3));
   z-index: 2;
@@ -65,7 +64,6 @@
   height: auto;
 }
 
-/* 스모어 체크포인트 */
 .mark {
   position: absolute;
   left: 52px;
@@ -82,11 +80,10 @@
 }
 .mark.passed {
   opacity: 1;
-  transform: scale(1.15); /* 지날 때 살짝 튀며 켜짐 */
+  transform: scale(1.15);
   filter: grayscale(0);
 }
 
-/* 통과 순간 퍼지는 링 파동 (쾌감) */
 .ring {
   position: absolute;
   inset: -3px;
@@ -105,7 +102,6 @@
   font-size: 12px;
 }
 
-/* 100% 세리머니 — 게이지 위로 팝인 */
 .finale {
   position: absolute;
   right: -2px;
@@ -158,7 +154,6 @@
   }
 }
 
-/* 도킹 시 로켓이 살짝 튄다 (rotate 유지) */
 .wrap[data-done='true'] .rocket {
   animation: dock 0.7s ease;
 }
@@ -198,7 +193,6 @@
   }
 }
 
-/* 아주 좁은 화면에선 숨김 */
 @media (max-width: 480px) {
   .wrap {
     display: none;

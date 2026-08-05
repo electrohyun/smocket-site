@@ -1,8 +1,5 @@
 import styles from './DriftWords.module.css';
 
-// 별밭과 같은 방향·속도로 흐르는 텍스트/이모지 레이어.
-// 900px 셀을 격자로 반복하고 track 을 한 셀만큼 이동 → seamless.
-// (이모지는 SVG 배경에서 색이 안 뜨는 브라우저가 있어 실제 DOM 으로 렌더한다.)
 const CELL = 900;
 
 type Item = { x: number; y: number; kw?: string; emoji?: string; size: number };

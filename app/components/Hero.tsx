@@ -6,7 +6,6 @@ import StarField from './StarField';
 import DriftWords from './DriftWords';
 import styles from './Hero.module.css';
 
-// H1에서 h1Accent 부분만 오렌지로 강조.
 function Headline() {
   const [lead] = hero.h1.split(hero.h1Accent);
   return (
@@ -18,8 +17,6 @@ function Headline() {
 }
 
 export default function Hero() {
-  // 마우스 감지 범위 = 히어로 섹션 전체. 여기서 정한 틸트/패럴랙스 값을
-  // CSS 변수로 섹션에 실으면, 로켓(stage)과 성좌가 상속받아 반응한다.
   function onMove(e: React.MouseEvent<HTMLElement>) {
     const el = e.currentTarget;
     const r = el.getBoundingClientRect();
@@ -53,7 +50,6 @@ export default function Hero() {
       <div className={`inner ${styles.grid}`}>
         <div className={styles.copy}>
           <header className={styles.brand}>
-            {/* eslint-disable-next-line @next/next/no-img-element -- 로컬 고양이 로고 */}
             <img
               className={styles.mascot}
               src={hero.mascot.src}

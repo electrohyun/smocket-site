@@ -1,4 +1,3 @@
-/* wrapper: 마우스 역-패럴랙스 (별밭과 동일). */
 .drift {
   position: absolute;
   inset: 0;
@@ -9,8 +8,6 @@
   transition: transform 0.3s ease-out;
 }
 
-/* track: 좌하향으로 한 셀(900px)만큼 이동 후 반복 → seamless.
-   속도는 별밭(300px/7s)과 동일한 px/s (900/21 = 42.9). */
 .track {
   position: absolute;
   top: 0;

@@ -15,7 +15,6 @@ export default function Trace() {
         </h2>
         <p className="lead">{trace.desc}</p>
 
-        {/* 소켓 표기: 라벨 + sid 앞 4자리(흐린 회색) — 지시서 §3-2 */}
         <ul className={styles.legend}>
           {trace.sockets.map((s) => (
             <li key={s.label} className={styles.socket}>
@@ -24,7 +23,6 @@ export default function Trace() {
           ))}
         </ul>
 
-        {/* 완전한 정지 상태. 재생 버튼/애니메이션 없음 (지시서 §3-2) */}
         <div className={styles.record}>
           {trace.blocks.map((b) => (
             <div key={b.call} className={styles.block}>

@@ -15,7 +15,6 @@ export default function Demo() {
         </h2>
         <p className="lead">{demo.desc}</p>
 
-        {/* 16:9 점선 박스. 3분할 비율만 표시 (지시서 §3-5) — 실제 데모는 별도 작업 */}
         <div className={styles.frame}>
           <div className={styles.layout}>
             <div className={`dashed ${styles.main}`}>drawer</div>

@@ -15,7 +15,6 @@ export default function Pain() {
         </h2>
 
         <div className={styles.cols}>
-          {/* Before: 손으로 짠 mock */}
           <figure className={styles.col}>
             <figcaption className={styles.label}>{pain.before.label}</figcaption>
             {pain.before.code ? (
@@ -29,7 +28,6 @@ export default function Pain() {
             )}
           </figure>
 
-          {/* After: smocket */}
           <figure className={styles.col}>
             <figcaption className={styles.label}>{pain.after.label}</figcaption>
             <pre className="code">

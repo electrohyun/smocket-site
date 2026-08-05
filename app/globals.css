@@ -1,26 +1,21 @@
-/* smocket-site — 따뜻한 라이트 테마 (s'more + space).
-   레퍼런스 무드: 크림 배경 · 초콜릿 브라운 텍스트 · 토스트 오렌지 강조.
-   (원래의 다크 전용 스펙은 기현 지시로 대체됨. 되돌리려면 :root 값만 원복.) */
-
 :root {
-  --bg: #f5ecdb; /* 따뜻한 크림 */
-  --bg-tint: #efe3ce; /* 살짝 진한 크림 (배경 형상용) */
-  --panel: #fffdf8; /* 카드 흰빛 크림 */
-  --border: #ddcdb0; /* 부드러운 탄 (더 또렷하게) */
-  --text: #241608; /* 진한 초콜릿 (고대비) */
-  --text-dim: #55442f; /* 뮤트 브라운 (크림 위 AA+) */
-  --accent: #f4a259; /* 브랜드 토스트 오렌지 (채움·버튼·일러스트) */
-  --accent-ink: #b45f18; /* 라이트 배경 위 오렌지 텍스트/링크 (AA) */
+  --bg: #f5ecdb;
+  --bg-tint: #efe3ce;
+  --panel: #fffdf8;
+  --border: #ddcdb0;
+  --text: #241608;
+  --text-dim: #55442f;
+  --accent: #f4a259;
+  --accent-ink: #b45f18;
 
-  --code-bg: #2e2016; /* 다크 초콜릿 코드 블록 */
-  --code-text: #f2e8d6; /* 코드 위 크림 텍스트 */
+  --code-bg: #2e2016;
+  --code-text: #f2e8d6;
 
   --shadow-sm: 0 1px 2px rgba(58, 42, 28, 0.06);
   --shadow-md: 0 2px 4px rgba(58, 42, 28, 0.05), 0 12px 28px rgba(58, 42, 28, 0.08);
 
   --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
     Arial, sans-serif;
-  /* --font-mono 은 next/font 가 layout.tsx 에서 주입 */
 
   --maxw: 1040px;
   --pad: 24px;
@@ -63,7 +58,6 @@ a:hover {
   color: var(--text);
 }
 
-/* 키보드 포커스 링을 지우지 말 것 */
 :focus-visible {
   outline: 2px solid var(--accent-ink);
   outline-offset: 2px;
@@ -78,7 +72,6 @@ pre {
   overflow-x: auto;
 }
 
-/* 시각적으로 숨기되 스크린리더엔 노출 (헤딩 계층·랜드마크 라벨용) */
 .srOnly {
   position: absolute;
   width: 1px;
@@ -91,7 +84,6 @@ pre {
   border: 0;
 }
 
-/* --- 섹션 공통 레이아웃 프리미티브 --- */
 .section {
   padding: 72px var(--pad);
   border-top: 1px solid var(--border);
@@ -116,7 +108,6 @@ pre {
   font-size: 1.02rem;
 }
 
-/* 재료 없는 자리: 화면에 그대로 노출 */
 .todo {
   font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.8rem;
@@ -128,7 +119,6 @@ pre {
   display: inline-block;
 }
 
-/* 이미지 없는 자리: 점선 박스 + 라벨 */
 .dashed {
   border: 1px dashed var(--border);
   border-radius: 6px;
@@ -139,7 +129,6 @@ pre {
   text-align: center;
 }
 
-/* 코드 블록: 다크 초콜릿 (레퍼런스의 install 알약과 동일 톤) */
 pre.code {
   background: var(--code-bg);
   color: var(--code-text);

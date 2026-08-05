@@ -1,55 +1,39 @@
-// smocket-site 랜딩 페이지의 모든 문구 출처.
-// 출처 문서: smocket-site_카피_원본.md (여기 없는 문구는 지어내지 말고 TODO(hyun)로 남길 것)
-// 순서·문구를 바꿔가며 볼 것이므로 교체가 쉬워야 한다 (지시서 §4.1).
-
 export const REPO_URL = 'https://github.com/electrohyun/smocket';
 
-// 배포 도메인. 실제 도메인이 정해지면 NEXT_PUBLIC_SITE_URL 로 덮거나 이 값을 교체.
-// (metadataBase · OG · robots · sitemap 에서 사용) — TODO.md 참조.
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://smocket-site.vercel.app';
 
-// §1 Hero ------------------------------------------------------------------
 export const hero = {
   id: 'hero',
   wordmark: 'smocket',
-  // 워드마크 옆 마스코트 (로컬 에셋, 외부요청 없음).
   mascot: {
     src: '/cat.webp',
     alt: 'smocket mascot: a cool cat wearing sunglasses',
   },
-  // H1: 카피 §1 3안 중 B안 확정 (기현 선택). h1Accent 부분은 오렌지 강조.
   h1: 'Test socket.io without a server.',
   h1Accent: 'without a server.',
   sub: "smocket reimplements socket.io's rooms, broadcasts, and acknowledgements in memory — and every release is verified against the real library.",
-  tagline: 'Sweet setup, rocket speed.', // 카피 §1 태그라인 (히어로에도 노출)
-  // 칩: 레포 기준 실제 값. MIT(package.json license), v0.3.0(현재 npm 배포 버전),
-  // dual-run CI(README의 real+mock 컨포먼스 CI). 릴리스 올라가면 버전만 갱신.
+  tagline: 'Sweet setup, rocket speed.',
   chips: ['MIT', 'v0.3.0', 'dual-run CI'],
   ctas: [
     { label: 'Read the docs', href: `${REPO_URL}#readme`, primary: true },
     { label: 'View on GitHub', href: REPO_URL, primary: false },
   ],
-  // 히어로 주인공: 스모어 로켓 (투명 에셋) + 흐린 성좌 배경.
   visual: {
     rocket: { src: '/rocket.webp', alt: 'a s’more rocket blasting off' },
-    // 내가 쓴 문학 카피 (검토용, 교체 가능). em-dash 미사용.
     caption:
       'Packed like a s’more, aimed like a rocket. Each message reaches exactly the sockets it was addressed to, and no others.',
   },
 } as const;
 
-// §2 Trace -----------------------------------------------------------------
 export const trace = {
   id: 'trace',
   title: 'See who received what.',
   desc: 'Rooms, exclusions, and targeted emits resolve exactly the way socket.io resolves them. Here is the delivery record.',
-  // 라벨 A/B/C + sid 앞 4자리 (지시서 §3-2). 예시 mock sid.
   sockets: [
     { label: 'A', sid: 'a3f1' },
     { label: 'B', sid: 'b7c2' },
     { label: 'C', sid: 'c9e4' },
   ],
-  // 하드코딩, 그대로 사용 (카피 §2). 배달식을 지어내지 말 것.
   blocks: [
     {
       call: "io.to('room-1').except(sid_A).emit('stroke', { … })",
@@ -66,13 +50,11 @@ export const trace = {
   ],
 } as const;
 
-// §3 Pain ------------------------------------------------------------------
 export const pain = {
   id: 'pain',
   title: 'Before, a second player was out of reach.',
   before: {
     label: 'Hand-written mock',
-    // 폴리카소(그림 대결)용으로 손으로 짠 MockSocket 발췌.
     code: `// polycasso/test/mock-socket.ts — before smocket
 // A stand-in for socket.io, grown one test at a time.
 
@@ -107,8 +89,6 @@ const socket = new MockSocket();`,
   },
   after: {
     label: 'smocket',
-    // 실제 공개 API와 대조 완료 (레포 README Usage / ADR 0003 url-is-required).
-    // Server(url) 필수, connect(url)로 클라이언트가 붙는다.
     code: `import { connect, Server } from 'smocket';
 
 const io = new Server('http://localhost:3000');
@@ -119,7 +99,6 @@ const c = connect('http://localhost:3000');`,
   caption: '190 lines of hand-written mock, and still only one player could connect.',
 } as const;
 
-// §4 Features --------------------------------------------------------------
 export const features = {
   id: 'features',
   cards: [
@@ -142,15 +121,13 @@ export const features = {
   ],
 } as const;
 
-// §5 Demo ------------------------------------------------------------------
 export const demo = {
   id: 'demo',
   title: 'Three players, one page, no server.',
   desc: 'One person draws, two watch, and the delivery record on the right shows which socket received each event.',
-  placeholder: 'TODO: drawing demo', // 이번 라운드에서는 만들지 않음 (지시서 §3-5)
+  placeholder: 'TODO: drawing demo',
 } as const;
 
-// §6 Quick start -----------------------------------------------------------
 export const quickstart = {
   id: 'quickstart',
   title: 'Three steps.',
@@ -158,7 +135,7 @@ export const quickstart = {
     {
       n: 1,
       title: 'Install',
-      code: 'npm install -D smocket', // 레포 README Install / npm에 v0.3.0 배포됨
+      code: 'npm install -D smocket',
       isTodo: false,
     },
     {
@@ -171,7 +148,6 @@ export const quickstart = {
     {
       n: 3,
       title: 'Run the test',
-      // 공개 API(connect, Server)만 사용. smocket 레포에서 실제로 실행해 통과 확인함.
       code: `import { expect, it } from 'vitest';
 import { connect, Server } from 'smocket';
 
@@ -210,12 +186,9 @@ it('a room broadcast reaches the room and excludes the sender', async () => {
   ],
 } as const;
 
-// §7 Scope -----------------------------------------------------------------
 export const scope = {
   id: 'scope',
   doTitle: 'What smocket does',
-  // 실제 API 표면과 대조 완료 (레포 README Features / src 테스트).
-  // 'Middleware and per-socket data'는 현 릴리스에 없어 제거 (지시서 §7: 없는 항목은 지운다).
   does: [
     'Rooms and namespaces',
     'Broadcast, with and without exclusions',
@@ -224,7 +197,6 @@ export const scope = {
     'Disconnect cleanup',
   ],
   cannotTitle: 'What a mock cannot have',
-  // 문구를 바꾸지 말 것 (카피 §7)
   cannot: [
     'Reconnection behaviour — there is no "later" to wait for',
     'Transport fallback — there is no transport',
@@ -234,18 +206,15 @@ export const scope = {
   ],
 } as const;
 
-// §8 Footer ----------------------------------------------------------------
-// href가 없는 링크는 todo로 노출한다(§3-8). 링크가 다 채워져도 이 갈래가 살아있게
-// 명시 타입을 준다 (전부 href면 as const 리터럴 narrowing이 todo 갈래를 never로 만듦).
 type FooterLink = { label: string; href: string | null; todo: string | null };
 
 export const footer = {
   id: 'footer',
-  tagline: 'Sweet setup, rocket speed.', // 카피 §1 태그라인 — 워드마크 옆
+  tagline: 'Sweet setup, rocket speed.',
   links: [
     { label: 'Docs', href: `${REPO_URL}#readme`, todo: null },
     { label: 'GitHub', href: REPO_URL, todo: null },
-    { label: 'npm', href: 'https://www.npmjs.com/package/smocket', todo: null }, // v0.3.0 배포됨
+    { label: 'npm', href: 'https://www.npmjs.com/package/smocket', todo: null },
     { label: 'MIT', href: `${REPO_URL}/blob/main/LICENSE`, todo: null },
   ] as FooterLink[],
   builtBy: 'Built by electrohyun.',

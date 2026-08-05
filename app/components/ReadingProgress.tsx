@@ -3,13 +3,11 @@
 import { useEffect, useState } from 'react';
 import styles from './ReadingProgress.module.css';
 
-// 읽기 진행도 = 스크롤. 로켓이 스모어 스택(🍪 그레이엄 · 🍫 초콜릿 · 🍡 마시멜로 · 🍪 그레이엄)을
-// 아래에서 위로 통과한다. 재료를 지날 때마다 팝 + 링 파동으로 쾌감을 준다.
 const STACK = [
-  { at: 0, emoji: '🍪', label: 'graham' }, // 발사대 (바닥)
+  { at: 0, emoji: '🍪', label: 'graham' },
   { at: 0.34, emoji: '🍫', label: 'chocolate' },
   { at: 0.67, emoji: '🍡', label: 'marshmallow' },
-  { at: 1, emoji: '🍪', label: 'graham' }, // 목표 (꼭대기)
+  { at: 1, emoji: '🍪', label: 'graham' },
 ];
 
 export default function ReadingProgress() {
@@ -50,12 +48,10 @@ export default function ReadingProgress() {
       aria-valuenow={pct}
     >
       <div className={styles.gauge}>
-        {/* 왼쪽: 로켓과 함께 올라가는 % */}
         <span className={styles.percent} style={{ bottom: `calc(${p} * (100% - 14px))` }}>
           {pct}%
         </span>
 
-        {/* 가운데: 연료 튜브 + 로켓 */}
         <div className={styles.tube}>
           <div className={styles.fill} style={{ height: `${pct}%` }} />
         </div>
@@ -64,11 +60,9 @@ export default function ReadingProgress() {
           style={{ bottom: `calc(${p} * (100% - 24px))` }}
           aria-hidden="true"
         >
-          {/* eslint-disable-next-line @next/next/no-img-element -- 로컬 투명 로켓 */}
           <img src="/rocket.webp" alt="" width={24} height={24} />
         </div>
 
-        {/* 오른쪽: 스모어 체크포인트 스택 */}
         {STACK.map((s, i) => {
           const passed = p >= s.at - 0.001;
           return (
@@ -90,11 +84,9 @@ export default function ReadingProgress() {
           </span>
         )}
 
-        {/* 100% 세리머니: 고양이 + 축하 토스트 (왼쪽) */}
         {done && (
           <div className={styles.finale}>
             <span className={styles.toast}>S’more complete!</span>
-            {/* eslint-disable-next-line @next/next/no-img-element -- 로컬 고양이 로고 */}
             <img className={styles.cat} src="/cat.webp" alt="" width={34} height={34} />
           </div>
         )}

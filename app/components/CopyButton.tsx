@@ -11,9 +11,7 @@ export default function CopyButton({ text }: { text: string }) {
       await navigator.clipboard.writeText(text);
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
-    } catch {
-      // 클립보드 접근 실패 시 조용히 무시
-    }
+    } catch {}
   }
 
   return (
