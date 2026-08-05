@@ -9,6 +9,30 @@
 - 히어로 별자리(구 `HeroConstellation`) → `HeroVisual`로 교체. 로켓 + 흐린 성좌 배경 + 발사 궤적 + 문학 캡션.
 - Trace "첫 증거" 패널은 다크 초콜릿으로 강조(코드 블록과 동톤).
 
+## 데모 (`/demo`) — 진행 중
+
+계획서: `smocket_데모_구현계획_2026-08-05.md`. 사양: `smocket_데모앱_기획_v2_2026-08-05.md`.
+
+0단계(라우트·톤)와 1단계(통신 코어)까지 되어 있다. 화면은 아직 없고, 트레이스는 `pnpm test`로만 확인된다.
+
+- `app/demo/lib/trace.ts` — 배달 기록 조립·서식
+- `app/demo/lib/trace-adapter.ts` — `Adapter` 상속, `socketsIn`/`add`/`del` 관측
+- `app/demo/lib/room.ts` — 한 라운드의 소켓 통신
+- `app/demo/lib/__tests__/trace.test.ts` — 배달식·도달·제외·join/leave·ack 검증
+
+| 위치 | 파일 | 상태 |
+|---|---|---|
+| 데모 입구 스크린샷 | `content/landing.ts` `demo.shotTodo` | `TODO(hyun): demo screenshot` — 화면 노출 중. 데모가 돌기 시작하면 찍어서 교체 |
+| 데모 입구 링크 문구 | `content/landing.ts` `demo.linkTodo` | `TODO(hyun): copy needed — demo entry link` — 카피 원본에 없는 자리 (지시서 §5-5) |
+| 데모 페이지 본문 | `content/demo.ts` `page.todo` | `TODO: drawing demo` — 화면 노출 중 |
+
+**vendor tarball은 임시다.** `package.json`의 `smocket` 의존성이 `file:vendor/*.tgz`인데,
+데모가 쓰는 API(`DelayingAdapter` · `onAnyOutgoing` · `scheduleDelivery`)가 npm 배포본에 아직 없어서다.
+정식 배포되면 `vendor/`와 `scripts/sync-smocket.mjs`를 지우고 버전 범위로 되돌릴 것 —
+계획서 §7의 마지막 완료 기준이 이걸 강제한다.
+
+동기화: `pnpm smocket:sync` (형제 경로 `../smocket` 전제)
+
 ## 확인 필요 — 검토해서 확정할 것
 
 | 위치 | 파일 | 상태 |
@@ -33,6 +57,11 @@
 
 - Hero 칩 버전(`hero.chips`)은 현재 npm 버전 `v0.3.0` 기준. 상위 릴리스 나오면 값만 갱신.
 - 로드맵상 `v0.4.0`은 진행 중, `v1.0.0` 예정.
+- **Scope "does" 재검토**: 위 표에서 `Middleware and per-socket data`를 뺀 근거는 "src에 없음"이었는데,
+  `io.use()`와 `socket.data`가 그 뒤 `main`에 들어왔다. 배포되면 되살릴지 판단할 것.
+- **Trace 배달식 표기 재검토**: `trace.blocks[0].call`이 `socket_A.to('room-1')`인 것은
+  `BroadcastOperator`에 `except()`가 없어서다. `io.to().except()` 체이닝이 배포되면
+  원래 문구로 되돌릴지 정할 것 (계획서 §0-1).
 - **배포 도메인**: `SITE_URL`(content/landing.ts)이 임시로 `https://smocket-site.vercel.app`.
   실도메인이 정해지면 그 값을 바꾸거나 배포 환경변수 `NEXT_PUBLIC_SITE_URL`로 덮을 것.
   (metadataBase · OG/트위터 이미지 · robots.txt · sitemap.xml 이 모두 이 값을 씀)
@@ -42,6 +71,6 @@
 - 라이트 모드 토글 (다크 전용)
 - 스폰서 / 후기 / 로고 월 / 비교표 / 뉴스레터 / 배지
 - 애니메이션·스크롤 연출·그라디언트 (hover 색 변화까지만)
-- Demo 실제 구현 (별도 작업 — `TODO: drawing demo` 노출 중)
+- Demo 라운드 구현 (별도 작업 — 위 "데모" 절 참고. 랜딩의 자리는 `/demo` 입구로 교체됨)
 - 본문 웹폰트 (시스템 산세리프로 진행 — 미확정)
 - 배포 설정 (Vercel 전제이나 이번 범위 아님)
