@@ -89,6 +89,15 @@ export default function ReadingProgress() {
             ✨
           </span>
         )}
+
+        {/* 100% 세리머니: 고양이 + 축하 토스트 (왼쪽) */}
+        {done && (
+          <div className={styles.finale}>
+            <span className={styles.toast}>S’more complete!</span>
+            {/* eslint-disable-next-line @next/next/no-img-element -- 로컬 고양이 로고 */}
+            <img className={styles.cat} src="/cat.webp" alt="" width={34} height={34} />
+          </div>
+        )}
       </div>
     </div>
   );
