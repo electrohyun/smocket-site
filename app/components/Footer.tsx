@@ -10,7 +10,7 @@ export default function Footer() {
           <span className={styles.tagline}>{footer.tagline}</span>
         </div>
 
-        <nav className={styles.links}>
+        <nav className={styles.links} aria-label="Footer">
           {footer.links.map((link) =>
             link.href ? (
               <a key={link.label} href={link.href}>
@@ -25,7 +25,7 @@ export default function Footer() {
           )}
         </nav>
 
-        <p className={styles.builtBy}>{footer.builtBy}</p>
+        <address className={styles.builtBy}>{footer.builtBy}</address>
       </div>
     </footer>
   );

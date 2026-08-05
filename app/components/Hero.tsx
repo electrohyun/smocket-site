@@ -10,7 +10,7 @@ import styles from './Hero.module.css';
 function Headline() {
   const [lead] = hero.h1.split(hero.h1Accent);
   return (
-    <h1 className={styles.h1}>
+    <h1 id="hero-title" className={styles.h1}>
       {lead}
       <span className={styles.accent}>{hero.h1Accent}</span>
     </h1>
@@ -42,6 +42,7 @@ export default function Hero() {
     <section
       id={hero.id}
       data-section={hero.id}
+      aria-labelledby="hero-title"
       className={`section ${styles.hero}`}
       onMouseMove={onMove}
       onMouseLeave={onLeave}
@@ -51,7 +52,7 @@ export default function Hero() {
 
       <div className={`inner ${styles.grid}`}>
         <div className={styles.copy}>
-          <div className={styles.brand}>
+          <header className={styles.brand}>
             {/* eslint-disable-next-line @next/next/no-img-element -- 로컬 고양이 로고 */}
             <img
               className={styles.mascot}
@@ -61,7 +62,7 @@ export default function Hero() {
               height={48}
             />
             <span className={styles.wordmark}>{hero.wordmark}</span>
-          </div>
+          </header>
 
           <Headline />
           <p className={styles.sub}>{hero.sub}</p>
@@ -85,13 +86,13 @@ export default function Hero() {
             ))}
           </div>
 
-          <div className={styles.chips}>
+          <ul className={styles.chips}>
             {hero.chips.map((chip) => (
-              <span key={chip} className={styles.chip}>
+              <li key={chip} className={styles.chip}>
                 {chip}
-              </span>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
 
         <RocketScene />

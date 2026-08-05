@@ -3,19 +3,26 @@ import styles from './Trace.module.css';
 
 export default function Trace() {
   return (
-    <section id={trace.id} data-section={trace.id} className="section">
+    <section
+      id={trace.id}
+      data-section={trace.id}
+      aria-labelledby="trace-title"
+      className="section"
+    >
       <div className="inner">
-        <h2 className="h2">{trace.title}</h2>
+        <h2 id="trace-title" className="h2">
+          {trace.title}
+        </h2>
         <p className="lead">{trace.desc}</p>
 
         {/* 소켓 표기: 라벨 + sid 앞 4자리(흐린 회색) — 지시서 §3-2 */}
-        <div className={styles.legend}>
+        <ul className={styles.legend}>
           {trace.sockets.map((s) => (
-            <span key={s.label} className={styles.socket}>
+            <li key={s.label} className={styles.socket}>
               {s.label} <span className={styles.sid}>{s.sid}</span>
-            </span>
+            </li>
           ))}
-        </div>
+        </ul>
 
         {/* 완전한 정지 상태. 재생 버튼/애니메이션 없음 (지시서 §3-2) */}
         <div className={styles.record}>

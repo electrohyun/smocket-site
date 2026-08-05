@@ -3,9 +3,16 @@ import styles from './Demo.module.css';
 
 export default function Demo() {
   return (
-    <section id={demo.id} data-section={demo.id} className="section">
+    <section
+      id={demo.id}
+      data-section={demo.id}
+      aria-labelledby="demo-title"
+      className="section"
+    >
       <div className="inner">
-        <h2 className="h2">{demo.title}</h2>
+        <h2 id="demo-title" className="h2">
+          {demo.title}
+        </h2>
         <p className="lead">{demo.desc}</p>
 
         {/* 16:9 점선 박스. 3분할 비율만 표시 (지시서 §3-5) — 실제 데모는 별도 작업 */}

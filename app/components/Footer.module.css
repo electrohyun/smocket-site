@@ -34,4 +34,5 @@
 .builtBy {
   color: var(--text-dim);
   font-size: 0.85rem;
+  font-style: normal; /* <address> 기본 이탤릭 제거 */
 }
