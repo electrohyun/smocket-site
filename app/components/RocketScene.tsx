@@ -41,10 +41,15 @@ export default function RocketScene() {
             <span className={styles.orbitStar} />
           </div>
 
-          {/* 로켓: 축 방향으로 앞뒤·위아래 미끄러지는 비행 드리프트 + 마우스 패럴랙스 + 3D pop */}
-          <div className={styles.float}>
-            {/* eslint-disable-next-line @next/next/no-img-element -- 로컬 투명 로켓 */}
-            <img className={styles.rocket} src={visual.rocket.src} alt={visual.rocket.alt} />
+          {/* 로켓: X·Y·Z 를 각각 다른 주기의 부드러운 사인으로 분리 → 모서리 없는
+              리사주 곡선(부유 + 카메라 depth). 세 레이어가 서로 안 덮게 합성. */}
+          <div className={styles.floatZ}>
+            <div className={styles.floatY}>
+              <div className={styles.floatX}>
+                {/* eslint-disable-next-line @next/next/no-img-element -- 로컬 투명 로켓 */}
+                <img className={styles.rocket} src={visual.rocket.src} alt={visual.rocket.alt} />
+              </div>
+            </div>
           </div>
         </div>
       </div>
