@@ -53,7 +53,7 @@
   place-items: center;
   transform: translateZ(80px);
   transform-style: preserve-3d;
-  animation: fly 5.5s ease-in-out infinite;
+  animation: fly 4.5s ease-in-out infinite;
 }
 .rocket {
   width: 84%;
@@ -98,15 +98,18 @@
   box-shadow: 0 0 8px rgba(244, 162, 89, 0.7);
 }
 
-/* 로켓 축(위-오른쪽) 방향으로 앞뒤 + 위아래로 천천히 미끄러지는 비행 드리프트.
-   forward = translate(+x, -y) (오른쪽·위), back = translate(-x, +y). */
+/* 카메라 depth 돌리: translateZ(원근)로 부드럽게 다가왔다(커짐) 멀어진다(작아짐).
+   위치는 살짝만 따라 움직임. 두 극점만 ease-in-out 으로 보간 → 꺾임·급정지 없는
+   사인 곡선. 로켓은 항상 다른 레이어보다 앞(z>=70). */
 @keyframes fly {
-  0%,
-  100% {
-    transform: translateZ(80px) translate(-7px, 7px);
+  0% {
+    transform: translateZ(70px) translate(-8px, 10px);
   }
   50% {
-    transform: translateZ(80px) translate(9px, -13px);
+    transform: translateZ(210px) translate(10px, -14px);
+  }
+  100% {
+    transform: translateZ(70px) translate(-8px, 10px);
   }
 }
 @keyframes auraPulse {

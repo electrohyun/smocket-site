@@ -3,6 +3,7 @@
 import { hero } from '@/content/landing';
 import RocketScene from './RocketScene';
 import StarField from './StarField';
+import DriftWords from './DriftWords';
 import styles from './Hero.module.css';
 
 // H1에서 h1Accent 부분만 오렌지로 강조.
@@ -46,6 +47,7 @@ export default function Hero() {
       onMouseLeave={onLeave}
     >
       <StarField />
+      <DriftWords />
 
       <div className={`inner ${styles.grid}`}>
         <div className={styles.copy}>
