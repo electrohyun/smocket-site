@@ -1,0 +1,21 @@
+/* Top left and small, per 기획 §9: the brand marks the page and then gets out
+   of the way, because the app area below it stays neutral. */
+.brand {
+  position: absolute;
+  top: 20px;
+  left: var(--pad);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mascot {
+  display: block;
+  border-radius: 6px;
+}
+
+.wordmark {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}

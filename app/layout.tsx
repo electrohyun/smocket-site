@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { JetBrains_Mono } from 'next/font/google';
 import { hero, REPO_URL, SITE_URL } from '@/content/landing';
-import ReadingProgress from './components/ReadingProgress';
 import './globals.css';
 
 const jetbrainsMono = JetBrains_Mono({
@@ -66,10 +65,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={jetbrainsMono.variable}>
-      <body>
-        {children}
-        <ReadingProgress />
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
