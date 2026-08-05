@@ -1,0 +1,93 @@
+.wrap {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  pointer-events: none; /* 장식 오버레이 — 클릭 통과 */
+  user-select: none;
+}
+
+.goal,
+.pad {
+  position: relative;
+  font-size: 15px;
+  line-height: 1;
+  filter: saturate(1.05);
+}
+
+/* 완료 시 목표 🍪 가 살짝 커지고 반짝 */
+.goal {
+  transition: transform 0.25s ease;
+}
+.wrap[data-done='true'] .goal {
+  transform: scale(1.25);
+}
+.spark {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  font-size: 11px;
+}
+
+.tubeWrap {
+  position: relative;
+  width: 30px;
+  height: 132px;
+  display: flex;
+  justify-content: center;
+}
+
+.tube {
+  width: 12px;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.fill {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background: var(--accent);
+  opacity: 0.9;
+  border-radius: 999px;
+  transition: height 0.12s linear;
+}
+
+.rocket {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%) rotate(-45deg); /* 코가 위를 향하도록 */
+  width: 26px;
+  height: 26px;
+  transition: bottom 0.12s linear;
+  filter: drop-shadow(0 3px 4px rgba(36, 22, 8, 0.3));
+}
+.rocket img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .goal,
+  .fill,
+  .rocket {
+    transition: none;
+  }
+}
+
+/* 아주 좁은 화면에선 숨김 (본문 가림 방지) */
+@media (max-width: 480px) {
+  .wrap {
+    display: none;
+  }
+}

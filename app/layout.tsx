@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { JetBrains_Mono } from 'next/font/google';
 import { hero } from '@/content/landing';
+import ReadingProgress from './components/ReadingProgress';
 import './globals.css';
 
 // 코드/데이터 폰트: JetBrains Mono (지시서 §1). 본문은 시스템 산세리프.
@@ -20,7 +21,10 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={jetbrainsMono.variable}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <ReadingProgress />
+      </body>
     </html>
   );
 }
