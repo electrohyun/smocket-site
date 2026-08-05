@@ -3,3 +3,7 @@
 # the committed blobs stay LF, and Prettier (endOfLine defaults to "lf") then
 # reports every file in the repo as unformatted.
 * text=auto eol=lf
+
+# The vendored smocket tarball is binary. `text=auto` above detects that on its
+# own, but a mangled archive fails silently and late, so it is stated outright.
+*.tgz binary
