@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { demo } from '@/content/landing';
 import styles from './Demo.module.css';
 
@@ -15,17 +16,12 @@ export default function Demo() {
         </h2>
         <p className="lead">{demo.desc}</p>
 
-        <div className={styles.frame}>
-          <div className={styles.layout}>
-            <div className={`dashed ${styles.main}`}>drawer</div>
-            <div className={styles.side}>
-              <div className={`dashed ${styles.watcher}`}>watcher</div>
-              <div className={`dashed ${styles.watcher}`}>watcher</div>
-              <div className={`dashed ${styles.panel}`}>trace panel</div>
-            </div>
-          </div>
-          <span className={`todo ${styles.tag}`}>{demo.placeholder}</span>
-        </div>
+        <Link href={demo.href} className={styles.entry}>
+          <span className={`dashed ${styles.shot}`}>
+            <span className="todo">{demo.shotTodo}</span>
+          </span>
+          <span className={`todo ${styles.label}`}>{demo.linkTodo}</span>
+        </Link>
       </div>
     </section>
   );

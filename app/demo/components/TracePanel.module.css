@@ -1,0 +1,133 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.title {
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.66rem;
+}
+
+.legend {
+  display: flex;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chip {
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  border-radius: 4px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  color: var(--code-bg);
+  background: var(--socket);
+}
+
+.log {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 10px 12px 14px;
+  scrollbar-width: thin;
+}
+
+.row {
+  margin-top: 8px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.row:first-child {
+  margin-top: 0;
+}
+
+.call {
+  color: var(--code-text);
+}
+
+.reach {
+  padding-left: 14px;
+  color: var(--text-dim);
+}
+
+/* The socket colours are the link between this record and the picture beside it,
+   so a label here is the same colour as that socket is everywhere else. */
+.socket,
+.chip {
+  --socket: var(--text-dim);
+}
+
+.socket[data-socket='A'],
+.chip[data-socket='A'] {
+  --socket: var(--sock-a);
+}
+
+.socket[data-socket='B'],
+.chip[data-socket='B'] {
+  --socket: var(--sock-b);
+}
+
+.socket[data-socket='C'],
+.chip[data-socket='C'] {
+  --socket: var(--sock-c);
+}
+
+.socket {
+  color: var(--socket);
+  font-weight: 700;
+}
+
+.except {
+  opacity: 0.75;
+}
+
+.count {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* Dimmed and pointed the other way: an ack is the game code's own note, not a
+   routed delivery, and the two must not read alike. */
+.ack {
+  padding-left: 14px;
+  color: var(--text-dim);
+  opacity: 0.72;
+}
+
+.note {
+  color: var(--text-dim);
+}
+
+.mismatch {
+  padding-left: 14px;
+  color: #ff8b8b;
+}
+
+@media (max-width: 900px) {
+  .panel {
+    font-size: 0.68rem;
+  }
+}

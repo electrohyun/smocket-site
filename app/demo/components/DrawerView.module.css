@@ -1,0 +1,52 @@
+.stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  gap: 16px;
+  height: 100dvh;
+  padding: 60px var(--pad) 20px;
+}
+
+.board {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+}
+
+.word {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.wordLabel {
+  color: var(--text-dim);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* The drawer's own colour, the same one its label wears in the record. */
+.wordValue {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--sock-a);
+}
+
+.surface {
+  flex: 1;
+  min-height: 0;
+}
+
+.hint {
+  color: var(--text-dim);
+  font-size: 0.82rem;
+}
+
+@media (max-width: 900px) {
+  .stage {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) 40dvh;
+  }
+}
