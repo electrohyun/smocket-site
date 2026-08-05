@@ -1,0 +1,47 @@
+/* 히어로 배경 전체를 덮는 성좌. 마우스에 살짝 역-패럴랙스로 깊이감. */
+.field {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  transform: translate(calc(var(--mx, 0px) * -0.35), calc(var(--my, 0px) * -0.35));
+  transition: transform 0.3s ease-out;
+}
+
+.link {
+  stroke: var(--accent);
+  stroke-width: 1.2;
+  opacity: 0.16;
+}
+.node {
+  fill: var(--accent-ink);
+  opacity: 0.22;
+}
+.spark {
+  fill: var(--accent);
+  opacity: 0.5;
+}
+
+.twinkle {
+  animation: twinkle 5s ease-in-out infinite;
+}
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.12;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .field {
+    transition: none;
+  }
+  .twinkle {
+    animation: none;
+  }
+}

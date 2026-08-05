@@ -1,0 +1,141 @@
+/* smocket-site — 따뜻한 라이트 테마 (s'more + space).
+   레퍼런스 무드: 크림 배경 · 초콜릿 브라운 텍스트 · 토스트 오렌지 강조.
+   (원래의 다크 전용 스펙은 기현 지시로 대체됨. 되돌리려면 :root 값만 원복.) */
+
+:root {
+  --bg: #f5ecdb; /* 따뜻한 크림 */
+  --bg-tint: #efe3ce; /* 살짝 진한 크림 (배경 형상용) */
+  --panel: #fffdf8; /* 카드 흰빛 크림 */
+  --border: #ddcdb0; /* 부드러운 탄 (더 또렷하게) */
+  --text: #241608; /* 진한 초콜릿 (고대비) */
+  --text-dim: #55442f; /* 뮤트 브라운 (크림 위 AA+) */
+  --accent: #f4a259; /* 브랜드 토스트 오렌지 (채움·버튼·일러스트) */
+  --accent-ink: #b45f18; /* 라이트 배경 위 오렌지 텍스트/링크 (AA) */
+
+  --code-bg: #2e2016; /* 다크 초콜릿 코드 블록 */
+  --code-text: #f2e8d6; /* 코드 위 크림 텍스트 */
+
+  --shadow-sm: 0 1px 2px rgba(58, 42, 28, 0.06);
+  --shadow-md: 0 2px 4px rgba(58, 42, 28, 0.05), 0 12px 28px rgba(58, 42, 28, 0.08);
+
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif;
+  /* --font-mono 은 next/font 가 layout.tsx 에서 주입 */
+
+  --maxw: 1040px;
+  --pad: 24px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--accent-ink);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+a:hover {
+  color: var(--text);
+}
+
+/* 키보드 포커스 링을 지우지 말 것 */
+:focus-visible {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: 2px;
+}
+
+code,
+pre {
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+pre {
+  overflow-x: auto;
+}
+
+/* --- 섹션 공통 레이아웃 프리미티브 --- */
+.section {
+  padding: 72px var(--pad);
+  border-top: 1px solid var(--border);
+}
+
+.inner {
+  max-width: var(--maxw);
+  margin: 0 auto;
+}
+
+.h2 {
+  font-size: 1.85rem;
+  font-weight: 800;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+}
+
+.lead {
+  margin-top: 12px;
+  max-width: 60ch;
+  color: var(--text-dim);
+  font-size: 1.02rem;
+}
+
+/* 재료 없는 자리: 화면에 그대로 노출 */
+.todo {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.8rem;
+  color: var(--accent-ink);
+  background: rgba(244, 162, 89, 0.14);
+  border: 1px dashed var(--accent);
+  border-radius: 4px;
+  padding: 6px 10px;
+  display: inline-block;
+}
+
+/* 이미지 없는 자리: 점선 박스 + 라벨 */
+.dashed {
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* 코드 블록: 다크 초콜릿 (레퍼런스의 install 알약과 동일 톤) */
+pre.code {
+  background: var(--code-bg);
+  color: var(--code-text);
+  border: 1px solid #3f2c1d;
+  border-radius: 10px;
+  padding: 16px;
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  white-space: pre;
+  box-shadow: var(--shadow-sm);
+}

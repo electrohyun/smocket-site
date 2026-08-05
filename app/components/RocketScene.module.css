@@ -1,0 +1,192 @@
+.figure {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
+
+/* 박스 없음 — 로켓이 크림 위에 자유롭게 뜬다. 넓게 쓰려고 overflow 허용. */
+.scene {
+  width: 100%;
+  max-width: 500px;
+  aspect-ratio: 1 / 1;
+  perspective: 1100px;
+  overflow: visible;
+}
+
+.stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transform-style: preserve-3d;
+  transition: transform 0.25s ease-out;
+
+  /* 배기 부스러기 색 */
+  --tw: #fdf7ec; /* 마시멜로 */
+  --tc: #6b4a2f; /* 초콜릿 */
+  --tg: #cf9a55; /* 그레이엄 */
+}
+
+/* 은은한 따뜻한 오라 (네온 아님) */
+.aura {
+  position: absolute;
+  inset: -6%;
+  transform: translateZ(10px);
+  background: radial-gradient(
+    circle at 54% 46%,
+    rgba(244, 162, 89, 0.28),
+    rgba(244, 162, 89, 0.08) 42%,
+    rgba(244, 162, 89, 0) 66%
+  );
+  filter: blur(6px);
+  pointer-events: none;
+  animation: auraPulse 2.6s ease-in-out infinite;
+}
+
+/* 로켓 */
+.float {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  transform: translateZ(80px);
+  transform-style: preserve-3d;
+  animation: fly 5.5s ease-in-out infinite;
+}
+.rocket {
+  width: 84%;
+  transform: translate(var(--mx, 0), var(--my, 0));
+  transition: transform 0.25s ease-out;
+  filter: drop-shadow(0 22px 26px rgba(36, 22, 8, 0.24));
+  will-change: transform;
+}
+
+/* 배기 부스러기 */
+.trail {
+  position: absolute;
+  inset: 0;
+  transform: translateZ(48px);
+  pointer-events: none;
+}
+.crumb {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0;
+  box-shadow: 0 1px 2px rgba(36, 22, 8, 0.25);
+  animation: drift 2.6s ease-in infinite;
+}
+
+/* 궤도를 도는 작은 별 */
+.orbit {
+  position: absolute;
+  inset: 0;
+  transform: translateZ(60px);
+  animation: spin 16s linear infinite;
+  pointer-events: none;
+}
+.orbitStar {
+  position: absolute;
+  top: 8%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  margin-left: -4px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px rgba(244, 162, 89, 0.7);
+}
+
+/* 로켓 축(위-오른쪽) 방향으로 앞뒤 + 위아래로 천천히 미끄러지는 비행 드리프트.
+   forward = translate(+x, -y) (오른쪽·위), back = translate(-x, +y). */
+@keyframes fly {
+  0%,
+  100% {
+    transform: translateZ(80px) translate(-7px, 7px);
+  }
+  50% {
+    transform: translateZ(80px) translate(9px, -13px);
+  }
+}
+@keyframes auraPulse {
+  0%,
+  100% {
+    opacity: 0.8;
+    transform: translateZ(10px) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateZ(10px) scale(1.06);
+  }
+}
+@keyframes drift {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(1);
+  }
+  15% {
+    opacity: 0.95;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-46px, 54px) scale(0.4);
+  }
+}
+@keyframes spin {
+  to {
+    transform: translateZ(60px) rotate(360deg);
+  }
+}
+.twinkle {
+  animation: twinkle 4.5s ease-in-out infinite;
+}
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.caption {
+  max-width: 42ch;
+  text-align: center;
+  font-style: italic;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--text-dim);
+  text-wrap: balance;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .float,
+  .aura,
+  .crumb,
+  .twinkle,
+  .orbit {
+    animation: none;
+  }
+  .stage {
+    transition: none;
+  }
+  .crumb {
+    opacity: 0.6;
+  }
+}
+
+@media (max-width: 900px) {
+  .scene {
+    max-width: 440px;
+  }
+}
+@media (max-width: 768px) {
+  .scene {
+    max-width: 360px;
+  }
+  .caption {
+    font-size: 0.88rem;
+  }
+}

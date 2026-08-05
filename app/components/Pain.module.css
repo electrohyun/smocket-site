@@ -1,0 +1,35 @@
+.cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 28px;
+  align-items: start;
+}
+
+.col {
+  min-width: 0;
+}
+
+.label {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+}
+
+.emptyCode {
+  min-height: 168px;
+  padding: 16px;
+}
+
+.caption {
+  margin-top: 20px;
+  color: var(--text-dim);
+  font-size: 0.95rem;
+}
+
+@media (max-width: 768px) {
+  .cols {
+    grid-template-columns: 1fr;
+  }
+}

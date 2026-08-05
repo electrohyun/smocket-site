@@ -1,0 +1,50 @@
+.frame {
+  position: relative;
+  margin-top: 28px;
+  aspect-ratio: 16 / 9;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 12px;
+  height: 100%;
+}
+
+.side {
+  display: grid;
+  grid-template-rows: 1fr 1fr 1.4fr;
+  gap: 12px;
+  min-height: 0;
+}
+
+.main,
+.watcher,
+.panel {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.75rem;
+}
+
+.main {
+  height: 100%;
+}
+
+.tag {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+}
+
+@media (max-width: 768px) {
+  .layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: 2fr 1fr;
+  }
+  .side {
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr;
+  }
+}

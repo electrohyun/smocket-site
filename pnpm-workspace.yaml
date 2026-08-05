@@ -1,0 +1,5 @@
+# 이 랜딩 페이지는 이미지 최적화(sharp)를 쓰지 않고, 네이티브 리졸버 빌드도 필요 없다.
+# pnpm 11의 빌드 스크립트 승인: 둘 다 실행하지 않음으로 확정.
+allowBuilds:
+  sharp: false
+  unrs-resolver: false
