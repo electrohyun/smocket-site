@@ -33,6 +33,9 @@
 
 - Hero 칩 버전(`hero.chips`)은 현재 npm 버전 `v0.3.0` 기준. 상위 릴리스 나오면 값만 갱신.
 - 로드맵상 `v0.4.0`은 진행 중, `v1.0.0` 예정.
+- **배포 도메인**: `SITE_URL`(content/landing.ts)이 임시로 `https://smocket-site.vercel.app`.
+  실도메인이 정해지면 그 값을 바꾸거나 배포 환경변수 `NEXT_PUBLIC_SITE_URL`로 덮을 것.
+  (metadataBase · OG/트위터 이미지 · robots.txt · sitemap.xml 이 모두 이 값을 씀)
 
 ## 이번 라운드에서 의도적으로 만들지 않은 것
 

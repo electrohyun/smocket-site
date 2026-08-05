@@ -4,6 +4,10 @@
 
 export const REPO_URL = 'https://github.com/electrohyun/smocket';
 
+// 배포 도메인. 실제 도메인이 정해지면 NEXT_PUBLIC_SITE_URL 로 덮거나 이 값을 교체.
+// (metadataBase · OG · robots · sitemap 에서 사용) — TODO.md 참조.
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://smocket-site.vercel.app';
+
 // §1 Hero ------------------------------------------------------------------
 export const hero = {
   id: 'hero',
