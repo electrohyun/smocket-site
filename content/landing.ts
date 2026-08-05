@@ -36,7 +36,7 @@ export const trace = {
   ],
   blocks: [
     {
-      call: "io.to('room-1').except(sid_A).emit('stroke', { … })",
+      call: "socket_A.to('room-1').emit('stroke', { … })",
       reach: '→ B, C   (except A)',
     },
     {
@@ -125,7 +125,9 @@ export const demo = {
   id: 'demo',
   title: 'Three players, one page, no server.',
   desc: 'One person draws, two watch, and the delivery record on the right shows which socket received each event.',
-  placeholder: 'TODO: drawing demo',
+  href: '/demo',
+  shotTodo: 'TODO(hyun): demo screenshot',
+  linkTodo: 'TODO(hyun): copy needed — demo entry link',
 } as const;
 
 export const quickstart = {
