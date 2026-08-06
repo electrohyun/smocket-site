@@ -1,5 +1,7 @@
 /* Centred on the drawing, over everything, catching nothing: the round keeps
    running underneath and the board is only there to be read. */
+/* The winner's colour, set once here and read by the board and the fireworks
+   both — the same colour that socket wears at its desk and in the record. */
 .wrap {
   position: absolute;
   inset: 0;
@@ -7,6 +9,19 @@
   display: grid;
   place-items: center;
   pointer-events: none;
+  --socket: var(--text-dim);
+}
+
+.wrap[data-socket='A'] {
+  --socket: var(--sock-a);
+}
+
+.wrap[data-socket='B'] {
+  --socket: var(--sock-b);
+}
+
+.wrap[data-socket='C'] {
+  --socket: var(--sock-c);
 }
 
 .board {
@@ -15,14 +30,14 @@
   position: relative;
   z-index: 1;
   padding: 20px 38px;
-  border: 1px solid var(--sock-b);
+  border: 1px solid var(--socket);
   border-radius: 16px;
   /* The same glass every other surface here is, so it sits in the sky rather
      than on top of the page. */
   background: var(--panel);
   box-shadow:
     var(--shadow-md),
-    0 0 48px -14px var(--sock-b);
+    0 0 48px -14px var(--socket);
   text-align: center;
   animation:
     fanfare-in 0.34s cubic-bezier(0.2, 0.8, 0.3, 1.2) both,
@@ -40,7 +55,7 @@
    already wear. */
 .word {
   margin-top: 4px;
-  color: var(--sock-b);
+  color: var(--socket);
   font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 1.9rem;
   font-weight: 700;

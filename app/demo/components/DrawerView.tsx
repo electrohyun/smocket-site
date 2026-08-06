@@ -10,6 +10,7 @@ import type { StrokePayload } from '../lib/stroke';
 import seedJson from '../lib/seed.json';
 import Canvas from './Canvas';
 import Countdown from './Countdown';
+import Fanfare from './Fanfare';
 import TracePanel from './TracePanel';
 import styles from './DrawerView.module.css';
 
@@ -55,11 +56,15 @@ export default function DrawerView({ replay = false }: { replay?: boolean }) {
   const [word, setWord] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [ended, setEnded] = useState<Ended | null>(null);
+  // Separate from `ended`, which keeps the result pill for the rest of the round:
+  // the board announces and goes, the pill stays.
+  const [fanfare, setFanfare] = useState<Ended | null>(null);
   const [runId, setRunId] = useState(0);
   const [copied, setCopied] = useState(false);
   // False until the 3-2-1 finishes; drawing, the bots, and any replay wait for it.
   const [active, setActive] = useState(false);
   const begin = useCallback(() => setActive(true), []);
+  const clearFanfare = useCallback(() => setFanfare(null), []);
 
   const roundRef = useRef<Round | null>(null);
   const botsRef = useRef<Bots | null>(null);
@@ -100,6 +105,7 @@ export default function DrawerView({ replay = false }: { replay?: boolean }) {
       setWord(null);
       setMessages([]);
       setEnded(null);
+      setFanfare(null);
       setActive(false);
 
       // The drawer learns the word by receiving it, the same way the panel learns
@@ -116,6 +122,9 @@ export default function DrawerView({ replay = false }: { replay?: boolean }) {
 
       next.on(DRAWER, 'announce', ((result: Ended) => {
         setEnded(result);
+        // A timeout reveal announces with no winner, and there is nothing to
+        // celebrate about the round simply running out.
+        if (result.winner) setFanfare(result);
         // The win is a beat too: a bot admires the answer once it lands.
         botsRef.current?.markWon();
       }) as (...args: never[]) => void);
@@ -201,6 +210,16 @@ export default function DrawerView({ replay = false }: { replay?: boolean }) {
         <div className={styles.surface}>
           <Canvas onSegment={commit} disabled={replay || ended !== null || !active} />
           {round && !active && <Countdown onDone={begin} />}
+          {/* A drew it; the win belongs to whoever guessed, and the board is lit
+              in their colour rather than the drawer's. */}
+          {fanfare && (
+            <Fanfare
+              word={fanfare.word}
+              socket={fanfare.winner}
+              eyebrow={`${fanfare.winner} guessed it`}
+              onDone={clearFanfare}
+            />
+          )}
           {ended && (
             <div className={styles.result} role="status">
               <span className={styles.resultName} data-socket={ended.winner}>

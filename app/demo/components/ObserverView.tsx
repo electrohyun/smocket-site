@@ -194,7 +194,10 @@ export default function ObserverView({
         <div className={styles.surface}>
           <Canvas ref={canvasRef} onSegment={NO_SEGMENTS} disabled />
           {round && !active && <Countdown onDone={begin} />}
-          {fanfare && <Fanfare word={fanfare} onDone={clearFanfare} />}
+          {/* The user is B, so this win is theirs to be told about. */}
+          {fanfare && (
+            <Fanfare word={fanfare} socket={USER} eyebrow="You got it" onDone={clearFanfare} />
+          )}
         </div>
 
         <div className={styles.players}>

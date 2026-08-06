@@ -21,7 +21,7 @@ const BURSTS = [
   { x: 50, y: 55, delay: 0.5 },
 ];
 
-const TINTS = ['var(--sock-b)', 'var(--accent)', '#ffe9c4'];
+const TINTS = ['var(--socket)', 'var(--accent)', '#ffe9c4'];
 const PER_BURST = 16;
 
 interface Spark {

@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import type { Label } from '../lib/room';
 import Fireworks from './Fireworks';
 import styles from './Fanfare.module.css';
 
@@ -22,11 +23,15 @@ const SHOWN_MS = 2800;
 
 interface Props {
   word: string;
+  /** The winner, whose colour the board and its fireworks are lit in. */
+  socket: Label;
+  /** Whose win this is, in the voice of the viewpoint reading it. */
+  eyebrow: string;
   /** Called once the board has said its piece; the parent unmounts it. */
   onDone: () => void;
 }
 
-export default function Fanfare({ word, onDone }: Props) {
+export default function Fanfare({ word, socket, eyebrow, onDone }: Props) {
   useEffect(() => {
     const timer = window.setTimeout(onDone, SHOWN_MS);
     return () => window.clearTimeout(timer);
@@ -35,11 +40,13 @@ export default function Fanfare({ word, onDone }: Props) {
   return (
     // `status` rather than `alert`: it is good news arriving, not an error, and
     // polite means it waits for a screen reader to finish its sentence.
-    <div className={styles.wrap} role="status" aria-live="polite">
+    // `data-socket` on the wrap, not the board: the fireworks read --socket from
+    // here too, so the burst is lit in the same colour as the word inside it.
+    <div className={styles.wrap} role="status" aria-live="polite" data-socket={socket}>
       {/* Behind the board, so the words stay the readable thing. */}
       <Fireworks />
       <div className={styles.board}>
-        <p className={styles.eyebrow}>You got it</p>
+        <p className={styles.eyebrow}>{eyebrow}</p>
         <p className={styles.word}>{word}</p>
       </div>
     </div>
