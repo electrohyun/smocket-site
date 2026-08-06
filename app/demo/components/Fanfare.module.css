@@ -10,6 +10,10 @@
 }
 
 .board {
+  /* Above the fireworks: they are absolutely positioned and would otherwise
+     paint over this, which is in flow. */
+  position: relative;
+  z-index: 1;
   padding: 20px 38px;
   border: 1px solid var(--sock-b);
   border-radius: 16px;

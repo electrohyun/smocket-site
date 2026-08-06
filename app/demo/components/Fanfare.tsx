@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import Fireworks from './Fireworks';
 import styles from './Fanfare.module.css';
 
 /* The win, said out loud to the one who won it.
@@ -35,6 +36,8 @@ export default function Fanfare({ word, onDone }: Props) {
     // `status` rather than `alert`: it is good news arriving, not an error, and
     // polite means it waits for a screen reader to finish its sentence.
     <div className={styles.wrap} role="status" aria-live="polite">
+      {/* Behind the board, so the words stay the readable thing. */}
+      <Fireworks />
       <div className={styles.board}>
         <p className={styles.eyebrow}>You got it</p>
         <p className={styles.word}>{word}</p>

@@ -1,0 +1,49 @@
+.sky {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.spark {
+  position: absolute;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 999px;
+  background: var(--tint);
+  /* The glow is what makes a dot read as a spark rather than a bullet point. */
+  box-shadow: 0 0 8px 1px var(--tint);
+  animation: spark 1.15s cubic-bezier(0.15, 0.6, 0.35, 1) var(--delay) both;
+}
+
+/* Out fast, then over and down: the bend at 55% is the arc, and the fade starts
+   before the travel ends so nothing blinks out at full brightness. */
+@keyframes spark {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.3);
+  }
+
+  10% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  55% {
+    opacity: 1;
+    transform: translate(calc(-50% + var(--mx)), calc(-50% + var(--my))) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.55);
+  }
+}
+
+/* Decoration with nothing to say, so it simply does not happen. The board still
+   announces the win, which is the part that carries the meaning. */
+@media (prefers-reduced-motion: reduce) {
+  .sky {
+    display: none;
+  }
+}
