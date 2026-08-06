@@ -1,18 +1,29 @@
 'use client';
 
-import { useCallback, useEffect, useRef } from 'react';
-import { FLUSH_MS, SegmentBuffer, toPixels, toPoint, type Pt } from '../lib/stroke';
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef } from 'react';
+import { FLUSH_MS, SegmentBuffer, toPixels, toPoint, type Pt, type StrokePayload } from '../lib/stroke';
 import styles from './Canvas.module.css';
 
-/* The drawer's canvas.
+/* The canvas, on both sides of the wire.
  *
- * It paints its own strokes locally, which is not a shortcut: `socket.to(room)`
- * excludes the sender, so the segment it just sent never comes back to it. The
- * local paint and the emit are two paths on purpose, and that they are two is the
- * thing the delivery record next to it is proving.
+ * The drawer paints from its own pointer and the observer paints from what it
+ * receives, but they paint the same way: every point reaches the surface through
+ * `draw`, one path, so a line that renders live also renders on replay and a gap
+ * at a segment boundary cannot appear on one side but not the other. The drawer
+ * excludes itself when it broadcasts (`socket.to(room)`), so its strokes never
+ * come back to it — which is exactly why its own paint has to be local, and why
+ * the record beside it, not a returned stroke, is the proof of delivery.
  *
- * Points are coalesced and flushed on a timer rather than per pointer event; see
- * `lib/stroke.ts` for why the segment is the unit. */
+ * `draw` reassembles a stroke from its segments. The wire splits one stroke into
+ * a segment per flush, all sharing an `id`; a changed `id` is a new stroke, and a
+ * same-`id` segment continues from the previous one's last point, so the line
+ * does not break at the 40ms seam. Normalised coordinates (stroke.ts) let the
+ * observer's canvas, a different size, draw the same picture. */
+
+export interface CanvasHandle {
+  /** Paint a received segment. The observer's socket handler calls this. */
+  draw(segment: StrokePayload): void;
+}
 
 interface Props {
   /**
@@ -22,20 +33,52 @@ interface Props {
    * one does (기획 3단계 §1).
    */
   onSegment: (segment: ReturnType<SegmentBuffer['take']>) => void;
-  /** Once the round is decided, the surface stops taking new strokes. */
+  /** A receive-only surface (the observer, or a decided round) takes no strokes. */
   disabled?: boolean;
 }
 
-export default function Canvas({ onSegment, disabled = false }: Props) {
+function Canvas({ onSegment, disabled = false }: Props, ref: React.Ref<CanvasHandle>) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const bufferRef = useRef(new SegmentBuffer());
-  const lastRef = useRef<Pt | null>(null);
 
   // Every stroke's points, kept in normalised space so the picture can be redrawn
-  // at whatever size the canvas becomes. The wire only ever carries a segment and
-  // forgets it (stroke.ts); the drawer's own screen is the one place that has to
-  // remember the whole line, because sizing the backing store wipes the pixels.
+  // at whatever size the canvas becomes. The wire carries a segment and forgets it
+  // (stroke.ts); the screen is the one place that has to remember the whole line,
+  // because sizing the backing store wipes the pixels.
   const historyRef = useRef<Pt[][]>([]);
+  // The stroke being assembled: its id, and the last point drawn, so a same-id
+  // segment bridges to it and a new id starts clean.
+  const assembleRef = useRef<{ id: number | null; last: Pt | null }>({ id: null, last: null });
+
+  const draw = useCallback((segment: StrokePayload) => {
+    const canvas = canvasRef.current;
+    const context = canvas?.getContext('2d');
+    if (!canvas || !context) return;
+    const rect = canvas.getBoundingClientRect();
+    const state = assembleRef.current;
+
+    if (segment.id !== state.id) {
+      state.id = segment.id;
+      state.last = null;
+      historyRef.current.push([]);
+    }
+    const stroke = historyRef.current[historyRef.current.length - 1];
+
+    for (const point of segment.pts) {
+      stroke.push(point);
+      if (state.last) {
+        const [x1, y1] = toPixels(state.last, rect);
+        const [x2, y2] = toPixels(point, rect);
+        context.beginPath();
+        context.moveTo(x1, y1);
+        context.lineTo(x2, y2);
+        context.stroke();
+      }
+      state.last = point;
+    }
+  }, []);
+
+  useImperativeHandle(ref, () => ({ draw }), [draw]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -85,32 +128,21 @@ export default function Canvas({ onSegment, disabled = false }: Props) {
     const observer = new ResizeObserver(resize);
     observer.observe(canvas);
 
-    // The flush timer carries `onSegment` in its dependencies rather than through
-    // a ref: it restarts when the round arrives, once, and a restart costs at most
-    // one flush interval.
+    // A flushed segment goes out to be delivered and, through `draw`, onto this
+    // canvas — the drawer's own paint, since the broadcast excludes it.
     const timer = window.setInterval(() => {
       const segment = bufferRef.current.take();
-      if (segment) onSegment(segment);
+      if (segment) {
+        onSegment(segment);
+        draw(segment);
+      }
     }, FLUSH_MS);
 
     return () => {
       observer.disconnect();
       window.clearInterval(timer);
     };
-  }, [onSegment]);
-
-  const paint = useCallback((from: Pt, to: Pt) => {
-    const canvas = canvasRef.current;
-    const context = canvas?.getContext('2d');
-    if (!canvas || !context) return;
-    const rect = canvas.getBoundingClientRect();
-    const [x1, y1] = toPixels(from, rect);
-    const [x2, y2] = toPixels(to, rect);
-    context.beginPath();
-    context.moveTo(x1, y1);
-    context.lineTo(x2, y2);
-    context.stroke();
-  }, []);
+  }, [onSegment, draw]);
 
   const pointAt = (event: React.PointerEvent<HTMLCanvasElement>): Pt => {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -121,28 +153,21 @@ export default function Canvas({ onSegment, disabled = false }: Props) {
     if (disabled) return;
     // Capture, so a stroke that leaves the canvas mid-drag still finishes here.
     event.currentTarget.setPointerCapture(event.pointerId);
-    const point = pointAt(event);
-    bufferRef.current.begin(point);
-    historyRef.current.push([point]);
-    lastRef.current = point;
+    bufferRef.current.begin(pointAt(event));
   };
 
   const move = (event: React.PointerEvent<HTMLCanvasElement>) => {
     if (!bufferRef.current.active) return;
-    const point = pointAt(event);
-    bufferRef.current.push(point);
-    historyRef.current[historyRef.current.length - 1]?.push(point);
-    if (lastRef.current) paint(lastRef.current, point);
-    lastRef.current = point;
+    bufferRef.current.push(pointAt(event));
   };
 
   const up = () => {
     const segment = bufferRef.current.end();
     if (!segment) return;
-    lastRef.current = null;
-    // The end segment goes out the one channel every segment does; whoever counts
-    // strokes counts it there, so the canvas owns no tally of its own.
+    // The end segment takes the same two paths every segment does: out to be
+    // delivered, and onto this canvas. Whoever counts strokes counts it downstream.
     onSegment(segment);
+    draw(segment);
   };
 
   return (
@@ -157,3 +182,5 @@ export default function Canvas({ onSegment, disabled = false }: Props) {
     />
   );
 }
+
+export default forwardRef(Canvas);
