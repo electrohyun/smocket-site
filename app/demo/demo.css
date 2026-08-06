@@ -4,9 +4,15 @@
    the landing keeps its cream because this stylesheet never ships with it.
 
    The tone is the landing's opposite that still reads as the same world
-   (기획 §9): deep space against cream, sharing one accent. The app area stays
-   neutral — no brand colour on the canvas, the characters, or the chat, since
-   the claim is "your app is left alone and smocket is slotted in".
+   (기획 §9): night against cream, sharing one accent. It is a night sky and not
+   deep space — the earlier near-black read as cold and empty, and the page it
+   frames is a drawing game. So the ground is a lit indigo, there is amber
+   airglow along the bottom, and there are stars.
+
+   The app area still carries no brand colour on the canvas, the characters or
+   the chat. What it does carry now is translucency: the panels are glass over
+   the sky rather than plates on top of it, which is the only way the stars are
+   visible at all, since the canvas covers nearly the whole viewport.
 
    Doubled :root beats globals.css's single :root on specificity rather than on
    source order, so the theme does not depend on how the bundler happens to
@@ -15,12 +21,17 @@
 :root:root {
   color-scheme: dark;
 
-  --bg: #0b0d16;
-  --bg-tint: #10131f;
-  --panel: #141828;
-  --border: #272d44;
+  --bg: #232043;
+  /* Translucent, so the starfield reads through every surface at slightly
+     different strengths. Anything needing a guaranteed flat backdrop — the code
+     block below — sets its own opaque colour instead. */
+  --bg-tint: rgba(30, 27, 57, 0.62);
+  --panel: rgba(44, 41, 84, 0.82);
+  --border: #423e6b;
   --text: #e9ebf4;
-  --text-dim: #99a0b8;
+  /* Lifted with the ground. TracePanel's `.sid` documents a fixed ratio against
+     --code-bg, and this is the value that keeps that promise true: 7.8:1. */
+  --text-dim: #aeaac9;
 
   /* Shared with the landing on purpose: one accent across both pages is the
      signal that the demo and the landing are the same world. */
@@ -30,27 +41,93 @@
   /* One colour per socket, worn by its trace label and by everything it does on
      screen. That shared colour is the link between the record and the picture
      (기획 §9), so these are read from both and never inlined. None of them go
-     near the accent, which already means something else on this page. */
-  --sock-a: #7bb0ff;
-  --sock-b: #8ee6a8;
-  --sock-c: #c79bff;
+     near the accent, which already means something else on this page. Lifted
+     with the ground so they keep their distance from it: on the old near-black
+     the darker mixes were already close, and the ground moved up, not down. */
+  --sock-a: #93c0ff;
+  --sock-b: #9dedb5;
+  --sock-c: #d3aaff;
 
-  --code-bg: #080a12;
-  --code-text: #dfe3f0;
+  --code-bg: #191635;
+  --code-text: #e6e2f5;
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.4), 0 12px 28px rgba(0, 0, 0, 0.45);
+  --shadow-sm: 0 1px 2px rgba(8, 6, 20, 0.45);
+  --shadow-md: 0 2px 4px rgba(8, 6, 20, 0.38), 0 12px 28px rgba(8, 6, 20, 0.42);
+
+  --star-tile: url('/star-tile-night.svg');
+}
+
+/* The ground goes on html so body::before can sit between it and the content
+   without either one needing a stacking context of its own. Amber along the
+   bottom is the warmth the old palette had nowhere; the violet at the top right
+   keeps the sky from being one flat wash. */
+html {
+  background:
+    radial-gradient(
+      125% 55% at 50% 106%,
+      rgba(244, 162, 89, 0.22),
+      rgba(244, 162, 89, 0.07) 44%,
+      rgba(244, 162, 89, 0) 72%
+    ),
+    radial-gradient(80% 55% at 82% -12%, rgba(150, 130, 224, 0.18), rgba(150, 130, 224, 0) 62%),
+    linear-gradient(180deg, #1e1b3a 0%, #232043 46%, #2a2450 100%);
+  background-attachment: fixed;
+  min-height: 100%;
 }
 
 body {
-  background: var(--bg);
+  /* Transparent, so html's sky shows and body::before can lie over it. */
+  background: transparent;
   color: var(--text);
+}
+
+/* The stars. Two tilings of one file at different sizes and offsets, which is
+   what stops a 400px tile from reading as a 400px grid. Fixed, so the sky does
+   not slide around behind a page that is already a fixed-height stage. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    var(--star-tile) repeat,
+    var(--star-tile) repeat;
+  background-size:
+    400px 400px,
+    247px 247px;
+  background-position:
+    0 0,
+    123px 71px;
+  animation: sky-breathe 11s ease-in-out infinite alternate;
+}
+
+/* Not a twinkle per star — that needs one element each. The field as a whole
+   comes up and down a little, which at this speed reads as air rather than as
+   an animation. */
+@keyframes sky-breathe {
+  from {
+    opacity: 0.72;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before {
+    animation: none;
+    opacity: 0.88;
+  }
 }
 
 a:hover {
   color: var(--text);
 }
 
+/* Opaque on purpose: code is read, and reading it through a starfield is worse
+   than the stars are good. */
 pre.code {
-  border-color: #1b2032;
+  background: var(--code-bg);
+  border-color: #2b2652;
 }
