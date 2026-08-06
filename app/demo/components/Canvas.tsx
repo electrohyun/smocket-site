@@ -18,13 +18,21 @@ interface Props {
   onSegment: (segment: ReturnType<SegmentBuffer['take']>) => void;
   /** Called when a stroke finishes, with the running total. Drives the bots. */
   onStrokeEnd: (total: number) => void;
+  /** Once the round is decided, the surface stops taking new strokes. */
+  disabled?: boolean;
 }
 
-export default function Canvas({ onSegment, onStrokeEnd }: Props) {
+export default function Canvas({ onSegment, onStrokeEnd, disabled = false }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const bufferRef = useRef(new SegmentBuffer());
   const lastRef = useRef<Pt | null>(null);
   const strokesRef = useRef(0);
+
+  // Every stroke's points, kept in normalised space so the picture can be redrawn
+  // at whatever size the canvas becomes. The wire only ever carries a segment and
+  // forgets it (stroke.ts); the drawer's own screen is the one place that has to
+  // remember the whole line, because sizing the backing store wipes the pixels.
+  const historyRef = useRef<Pt[][]>([]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -33,6 +41,32 @@ export default function Canvas({ onSegment, onStrokeEnd }: Props) {
     // The backing store is sized in device pixels and the context scaled back, so
     // a line is a line rather than a blurred pair of rows.
     const context = canvas.getContext('2d');
+
+    const style = () => {
+      if (!context) return;
+      context.lineCap = 'round';
+      context.lineJoin = 'round';
+      context.lineWidth = 2.5;
+      context.strokeStyle = getComputedStyle(canvas).getPropertyValue('--ink').trim() || '#e9ebf4';
+    };
+
+    // Redraw every stroke from its points. Sizing the backing store clears it, so
+    // without this the drawing is wiped every time the layout shifts — the feed
+    // arriving, the window resizing — even though the strokes were never lost.
+    const repaint = () => {
+      if (!context) return;
+      const rect = canvas.getBoundingClientRect();
+      for (const stroke of historyRef.current) {
+        context.beginPath();
+        stroke.forEach((point, index) => {
+          const [x, y] = toPixels(point, rect);
+          if (index === 0) context.moveTo(x, y);
+          else context.lineTo(x, y);
+        });
+        context.stroke();
+      }
+    };
+
     const resize = () => {
       const dpr = window.devicePixelRatio || 1;
       const rect = canvas.getBoundingClientRect();
@@ -40,10 +74,8 @@ export default function Canvas({ onSegment, onStrokeEnd }: Props) {
       canvas.height = Math.round(rect.height * dpr);
       if (!context) return;
       context.scale(dpr, dpr);
-      context.lineCap = 'round';
-      context.lineJoin = 'round';
-      context.lineWidth = 2.5;
-      context.strokeStyle = getComputedStyle(canvas).getPropertyValue('--ink').trim() || '#e9ebf4';
+      style();
+      repaint();
     };
 
     resize();
@@ -83,10 +115,12 @@ export default function Canvas({ onSegment, onStrokeEnd }: Props) {
   };
 
   const down = (event: React.PointerEvent<HTMLCanvasElement>) => {
+    if (disabled) return;
     // Capture, so a stroke that leaves the canvas mid-drag still finishes here.
     event.currentTarget.setPointerCapture(event.pointerId);
     const point = pointAt(event);
     bufferRef.current.begin(point);
+    historyRef.current.push([point]);
     lastRef.current = point;
   };
 
@@ -94,6 +128,7 @@ export default function Canvas({ onSegment, onStrokeEnd }: Props) {
     if (!bufferRef.current.active) return;
     const point = pointAt(event);
     bufferRef.current.push(point);
+    historyRef.current[historyRef.current.length - 1]?.push(point);
     if (lastRef.current) paint(lastRef.current, point);
     lastRef.current = point;
   };
