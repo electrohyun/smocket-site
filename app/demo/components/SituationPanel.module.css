@@ -1,0 +1,58 @@
+.panel {
+  position: fixed;
+  top: 12px;
+  right: 20px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.button {
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--panel);
+  color: var(--text-dim);
+  font-size: 0.76rem;
+  cursor: pointer;
+}
+
+.button:hover {
+  color: var(--text);
+  border-color: var(--text-dim);
+}
+
+/* An engaged toggle wears the accent, so on/off reads at a glance. */
+.active {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.slider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--panel);
+  color: var(--text-dim);
+  font-size: 0.74rem;
+  white-space: nowrap;
+}
+
+.slider input {
+  width: 96px;
+  accent-color: var(--accent);
+}
+
+@media (max-width: 900px) {
+  .panel {
+    top: auto;
+    bottom: 12px;
+    right: 12px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+}

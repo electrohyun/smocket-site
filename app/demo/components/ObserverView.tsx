@@ -38,7 +38,13 @@ interface Ended {
   word: string;
 }
 
-export default function ObserverView() {
+export default function ObserverView({
+  revealed = false,
+  delayMs = 0,
+}: {
+  revealed?: boolean;
+  delayMs?: number;
+}) {
   const [round, setRound] = useState<Round | null>(null);
   const [bubbles, setBubbles] = useState<Partial<Record<Label, string>>>({});
   const [ended, setEnded] = useState<Ended | null>(null);
@@ -136,6 +142,13 @@ export default function ObserverView() {
     return () => window.clearTimeout(timer);
   }, [round, ended]);
 
+  // The slider's delay, applied to what B receives. It is smocket's own per-socket
+  // delay (room.setDelay → DelayingAdapter), so the drawing and the chat reach B
+  // late while the record shows the delayed schedule — order kept (기획 5단계 §3).
+  useEffect(() => {
+    roundRef.current?.setDelay('B', delayMs);
+  }, [delayMs, round]);
+
   const submit = useCallback(
     (event: React.FormEvent) => {
       event.preventDefault();
@@ -178,7 +191,7 @@ export default function ObserverView() {
         </form>
       </section>
 
-      {round && <TracePanel store={round.trace} maskWord />}
+      {round && <TracePanel store={round.trace} maskWord={!revealed} />}
     </div>
   );
 }

@@ -25,6 +25,7 @@ export default async function DemoPage({
   const params = await searchParams;
   const initial = params.view === 'observer' ? 'observer' : 'drawer';
   const replay = 'replay' in params;
+  const initialDelay = Number(params.delay) || 0;
 
   return (
     <>
@@ -39,7 +40,7 @@ export default async function DemoPage({
         <span className={styles.wordmark}>{page.wordmark}</span>
       </header>
 
-      <Stage initial={initial} replay={replay} />
+      <Stage initial={initial} replay={replay} initialDelay={initialDelay} />
     </>
   );
 }
