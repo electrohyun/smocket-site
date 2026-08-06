@@ -9,13 +9,13 @@
 - 히어로 별자리(구 `HeroConstellation`) → `HeroVisual`로 교체. 로켓 + 흐린 성좌 배경 + 발사 궤적 + 문학 캡션.
 - Trace "첫 증거" 패널은 다크 초콜릿으로 강조(코드 블록과 동톤).
 
-## 데모 (`/demo`) — 진행 중
+## 데모 (`/demo`) — 완료 (2~6단계)
 
 계획서: `smocket_데모_구현계획_2026-08-05.md`. 사양: `smocket_데모앱_기획_v2_2026-08-05.md`.
 
-0·1·2단계(라우트·톤 / 통신 코어 / 그리는 사람 시선)까지 되어 있고, 브라우저에서 실제로 돌려
-확인했다(클라 3개 연결·stroke `→ B, C (except A)`·제시어 A 단독·ack 3종·정답 종료). 다음은 3단계
-(관찰자 시선 + 녹화 엔진)다.
+**2~6단계 전부 완료.** 두 시선(그리는 사람/관찰자), 녹화·재생 엔진, 상황 패널(시선 전환·제시어
+토글·B 지연 슬라이더), 3·2·1 카운트다운, 에러 경계까지 브라우저에서 실측했다. smocket `src/`는
+안 건드렸다. 진입: `/demo`(그리는 사람) · `?view=observer`(관찰자) · `?replay`(재생) · `?delay=1500`(지연).
 
 - `app/demo/lib/trace.ts` — 배달 기록 조립·서식
 - `app/demo/lib/trace-adapter.ts` — `Adapter` 상속, `socketsIn`/`add`/`del` 관측
@@ -27,9 +27,10 @@
 
 | 위치 | 파일 | 상태 |
 |---|---|---|
-| 데모 입구 스크린샷 | `content/landing.ts` `demo.shotTodo` | `TODO(hyun): demo screenshot` — 화면 노출 중. 데모가 돌기 시작하면 찍어서 교체 |
-| 데모 입구 링크 문구 | `content/landing.ts` `demo.linkTodo` | `TODO(hyun): copy needed — demo entry link` — 카피 원본에 없는 자리 (지시서 §5-5) |
-| 데모 페이지 본문 | `content/demo.ts` `page.todo` | `TODO: drawing demo` — 화면 노출 중 |
+| 데모 입구 스크린샷 | `content/landing.ts` `demo.shotTodo` | `TODO(hyun)` — 이제 데모가 도니 5·6단계 화면(상황 패널·sid 병기)으로 찍어 교체 |
+| 데모 입구 링크 문구 | `content/landing.ts` `demo.linkTodo` | `TODO(hyun)` — 카피 필요 (지시서 §5-5) |
+| 사운드 에셋 | `public/ambient.mp3` | 없음. 토글·`<audio>` 배선은 완료(기본 음소거). CC0 파일 넣으면 동작 |
+| 모바일 실측 | `app/demo/**/*.module.css` | 규칙은 bounded(캔버스+트레이스 동시). 실제 폰에서 가독 눈으로 확인만 남음 |
 
 **vendor tarball은 임시다.** `package.json`의 `smocket` 의존성이 `file:vendor/smocket-0.4.0-main.*.tgz`인데,
 데모가 쓰는 API(`DelayingAdapter` · `onAnyOutgoing` · broadcast `except`/`in` · `node:crypto` 없는 소켓 id)가
