@@ -98,6 +98,7 @@ interface Outgoing {
 export class TraceStore implements TraceSink {
   private readonly rows: TraceLine[] = [];
   private readonly labels = new Map<string, SocketLabel>();
+  private readonly sids = new Map<SocketLabel, string>();
   private open: OpenDelivery | null = null;
   private readonly listeners = new Set<() => void>();
 
@@ -129,10 +130,19 @@ export class TraceStore implements TraceSink {
   /** Give a sid its display label, so every line can read `A` rather than a sid. */
   name(sid: string, label: SocketLabel): void {
     this.labels.set(sid, label);
+    this.sids.set(label, sid);
   }
 
   labelOf(sid: string): SocketLabel {
     return this.labels.get(sid) ?? sid.slice(0, 4);
+  }
+
+  /**
+   * The first four of a label's real sid, shown dim beside the label so the name
+   * is not taken on faith — a label with an actual identifier behind it (기획 §4).
+   */
+  sidHint(label: SocketLabel): string {
+    return (this.sids.get(label) ?? '').slice(0, 4);
   }
 
   /**

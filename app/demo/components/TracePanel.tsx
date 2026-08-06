@@ -53,14 +53,22 @@ export default function TracePanel({ store, maskWord = false }: Props) {
 
       <div className={styles.log} ref={scrollRef}>
         {folded.map((entry, index) => (
-          <Row key={index} entry={entry} maskWord={maskWord} />
+          <Row key={index} entry={entry} maskWord={maskWord} sidHint={(l) => store.sidHint(l)} />
         ))}
       </div>
     </aside>
   );
 }
 
-function Row({ entry, maskWord }: { entry: FoldedLine; maskWord: boolean }) {
+function Row({
+  entry,
+  maskWord,
+  sidHint,
+}: {
+  entry: FoldedLine;
+  maskWord: boolean;
+  sidHint: (label: string) => string;
+}) {
   const { line, count } = entry;
 
   if (line.kind === 'delivery') {
@@ -72,11 +80,11 @@ function Row({ entry, maskWord }: { entry: FoldedLine; maskWord: boolean }) {
         </div>
         <div className={styles.reach}>
           <span aria-hidden="true">→ </span>
-          <Sockets labels={line.reached} />
+          <Sockets labels={line.reached} sidHint={sidHint} />
           {line.excluded.length > 0 && (
             <span className={styles.except}>
               {'  (except '}
-              <Sockets labels={line.excluded} />
+              <Sockets labels={line.excluded} sidHint={sidHint} />
               {')'}
             </span>
           )}
@@ -108,7 +116,13 @@ function Row({ entry, maskWord }: { entry: FoldedLine; maskWord: boolean }) {
   return <div className={`${styles.row} ${styles.note}`}>{line.text}</div>;
 }
 
-function Sockets({ labels }: { labels: string[] }) {
+function Sockets({
+  labels,
+  sidHint,
+}: {
+  labels: string[];
+  sidHint: (label: string) => string;
+}) {
   return (
     <>
       {labels.map((label, index) => (
@@ -116,6 +130,7 @@ function Sockets({ labels }: { labels: string[] }) {
           {index > 0 && ', '}
           <span className={styles.socket} data-socket={label}>
             {label}
+            <span className={styles.sid}>·{sidHint(label)}</span>
           </span>
         </span>
       ))}
