@@ -33,12 +33,14 @@ const round = (v) => Number(v.toFixed(1));
 
 const FLUSH_MS = 40;
 const SAMPLE_MS = 16; // pointer rate
-const SPEED = 1100; // px/s, a confident sketch
+const SPEED = 800; // px/s, an unhurried hand
 /* A floor on how long one stroke takes. Without it, spacing is a fixed number of
    pixels and a small closed shape gets only three or four samples — an ossicone
    knob comes out a pennant and the tail tuft a diamond. A hand slows down for a
    small detail, so the sampling has to be per-stroke time, not per-stroke length. */
-const MIN_STROKE_MS = 260;
+const MIN_STROKE_MS = 340;
+/** The beat between strokes, where the hand lifts and picks the next line. */
+const BETWEEN_STROKES_MS = 280;
 const PLACES = 4;
 
 /* ---------- the giraffe ---------- */
@@ -241,7 +243,7 @@ for (const stroke of STROKES) {
     events.push({ at, event: 'stroke', args: [last ? { id, pts, end: true } : { id, pts }] });
   });
 
-  at += 210; // the pause between strokes
+  at += BETWEEN_STROKES_MS;
   // Completed strokes, not segments: `commit` counts a stroke only on the segment
   // carrying `end`, so this is the number bots.ts `afterStrokes` compares against.
   phaseEnds[stroke.phase] = id;
