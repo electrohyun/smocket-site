@@ -35,8 +35,94 @@
 }
 
 .surface {
+  position: relative;
   flex: 1;
   min-height: 0;
+}
+
+/* The round's end, pinned to the surface so the picture and the verdict are one
+   frame. Neutral like the rest of the app area (demo.css) — the winner's own
+   socket colour is the only colour it carries. */
+.result {
+  position: absolute;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: baseline;
+  gap: 0.35ch;
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--panel);
+  box-shadow: var(--shadow-md);
+  color: var(--text-dim);
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.resultName {
+  font-weight: 700;
+  color: var(--socket);
+}
+
+.resultWord {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-weight: 700;
+  color: var(--socket);
+}
+
+/* B and C as A hears them. A record of arrivals, so it folds nothing and shows
+   every line; the delivery panel on the right is the one that folds. */
+.feed {
+  max-height: 120px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-tint);
+  scrollbar-width: thin;
+}
+
+.message {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6ch;
+  font-size: 0.82rem;
+  color: var(--text);
+}
+
+.messageName {
+  flex: none;
+  font-weight: 700;
+  color: var(--socket);
+}
+
+.resultName,
+.resultWord,
+.messageName {
+  --socket: var(--text-dim);
+}
+
+.resultName[data-socket='A'],
+.resultWord[data-socket='A'],
+.messageName[data-socket='A'] {
+  --socket: var(--sock-a);
+}
+
+.resultName[data-socket='B'],
+.resultWord[data-socket='B'],
+.messageName[data-socket='B'] {
+  --socket: var(--sock-b);
+}
+
+.resultName[data-socket='C'],
+.resultWord[data-socket='C'],
+.messageName[data-socket='C'] {
+  --socket: var(--sock-c);
 }
 
 .hint {
