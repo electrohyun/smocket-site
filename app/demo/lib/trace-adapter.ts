@@ -1,19 +1,26 @@
-import { Adapter } from 'smocket';
+import { DelayingAdapter } from 'smocket';
 import type { TraceSink } from './trace';
 
 /**
- * smocket's routing seam, kept intact and watched. It extends the built-in
- * `Adapter` rather than reimplementing it, so the membership bookkeeping and the
- * routing decision are still smocket's — every override calls `super` first and
- * reports what came back. Nothing here decides who receives anything, which is
- * what lets the record count as evidence (기획 §4-1).
+ * smocket's routing seam, kept intact and watched. It extends `DelayingAdapter`
+ * rather than reimplementing anything, so the membership bookkeeping, the routing
+ * decision, and the per-sid delivery delay are all still smocket's — every
+ * override calls `super` first and reports what came back. Nothing here decides
+ * who receives anything or reorders a delivery, which is what lets the record
+ * count as evidence (기획 §4-1).
+ *
+ * `DelayingAdapter` supplies `scheduleDelivery` (the delay hook, FIFO-preserving,
+ * ADR 0018) and `setDelay`, which the situation panel's slider drives; this class
+ * only overrides `socketsIn`/`add`/`del`, none of which it touches, so the two
+ * concerns compose rather than collide. `super()` takes no argument: the delaying
+ * adapter's timer defaults to the wall clock.
  *
  * Register it before any client connects, since `io.adapter()` installs a fresh
  * adapter on every namespace:
  *
  *     io.adapter(() => new TraceAdapter(store));
  */
-export class TraceAdapter extends Adapter {
+export class TraceAdapter extends DelayingAdapter {
   constructor(private readonly sink: TraceSink) {
     super();
   }

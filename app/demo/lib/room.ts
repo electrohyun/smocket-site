@@ -37,6 +37,12 @@ export interface Round {
   /** End on a timeout: reveal the word to the room with no winner (기획 4단계 §3). */
   reveal(): void;
   /**
+   * Delay everything one socket receives by `ms` (0 clears). Drives the panel's
+   * slider; the delay is smocket's own `DelayingAdapter`, so order is preserved
+   * and the demo never touches delivery itself (기획 5단계 §3).
+   */
+  setDelay(label: Label, ms: number): void;
+  /**
    * Listen on a client socket. A view receives what was delivered to it and
    * nothing else, which is what makes the word reaching only the drawer visible
    * rather than merely recorded.
@@ -51,7 +57,10 @@ export async function createRound(): Promise<Round> {
 
   // Before any client connects: `io.adapter` installs a fresh adapter on every
   // namespace, so registering it late would throw away membership already made.
-  io.adapter(() => new TraceAdapter(trace));
+  // The instance is captured so the slider can set a per-socket delay on it; the
+  // factory runs once per namespace and the demo uses one, so this is that one.
+  let adapter!: TraceAdapter;
+  io.adapter(() => (adapter = new TraceAdapter(trace)));
 
   const sids = {} as Record<Label, string>;
   const servers = {} as Record<Label, Awaited<ReturnType<typeof io.nextConnection>>>;
@@ -136,6 +145,8 @@ export async function createRound(): Promise<Round> {
       }),
 
     reveal: () => announce(null),
+
+    setDelay: (label, ms) => adapter.setDelay(sids[label], ms),
 
     on: (label, event, handler) => clients[label].on(event, handler),
 
