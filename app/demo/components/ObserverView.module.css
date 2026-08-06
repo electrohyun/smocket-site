@@ -45,8 +45,9 @@
   color: var(--text-dim);
 }
 
+/* Border shift on focus, but the global :focus-visible ring is left intact — a
+   keyboard user must still see where they are (구조 지시서 §4-6). */
 .input:focus {
-  outline: none;
   border-color: var(--text-dim);
 }
 
@@ -72,9 +73,12 @@
   cursor: default;
 }
 
+/* Stacked, but the record keeps a fixed slice of the height rather than growing
+   with its lines — so the canvas above and the record below are on screen at once,
+   which is the whole point of watching them together (기획 6단계 §2). */
 @media (max-width: 900px) {
   .stage {
     grid-template-columns: 1fr;
-    grid-template-rows: minmax(0, 1fr) auto;
+    grid-template-rows: minmax(0, 1fr) 42dvh;
   }
 }

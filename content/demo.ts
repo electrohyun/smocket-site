@@ -8,6 +8,4 @@ export const page = {
     src: '/cat.webp',
     alt: 'smocket mascot: a cool cat wearing sunglasses',
   },
-  /* The round has not been built yet. Stage 0 is the route and its tone. */
-  todo: 'TODO: drawing demo',
 } as const;

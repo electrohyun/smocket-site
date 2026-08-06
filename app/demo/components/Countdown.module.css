@@ -30,3 +30,12 @@
     opacity: 0.9;
   }
 }
+
+/* The countdown's flourish is presentation, not delivery, so it is dropped when
+   motion is unwelcome; the strokes and the record — the thing being shown — are
+   canvas and state, never a CSS animation, so they play on regardless (기획 6단계 §3-3). */
+@media (prefers-reduced-motion: reduce) {
+  .num {
+    animation: none;
+  }
+}
