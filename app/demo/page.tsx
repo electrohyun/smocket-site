@@ -1,5 +1,5 @@
 import { page } from '@/content/demo';
-import DrawerView from './components/DrawerView';
+import Stage from './components/Stage';
 import styles from './page.module.css';
 
 /* Stage 2 builds the drawer's viewpoint. The observer's, the recording engine,
@@ -13,15 +13,18 @@ import styles from './page.module.css';
  * off (pnpm-workspace.yaml), and 기획 §8 wants the demo making no request the
  * network tab has to explain. */
 
-/* `?replay` runs the recorded session instead of the live canvas (기획 3단계). Read
-   here, on the server, so `DrawerView` takes a plain boolean and needs no Suspense
-   boundary around `useSearchParams`. */
+/* The viewpoint and whether it replays are read here, on the server, so `Stage`
+   takes plain props and needs no Suspense boundary around `useSearchParams`.
+   `?view=observer` opens on the observer; `?replay` drives the drawer from the
+   recording (기획 3·4단계). The in-app switch is a dev toggle until stage 5. */
 export default async function DemoPage({
   searchParams,
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const replay = 'replay' in (await searchParams);
+  const params = await searchParams;
+  const initial = params.view === 'observer' ? 'observer' : 'drawer';
+  const replay = 'replay' in params;
 
   return (
     <>
@@ -36,7 +39,7 @@ export default async function DemoPage({
         <span className={styles.wordmark}>{page.wordmark}</span>
       </header>
 
-      <DrawerView replay={replay} />
+      <Stage initial={initial} replay={replay} />
     </>
   );
 }
