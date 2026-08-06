@@ -16,7 +16,7 @@
     "next": "16.2.12",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "smocket": "file:vendor/smocket-0.3.0-main.a7be4fb.tgz"
+    "smocket": "file:vendor/smocket-0.4.0-main.7a90bd0.tgz"
   },
   "devDependencies": {
     "@types/node": "^20",
