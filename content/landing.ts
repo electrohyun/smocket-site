@@ -13,7 +13,7 @@ export const hero = {
   h1Accent: 'without a server.',
   sub: "smocket reimplements socket.io's rooms, broadcasts, and acknowledgements in memory — and every release is verified against the real library.",
   tagline: 'Sweet setup, rocket speed.',
-  chips: ['MIT', 'v0.3.0', 'dual-run CI'],
+  chips: ['MIT', 'v0.4.0', 'dual-run CI'],
   ctas: [
     { label: 'Read the docs', href: `${REPO_URL}#readme`, primary: true },
     { label: 'View on GitHub', href: REPO_URL, primary: false },

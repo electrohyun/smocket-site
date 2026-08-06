@@ -7,7 +7,6 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "smocket:sync": "node scripts/sync-smocket.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit"
@@ -16,7 +15,7 @@
     "next": "16.2.12",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "smocket": "file:vendor/smocket-0.4.0-main.7a90bd0.tgz"
+    "smocket": "^0.4.0"
   },
   "devDependencies": {
     "@types/node": "^20",

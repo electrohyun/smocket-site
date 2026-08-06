@@ -32,12 +32,14 @@
 | 사운드 에셋 | `public/ambient.mp3` | 없음. 토글·`<audio>` 배선은 완료(기본 음소거). CC0 파일 넣으면 동작 |
 | 모바일 실측 | `app/demo/**/*.module.css` | 규칙은 bounded(캔버스+트레이스 동시). 실제 폰에서 가독 눈으로 확인만 남음 |
 
-**vendor tarball은 임시다.** `package.json`의 `smocket` 의존성이 `file:vendor/smocket-0.4.0-main.*.tgz`인데,
-데모가 쓰는 API(`DelayingAdapter` · `onAnyOutgoing` · broadcast `except`/`in` · `node:crypto` 없는 소켓 id)가
-main엔 있으나 npm 배포본(0.3.0)엔 아직 없어서다. 0.4.0이 npm에 올라오면 `vendor/`와
-`scripts/sync-smocket.mjs`를 지우고 버전 범위로 되돌릴 것 — 계획서 §7의 마지막 완료 기준이 이걸 강제한다.
+**vendor는 걷어냈다.** smocket 0.4.0이 npm에 `latest`로 올라와서 의존성이 `^0.4.0`이 됐다. 배포본을
+풀어 vendor한 main 빌드(`7a90bd0`)와 대조하니 파일 9개가 바이트 단위로 같았고, 데모가 쓰는
+API(`DelayingAdapter` · `onAnyOutgoing` · broadcast `except`/`in` · `node:crypto` 없는 소켓 id)도 그대로다.
+`vendor/`와 `scripts/sync-smocket.mjs`, `smocket:sync` 스크립트는 삭제 — 계획서 §7의 마지막 완료 기준
+("의존성이 `vendor/` 경로가 아닐 것")을 이제 만족한다.
 
-동기화: `pnpm smocket:sync` (형제 경로 `../smocket` 전제)
+`pnpm-workspace.yaml`의 `minimumReleaseAgeExclude: smocket@0.4.0`은 갓 나온 릴리스를 들이려고 pnpm이
+붙인 것. 배포 후 시간이 지나면 지워도 된다.
 
 ## 확인 필요 — 검토해서 확정할 것
 
@@ -50,7 +52,7 @@ main엔 있으나 npm 배포본(0.3.0)엔 아직 없어서다. 0.4.0이 npm에 �
 
 | 항목 | 값 | 근거 |
 |---|---|---|
-| Hero 칩 버전 | `v0.3.0` | `smocket/package.json` version, `npm view smocket version` = 0.3.0 |
+| Hero 칩 버전 | `v0.4.0` | `npm view smocket dist-tags` = latest 0.4.0 (0.3.0에서 갱신) |
 | Hero 칩 라이선스 | `MIT` | `smocket/package.json` license |
 | Hero 칩 CI | `dual-run CI` | README CI 배지 (real + mock 컨포먼스) |
 | Pain 우측 코드 | `new Server(url)` + `connect(url)` | README Usage, ADR 0003 (url 필수) — 카피의 `new Server()`/`connect(io.url)`는 실제 API와 어긋나 교체 |
@@ -61,15 +63,14 @@ main엔 있으나 npm 배포본(0.3.0)엔 아직 없어서다. 0.4.0이 npm에 �
 
 ## 릴리스 시 갱신
 
-- Hero 칩 버전(`hero.chips`)은 현재 npm 버전 `v0.3.0` 기준. 상위 릴리스 나오면 값만 갱신.
-- 로드맵상 `v0.4.0`은 진행 중, `v1.0.0` 예정.
-- **Scope "does" 재검토**: 위 표에서 `Middleware and per-socket data`를 뺀 근거는 "src에 없음"이었는데,
-  `io.use()`와 `socket.data`가 그 뒤 `main`에 들어왔고 지금 vendor된 0.4.0엔 있다. npm 0.4.0
-  배포 시 되살릴지 판단할 것.
-- **Trace 배달식 표기 재검토**: 트레이스의 stroke 호출이 `socket_A.to('room-1')`인 것은 원래
-  `BroadcastOperator`에 `except()`가 없어서였는데, 0.4.0에서 broadcast `except`/`in`이 들어왔다
-  (vendor에 반영됨). 단 `socket.to(room)`은 발신자 제외를 공짜로 얻는 정당한 형태라 그대로 둘 수도
-  있다 — `io.to().except(sid_A)`로 바꿀지 정할 것 (계획서 §0-1).
+- Hero 칩 버전(`hero.chips`)은 현재 npm 버전 `v0.4.0` 기준. 상위 릴리스 나오면 값만 갱신.
+- 로드맵상 `v1.0.0` 예정.
+- **Scope "does" 재검토 — 이제 결정 가능**: 위 표에서 `Middleware and per-socket data`를 뺀 근거는
+  "src에 없음"이었는데, `io.use()`와 `socket.data`가 그 뒤 들어왔고 npm 0.4.0에 있다. 되살릴지 판단할 것.
+- **Trace 배달식 표기 재검토 — 이제 결정 가능**: 트레이스의 stroke 호출이 `socket_A.to('room-1')`인 것은
+  원래 `BroadcastOperator`에 `except()`가 없어서였는데, 0.4.0에서 broadcast `except`/`in`이 들어왔다.
+  단 `socket.to(room)`은 발신자 제외를 공짜로 얻는 정당한 형태라 그대로 둘 수도 있다 —
+  `io.to().except(sid_A)`로 바꿀지 정할 것 (계획서 §0-1).
 - **배포 도메인**: `SITE_URL`(content/landing.ts)이 임시로 `https://smocket-site.vercel.app`.
   실도메인이 정해지면 그 값을 바꾸거나 배포 환경변수 `NEXT_PUBLIC_SITE_URL`로 덮을 것.
   (metadataBase · OG/트위터 이미지 · robots.txt · sitemap.xml 이 모두 이 값을 씀)
