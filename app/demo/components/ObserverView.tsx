@@ -10,6 +10,7 @@ import seedJson from '../lib/seed.json';
 import Canvas, { type CanvasHandle } from './Canvas';
 import Character from './Character';
 import Countdown from './Countdown';
+import Fanfare from './Fanfare';
 import TracePanel from './TracePanel';
 import styles from './ObserverView.module.css';
 
@@ -50,6 +51,10 @@ export default function ObserverView({
   const [bubbles, setBubbles] = useState<Partial<Record<Label, string>>>({});
   const [ended, setEnded] = useState<Ended | null>(null);
   const [wonByUser, setWonByUser] = useState(false);
+  // Separate from `wonByUser`, which outlines B's desk for the rest of the round:
+  // the board says its piece and goes, the outline stays.
+  const [fanfare, setFanfare] = useState<string | null>(null);
+  const clearFanfare = useCallback(() => setFanfare(null), []);
   const [input, setInput] = useState('');
   // False until the 3-2-1 finishes; the replay and the bots wait behind it.
   const [active, setActive] = useState(false);
@@ -99,7 +104,13 @@ export default function ObserverView({
         showBubble(message.from, message.text)) as (...args: never[]) => void);
       // Targeted to the winner alone: B receiving it, and C never, is a targeted
       // emit made visible.
-      next.on(USER, 'correct', (() => setWonByUser(true)) as (...args: never[]) => void);
+      // The word comes out of the payload rather than off the round: this is the
+      // emit addressed to B alone, so what the board shows is what only B was
+      // told — the same evidence the outline is, said loudly.
+      next.on(USER, 'correct', ((result: { word: string }) => {
+        setWonByUser(true);
+        setFanfare(result.word);
+      }) as (...args: never[]) => void);
       next.on(USER, 'announce', ((result: Ended) => {
         setEnded(result);
         botsRef.current?.markWon();
@@ -183,6 +194,7 @@ export default function ObserverView({
         <div className={styles.surface}>
           <Canvas ref={canvasRef} onSegment={NO_SEGMENTS} disabled />
           {round && !active && <Countdown onDone={begin} />}
+          {fanfare && <Fanfare word={fanfare} onDone={clearFanfare} />}
         </div>
 
         <div className={styles.players}>
