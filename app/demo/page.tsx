@@ -13,7 +13,16 @@ import styles from './page.module.css';
  * off (pnpm-workspace.yaml), and 기획 §8 wants the demo making no request the
  * network tab has to explain. */
 
-export default function DemoPage() {
+/* `?replay` runs the recorded session instead of the live canvas (기획 3단계). Read
+   here, on the server, so `DrawerView` takes a plain boolean and needs no Suspense
+   boundary around `useSearchParams`. */
+export default async function DemoPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const replay = 'replay' in (await searchParams);
+
   return (
     <>
       <header className={styles.brand}>
@@ -27,7 +36,7 @@ export default function DemoPage() {
         <span className={styles.wordmark}>{page.wordmark}</span>
       </header>
 
-      <DrawerView />
+      <DrawerView replay={replay} />
     </>
   );
 }

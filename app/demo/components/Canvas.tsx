@@ -15,18 +15,21 @@ import styles from './Canvas.module.css';
  * `lib/stroke.ts` for why the segment is the unit. */
 
 interface Props {
+  /**
+   * Every segment the drawer produces, the end one included. The stroke count the
+   * bots run on is derived from `end` segments downstream, not here: a stroke is
+   * counted where it is emitted, so a replayed round counts the same way a live
+   * one does (기획 3단계 §1).
+   */
   onSegment: (segment: ReturnType<SegmentBuffer['take']>) => void;
-  /** Called when a stroke finishes, with the running total. Drives the bots. */
-  onStrokeEnd: (total: number) => void;
   /** Once the round is decided, the surface stops taking new strokes. */
   disabled?: boolean;
 }
 
-export default function Canvas({ onSegment, onStrokeEnd, disabled = false }: Props) {
+export default function Canvas({ onSegment, disabled = false }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const bufferRef = useRef(new SegmentBuffer());
   const lastRef = useRef<Pt | null>(null);
-  const strokesRef = useRef(0);
 
   // Every stroke's points, kept in normalised space so the picture can be redrawn
   // at whatever size the canvas becomes. The wire only ever carries a segment and
@@ -137,9 +140,9 @@ export default function Canvas({ onSegment, onStrokeEnd, disabled = false }: Pro
     const segment = bufferRef.current.end();
     if (!segment) return;
     lastRef.current = null;
-    strokesRef.current += 1;
+    // The end segment goes out the one channel every segment does; whoever counts
+    // strokes counts it there, so the canvas owns no tally of its own.
     onSegment(segment);
-    onStrokeEnd(strokesRef.current);
   };
 
   return (
