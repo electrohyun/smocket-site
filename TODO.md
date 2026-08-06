@@ -24,6 +24,9 @@
 - `app/demo/components/Canvas.tsx` — 로컬 드로잉. 리사이즈 리페인트로 그림 유지, 정답 시 잠금
 - `app/demo/components/TracePanel.tsx` — 배달 기록 렌더(fold 포함)
 - `app/demo/lib/__tests__/trace.test.ts` — 배달식·도달·제외·join/leave·ack 검증
+- `scripts/draw-seed.mjs` — `seed.json`(재생용 기린 그림)의 원본. `pnpm seed:draw`로 재생성하고,
+  `--preview <dir>`를 주면 단계별 PNG도 뽑는다. 획 순서가 곧 오답의 근거라 `bots.ts`의
+  `afterStrokes`와 짝이다 — 그림을 바꾸면 스크립트가 출력하는 경계값으로 같이 갱신할 것
 
 | 위치 | 파일 | 상태 |
 |---|---|---|

@@ -28,12 +28,24 @@ export interface Beat {
   guess?: string;
 }
 
+/* The beats are pinned to the seed's stroke boundaries (`scripts/draw-seed.mjs`
+   prints them), because a wrong guess is only worth showing while it is still a
+   fair one. Body and four legs, and the drawing is any hoofed animal — a horse.
+   The neck goes up and a deer is the better guess. The ossicones land and they
+   are knobs, not antlers, which rules a deer out without yet saying what it is.
+   The spots are what settles it, so the winning guess waits for them.
+
+   Change the drawing and these numbers move with it; the phases are the contract
+   between the two, not the counts. */
 export const SCRIPT: readonly Beat[] = [
-  { afterStrokes: 3, from: 'B', say: 'a train?' },
-  { afterMs: 4000, from: 'C', say: 'a deer!' },
-  { afterStrokes: 12, from: 'C', say: 'long neck though' },
-  { afterStrokes: 20, from: 'B', guess: WORD },
-  { afterCorrect: true, from: 'C', say: 'how did they even get that' },
+  // The one time-based beat, well past the replay's own 3.7s, so a live round
+  // where hardly anything is drawn still has a voice in it.
+  { afterStrokes: 7, afterMs: 9000, from: 'C', say: 'a horse?' },
+  { afterStrokes: 9, from: 'C', say: 'a deer!' },
+  { afterStrokes: 12, from: 'B', say: 'long neck for a deer' },
+  { afterStrokes: 16, from: 'C', say: "those aren't antlers" },
+  { afterStrokes: 25, from: 'B', guess: WORD },
+  { afterCorrect: true, from: 'C', say: 'the spots gave it away' },
 ];
 
 export interface BotActions {
