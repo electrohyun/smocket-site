@@ -1,0 +1,32 @@
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  border-radius: inherit;
+  background: color-mix(in srgb, var(--bg) 62%, transparent);
+}
+
+.num {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: clamp(3rem, 12vw, 7rem);
+  font-weight: 800;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  animation: pop 0.8s ease both;
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  to {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+}

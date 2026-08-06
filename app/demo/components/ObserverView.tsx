@@ -9,6 +9,7 @@ import type { StrokePayload } from '../lib/stroke';
 import seedJson from '../lib/seed.json';
 import Canvas, { type CanvasHandle } from './Canvas';
 import Character from './Character';
+import Countdown from './Countdown';
 import TracePanel from './TracePanel';
 import styles from './ObserverView.module.css';
 
@@ -50,6 +51,9 @@ export default function ObserverView({
   const [ended, setEnded] = useState<Ended | null>(null);
   const [wonByUser, setWonByUser] = useState(false);
   const [input, setInput] = useState('');
+  // False until the 3-2-1 finishes; the replay and the bots wait behind it.
+  const [active, setActive] = useState(false);
+  const begin = useCallback(() => setActive(true), []);
 
   const roundRef = useRef<Round | null>(null);
   const botsRef = useRef<Bots | null>(null);
@@ -112,8 +116,8 @@ export default function ObserverView({
 
       setRound(next);
       // Delivered to A alone; B does not receive it, and the record shows it masked.
+      // This fills the record before the countdown; the replay itself waits for it.
       next.word();
-      playbackRef.current = play(SEED, commit);
     });
 
     return () => {
@@ -126,21 +130,32 @@ export default function ObserverView({
     };
   }, [commit, showBubble]);
 
+  // The replay waits behind the countdown, then re-emits A's strokes into the round
+  // through `commit`, exactly as a live drawer would (기획 3단계 §1).
+  useEffect(() => {
+    if (!active || !round) return;
+    playbackRef.current = play(SEED, commit);
+    return () => {
+      playbackRef.current?.stop();
+      playbackRef.current = null;
+    };
+  }, [active, round, commit]);
+
   // Time-based bot beats need a heartbeat. It is not gated on the win: the
   // observer plays on past it (기획 4단계 §1).
   useEffect(() => {
-    if (!round) return;
+    if (!round || !active) return;
     const timer = window.setInterval(() => botsRef.current?.advance(strokesRef.current), 500);
     return () => window.clearInterval(timer);
-  }, [round]);
+  }, [round, active]);
 
   // The only automatic end when the user never guesses: reveal the word to the
   // room through the server, so the record shows it (기획 4단계 §3).
   useEffect(() => {
-    if (!round || ended) return;
+    if (!round || !active || ended) return;
     const timer = window.setTimeout(() => round.reveal(), TIMEOUT_MS);
     return () => window.clearTimeout(timer);
-  }, [round, ended]);
+  }, [round, active, ended]);
 
   // The slider's delay, applied to what B receives. It is smocket's own per-socket
   // delay (room.setDelay → DelayingAdapter), so the drawing and the chat reach B
@@ -167,6 +182,7 @@ export default function ObserverView({
       <section className={styles.board}>
         <div className={styles.surface}>
           <Canvas ref={canvasRef} onSegment={NO_SEGMENTS} disabled />
+          {round && !active && <Countdown onDone={begin} />}
         </div>
 
         <div className={styles.players}>

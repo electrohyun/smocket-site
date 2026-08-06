@@ -9,6 +9,7 @@ import { createRound, DRAWER, WORD, type Label, type Round } from '../lib/room';
 import type { StrokePayload } from '../lib/stroke';
 import seedJson from '../lib/seed.json';
 import Canvas from './Canvas';
+import Countdown from './Countdown';
 import TracePanel from './TracePanel';
 import styles from './DrawerView.module.css';
 
@@ -56,6 +57,9 @@ export default function DrawerView({ replay = false }: { replay?: boolean }) {
   const [ended, setEnded] = useState<Ended | null>(null);
   const [runId, setRunId] = useState(0);
   const [copied, setCopied] = useState(false);
+  // False until the 3-2-1 finishes; drawing, the bots, and any replay wait for it.
+  const [active, setActive] = useState(false);
+  const begin = useCallback(() => setActive(true), []);
 
   const roundRef = useRef<Round | null>(null);
   const botsRef = useRef<Bots | null>(null);
@@ -96,6 +100,7 @@ export default function DrawerView({ replay = false }: { replay?: boolean }) {
       setWord(null);
       setMessages([]);
       setEnded(null);
+      setActive(false);
 
       // The drawer learns the word by receiving it, the same way the panel learns
       // it was delivered. Nothing reads it out of the round's own state.
@@ -124,16 +129,11 @@ export default function DrawerView({ replay = false }: { replay?: boolean }) {
         { controls: ['B', 'C'] },
       );
 
-      // Round start is the recorder's t0 and the replay's zero alike, so a session
-      // records against the same clock it will later play against.
-      recorderRef.current = replay ? null : new Recorder(WORD, Date.now());
+      recorderRef.current = null;
 
       setRound(next);
+      // Fills the record before the countdown; the drawing waits behind it.
       next.word();
-
-      if (replay) {
-        playbackRef.current = play(SEED, commit);
-      }
     });
 
     return () => {
@@ -147,14 +147,29 @@ export default function DrawerView({ replay = false }: { replay?: boolean }) {
     };
   }, [replay, runId, commit]);
 
-  // Beats that fire on elapsed time need a heartbeat, since a round where nothing
-  // is drawn would otherwise stop the clock the stroke count runs on. It stops once
-  // the round is won: a decided round has nothing left to advance.
+  // Once the countdown is done: a replay re-emits the recorded strokes, and a live
+  // round arms the recorder — its t0 is drawing-start, the same zero a replay's
+  // clock uses, so a recorded session plays back on time (기획 3단계 §2).
   useEffect(() => {
-    if (!round || ended) return;
+    if (!active || !round) return;
+    if (replay) {
+      playbackRef.current = play(SEED, commit);
+      return () => {
+        playbackRef.current?.stop();
+        playbackRef.current = null;
+      };
+    }
+    recorderRef.current = new Recorder(WORD, Date.now());
+  }, [active, round, replay, commit]);
+
+  // Beats that fire on elapsed time need a heartbeat, since a round where nothing
+  // is drawn would otherwise stop the clock the stroke count runs on. It waits for
+  // the countdown and stops on the win: a decided round has nothing left to advance.
+  useEffect(() => {
+    if (!round || !active || ended) return;
     const timer = window.setInterval(() => botsRef.current?.advance(strokesRef.current), 500);
     return () => window.clearInterval(timer);
-  }, [round, ended]);
+  }, [round, active, ended]);
 
   // The feed scrolls to its newest line, the way the record does.
   const feedRef = useRef<HTMLDivElement>(null);
@@ -184,7 +199,8 @@ export default function DrawerView({ replay = false }: { replay?: boolean }) {
           </span>
         </p>
         <div className={styles.surface}>
-          <Canvas onSegment={commit} disabled={replay || ended !== null} />
+          <Canvas onSegment={commit} disabled={replay || ended !== null || !active} />
+          {round && !active && <Countdown onDone={begin} />}
           {ended && (
             <div className={styles.result} role="status">
               <span className={styles.resultName} data-socket={ended.winner}>
