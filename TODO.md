@@ -13,11 +13,16 @@
 
 계획서: `smocket_데모_구현계획_2026-08-05.md`. 사양: `smocket_데모앱_기획_v2_2026-08-05.md`.
 
-0단계(라우트·톤)와 1단계(통신 코어)까지 되어 있다. 화면은 아직 없고, 트레이스는 `pnpm test`로만 확인된다.
+0·1·2단계(라우트·톤 / 통신 코어 / 그리는 사람 시선)까지 되어 있고, 브라우저에서 실제로 돌려
+확인했다(클라 3개 연결·stroke `→ B, C (except A)`·제시어 A 단독·ack 3종·정답 종료). 다음은 3단계
+(관찰자 시선 + 녹화 엔진)다.
 
 - `app/demo/lib/trace.ts` — 배달 기록 조립·서식
 - `app/demo/lib/trace-adapter.ts` — `Adapter` 상속, `socketsIn`/`add`/`del` 관측
 - `app/demo/lib/room.ts` — 한 라운드의 소켓 통신
+- `app/demo/components/DrawerView.tsx` — A 시선. `word`/`chat`/`announce`를 받아 제시어·채팅 피드·종료 배너로
+- `app/demo/components/Canvas.tsx` — 로컬 드로잉. 리사이즈 리페인트로 그림 유지, 정답 시 잠금
+- `app/demo/components/TracePanel.tsx` — 배달 기록 렌더(fold 포함)
 - `app/demo/lib/__tests__/trace.test.ts` — 배달식·도달·제외·join/leave·ack 검증
 
 | 위치 | 파일 | 상태 |
@@ -26,10 +31,10 @@
 | 데모 입구 링크 문구 | `content/landing.ts` `demo.linkTodo` | `TODO(hyun): copy needed — demo entry link` — 카피 원본에 없는 자리 (지시서 §5-5) |
 | 데모 페이지 본문 | `content/demo.ts` `page.todo` | `TODO: drawing demo` — 화면 노출 중 |
 
-**vendor tarball은 임시다.** `package.json`의 `smocket` 의존성이 `file:vendor/*.tgz`인데,
-데모가 쓰는 API(`DelayingAdapter` · `onAnyOutgoing` · `scheduleDelivery`)가 npm 배포본에 아직 없어서다.
-정식 배포되면 `vendor/`와 `scripts/sync-smocket.mjs`를 지우고 버전 범위로 되돌릴 것 —
-계획서 §7의 마지막 완료 기준이 이걸 강제한다.
+**vendor tarball은 임시다.** `package.json`의 `smocket` 의존성이 `file:vendor/smocket-0.4.0-main.*.tgz`인데,
+데모가 쓰는 API(`DelayingAdapter` · `onAnyOutgoing` · broadcast `except`/`in` · `node:crypto` 없는 소켓 id)가
+main엔 있으나 npm 배포본(0.3.0)엔 아직 없어서다. 0.4.0이 npm에 올라오면 `vendor/`와
+`scripts/sync-smocket.mjs`를 지우고 버전 범위로 되돌릴 것 — 계획서 §7의 마지막 완료 기준이 이걸 강제한다.
 
 동기화: `pnpm smocket:sync` (형제 경로 `../smocket` 전제)
 
@@ -58,10 +63,12 @@
 - Hero 칩 버전(`hero.chips`)은 현재 npm 버전 `v0.3.0` 기준. 상위 릴리스 나오면 값만 갱신.
 - 로드맵상 `v0.4.0`은 진행 중, `v1.0.0` 예정.
 - **Scope "does" 재검토**: 위 표에서 `Middleware and per-socket data`를 뺀 근거는 "src에 없음"이었는데,
-  `io.use()`와 `socket.data`가 그 뒤 `main`에 들어왔다. 배포되면 되살릴지 판단할 것.
-- **Trace 배달식 표기 재검토**: `trace.blocks[0].call`이 `socket_A.to('room-1')`인 것은
-  `BroadcastOperator`에 `except()`가 없어서다. `io.to().except()` 체이닝이 배포되면
-  원래 문구로 되돌릴지 정할 것 (계획서 §0-1).
+  `io.use()`와 `socket.data`가 그 뒤 `main`에 들어왔고 지금 vendor된 0.4.0엔 있다. npm 0.4.0
+  배포 시 되살릴지 판단할 것.
+- **Trace 배달식 표기 재검토**: 트레이스의 stroke 호출이 `socket_A.to('room-1')`인 것은 원래
+  `BroadcastOperator`에 `except()`가 없어서였는데, 0.4.0에서 broadcast `except`/`in`이 들어왔다
+  (vendor에 반영됨). 단 `socket.to(room)`은 발신자 제외를 공짜로 얻는 정당한 형태라 그대로 둘 수도
+  있다 — `io.to().except(sid_A)`로 바꿀지 정할 것 (계획서 §0-1).
 - **배포 도메인**: `SITE_URL`(content/landing.ts)이 임시로 `https://smocket-site.vercel.app`.
   실도메인이 정해지면 그 값을 바꾸거나 배포 환경변수 `NEXT_PUBLIC_SITE_URL`로 덮을 것.
   (metadataBase · OG/트위터 이미지 · robots.txt · sitemap.xml 이 모두 이 값을 씀)
