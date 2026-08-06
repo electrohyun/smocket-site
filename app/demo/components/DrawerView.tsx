@@ -109,14 +109,20 @@ export default function DrawerView({ replay = false }: { replay?: boolean }) {
       next.on(DRAWER, 'chat', ((message: Message) =>
         setMessages((prev) => [...prev, message])) as (...args: never[]) => void);
 
-      next.on(DRAWER, 'announce', ((result: Ended) => setEnded(result)) as (
-        ...args: never[]
-      ) => void);
+      next.on(DRAWER, 'announce', ((result: Ended) => {
+        setEnded(result);
+        // The win is a beat too: a bot admires the answer once it lands.
+        botsRef.current?.markWon();
+      }) as (...args: never[]) => void);
 
-      botsRef.current = new Bots({
-        chat: (from, text) => next.chat(from, text),
-        guess: (from, text) => void next.guess(from, text),
-      });
+      // The user is A, so the bots play B and C — B's scripted guess wins here.
+      botsRef.current = new Bots(
+        {
+          chat: (from, text) => next.chat(from, text),
+          guess: (from, text) => void next.guess(from, text),
+        },
+        { controls: ['B', 'C'] },
+      );
 
       // Round start is the recorder's t0 and the replay's zero alike, so a session
       // records against the same clock it will later play against.
@@ -172,7 +178,7 @@ export default function DrawerView({ replay = false }: { replay?: boolean }) {
     <div className={styles.stage}>
       <section className={styles.board}>
         <p className={styles.word}>
-          <span className={styles.wordLabel}>제시어</span>
+          <span className={styles.wordLabel}>word</span>
           <span className={styles.wordValue} data-socket="A">
             {word ?? '…'}
           </span>
@@ -184,7 +190,7 @@ export default function DrawerView({ replay = false }: { replay?: boolean }) {
               <span className={styles.resultName} data-socket={ended.winner}>
                 {ended.winner}
               </span>
-              님이 정답을 맞혔어요 —{' '}
+              {' guessed it — '}
               <span className={styles.resultWord} data-socket="A">
                 {ended.word}
               </span>
@@ -193,7 +199,7 @@ export default function DrawerView({ replay = false }: { replay?: boolean }) {
         </div>
 
         {messages.length > 0 && (
-          <div className={styles.feed} ref={feedRef} aria-label="채팅">
+          <div className={styles.feed} ref={feedRef} aria-label="chat">
             {messages.map((message, index) => (
               <p key={index} className={styles.message}>
                 <span className={styles.messageName} data-socket={message.from}>
@@ -208,18 +214,18 @@ export default function DrawerView({ replay = false }: { replay?: boolean }) {
         <div className={styles.footer}>
           <p className={styles.hint}>
             {replay
-              ? '재생 중입니다. 스트로크는 녹화본에서, 나머지는 라이브로 다시 일어납니다. 배달은 오른쪽 기록으로 확인하세요.'
+              ? 'Replaying — the strokes come from a recording, everything else happens live again. Watch delivery in the record on the right.'
               : ended
-                ? '라운드가 끝났습니다. 왼쪽 그림은 획마다, 오른쪽 기록은 배달마다 남았습니다.'
-                : '그려 보세요. 오른쪽 기록이 이 획이 누구에게 갔는지 보여줍니다.'}
+                ? 'Round over. The drawing is stroke by stroke, the record delivery by delivery.'
+                : 'Draw. The record on the right shows who each stroke reached.'}
           </p>
           {replay ? (
             <button type="button" className={styles.dev} onClick={() => setRunId((n) => n + 1)}>
-              다시 재생
+              replay again
             </button>
           ) : (
             <button type="button" className={styles.dev} onClick={copySession}>
-              {copied ? '복사됨' : '세션 복사'}
+              {copied ? 'copied' : 'copy session'}
             </button>
           )}
         </div>

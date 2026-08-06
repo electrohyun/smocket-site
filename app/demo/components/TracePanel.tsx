@@ -19,9 +19,11 @@ import styles from './TracePanel.module.css';
 
 interface Props {
   store: TraceStore;
+  /** Hide the word in `emit('word', …)` — the observer is not supposed to know it. */
+  maskWord?: boolean;
 }
 
-export default function TracePanel({ store }: Props) {
+export default function TracePanel({ store, maskWord = false }: Props) {
   const lines = useSyncExternalStore(
     (onChange) => store.subscribe(onChange),
     () => store.lines(),
@@ -51,21 +53,21 @@ export default function TracePanel({ store }: Props) {
 
       <div className={styles.log} ref={scrollRef}>
         {folded.map((entry, index) => (
-          <Row key={index} entry={entry} />
+          <Row key={index} entry={entry} maskWord={maskWord} />
         ))}
       </div>
     </aside>
   );
 }
 
-function Row({ entry }: { entry: FoldedLine }) {
+function Row({ entry, maskWord }: { entry: FoldedLine; maskWord: boolean }) {
   const { line, count } = entry;
 
   if (line.kind === 'delivery') {
     return (
       <div className={styles.row}>
         <div className={styles.call}>
-          {formatCall(line)}
+          {formatCall(line, { maskWord })}
           {count > 1 && <span className={styles.count}> ×{count}</span>}
         </div>
         <div className={styles.reach}>
@@ -87,7 +89,7 @@ function Row({ entry }: { entry: FoldedLine }) {
   if (line.kind === 'inbound') {
     return (
       <div className={styles.row}>
-        <div className={styles.call}>{formatInbound(line)}</div>
+        <div className={styles.call}>{formatInbound(line, { maskWord })}</div>
         <div className={styles.reach}>→ server</div>
       </div>
     );

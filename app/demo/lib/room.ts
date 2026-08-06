@@ -14,7 +14,7 @@ import type { StrokePayload } from './stroke';
 
 export const DEMO_URL = 'http://localhost:4000';
 export const ROOM = 'room-1';
-export const WORD = '기린';
+export const WORD = 'giraffe';
 
 /** A draws, B and C guess. Fixed for one round; there is no rotation (기획 §1). */
 export const LABELS = ['A', 'B', 'C'] as const;
@@ -34,6 +34,8 @@ export interface Round {
   chat(from: Label, text: string): void;
   /** A guess, answered by an ack. A correct one also announces (기획 §3-4). */
   guess(from: Label, text: string): Promise<boolean>;
+  /** End on a timeout: reveal the word to the room with no winner (기획 4단계 §3). */
+  reveal(): void;
   /**
    * Listen on a client socket. A view receives what was delivered to it and
    * nothing else, which is what makes the word reaching only the drawer visible
@@ -78,17 +80,27 @@ export async function createRound(): Promise<Round> {
       const correct = text === WORD;
       trace.ack(label, correct);
       ack(correct);
-      if (correct) announce(label);
+      if (correct) {
+        announce(label);
+      } else {
+        // A wrong guess is said out loud: it goes to the room as chat so it shows
+        // as a bubble and lands in the record, the same as any other message. The
+        // right word never takes this path, so a correct guess is not spoiled.
+        trace.deliver({ to: [ROOM] }, () => io.to(ROOM).emit('chat', { from: label, text }));
+      }
     });
   }
 
-  /* The three deliveries a correct guess produces, which is the whole of the ack
-     coverage in 기획 §7: the callback above, a targeted emit to whoever got it,
-     and a broadcast telling the room. */
-  function announce(winner: Label): void {
-    trace.deliver({ to: [sids[winner]] }, () =>
-      io.to(sids[winner]).emit('correct', { word: WORD }),
-    );
+  /* A correct guess produces three deliveries — the ack callback above, a targeted
+     emit to the winner, and a room broadcast (기획 §7). A timeout produces only the
+     broadcast, with no winner and no targeted `correct`: the word is revealed to
+     everyone, which is why `winner` is nullable and the `correct` is guarded. */
+  function announce(winner: Label | null): void {
+    if (winner) {
+      trace.deliver({ to: [sids[winner]] }, () =>
+        io.to(sids[winner]).emit('correct', { word: WORD }),
+      );
+    }
     trace.deliver({ to: [ROOM] }, () => io.to(ROOM).emit('announce', { winner, word: WORD }));
   }
 
@@ -122,6 +134,8 @@ export async function createRound(): Promise<Round> {
       new Promise<boolean>((resolve) => {
         clients[from].emit('guess', text, (correct: boolean) => resolve(correct));
       }),
+
+    reveal: () => announce(null),
 
     on: (label, event, handler) => clients[label].on(event, handler),
 
