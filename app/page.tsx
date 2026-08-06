@@ -7,10 +7,15 @@ import Quickstart from './components/Quickstart';
 import Scope from './components/Scope';
 import Footer from './components/Footer';
 import ReadingProgress from './components/ReadingProgress';
+import ThemeToggle from './components/ThemeToggle';
 
 export default function Home() {
   return (
     <>
+      {/* Landing only, for the same reason ReadingProgress is: /demo is night
+          whatever the switch says, so offering the switch there would be a
+          control that does nothing. */}
+      <ThemeToggle />
       <main>
         <Hero />
         <Trace />

@@ -8,15 +8,18 @@
    the colours live in globals.css as `--night-*` and both places assign from
    there. What is here is the mapping and the things only the demo has.
 
-   The demo wears it in either system theme, which is the whole reason this file
-   exists: /demo is night at noon.
+   The demo wears it in either system theme and whatever the landing's switch is
+   set to, which is the whole reason this file exists: /demo is night at noon.
+   A reader who picked light did so for the landing; the stage is not a document
+   and turning it cream would leave the drawing on paper.
 
-   Doubled :root beats globals.css's single :root on specificity rather than on
-   source order, so the theme does not depend on how the bundler happens to
-   order two global stylesheets — including over the dark block, which would
-   otherwise be setting the same tokens from the same specificity. */
+   Tripled :root wins on specificity rather than on source order, so the theme
+   does not depend on how the bundler happens to order two global stylesheets.
+   It needs all three: globals.css sets the same tokens from `:root` (0,1,0) for
+   light and from `:root[data-theme='dark']` / `:root:not([data-theme='light'])`
+   (0,2,0) for night, and this has to outrank the highest of them. */
 
-:root:root {
+:root:root:root {
   color-scheme: dark;
 
   --bg: var(--night-bg);

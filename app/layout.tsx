@@ -56,15 +56,33 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#f5ecdb',
-  colorScheme: 'light',
+  // The browser's own chrome — address bar, form controls — follows the theme
+  // too. Only the system preference can be expressed here; a reader who has
+  // overridden it with the switch gets the right page either way, and this is
+  // the frame around it.
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#f5ecdb' },
+    { media: '(prefers-color-scheme: dark)', color: '#232043' },
+  ],
+  colorScheme: 'light dark',
 };
+
+/* Runs before the first paint, so a reader who chose a side never sees the
+   system's theme first and the chosen one a frame later. It is inline and
+   blocking for that reason — anything deferred is already too late. Absent or
+   unreadable storage leaves the attribute off, which is the device setting, and
+   the stylesheet's media query takes it from there. Keep the key in step with
+   THEME_KEY in ThemeToggle.tsx. */
+const applyStoredTheme = `try{var t=localStorage.getItem('smocket-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}`;
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={jetbrainsMono.variable}>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: applyStoredTheme }} />
+      </head>
       <body>{children}</body>
     </html>
   );

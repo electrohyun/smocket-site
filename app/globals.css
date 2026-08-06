@@ -17,6 +17,25 @@
   --shadow-sm: 0 1px 2px rgba(58, 42, 28, 0.06);
   --shadow-md: 0 2px 4px rgba(58, 42, 28, 0.05), 0 12px 28px rgba(58, 42, 28, 0.08);
 
+  /* Day gets the same sky night does, which is the point: the constellation was
+     the hero's alone and the rest of the page was flat cream under it. Same
+     shape as --night-sky, same amber low on the page — cream is a daylit sky,
+     not a different idea. Kept faint, because this one is behind black text. */
+  --day-sky:
+    radial-gradient(
+      125% 55% at 50% 106%,
+      rgba(244, 162, 89, 0.2),
+      rgba(244, 162, 89, 0.06) 44%,
+      rgba(244, 162, 89, 0) 72%
+    ),
+    radial-gradient(80% 55% at 82% -12%, rgba(206, 152, 96, 0.14), rgba(206, 152, 96, 0) 62%),
+    linear-gradient(180deg, #f9f1e2 0%, #f5ecdb 46%, #f0e3cd 100%);
+  --day-stars: url('/star-tile.svg'), url('/star-tile.svg');
+
+  --page-sky: var(--day-sky);
+  --page-stars: var(--day-stars);
+  --sky-breathe: sky-breathe 11s ease-in-out infinite alternate;
+
   /* The night palette, by value, in one place. Two contexts wear it — /demo
      always, and the landing when the reader's system asks for dark — and a
      second copy of these numbers is a second thing to keep in step, so both
@@ -61,8 +80,8 @@
 }
 
 /* The page ground lives on html so body::before can lie between it and the
-   content without either needing a stacking context. `--page-sky` is unset in
-   light, where the ground is simply the background colour. */
+   content without either needing a stacking context. Both themes set
+   `--page-sky`; the fallback is only for a theme that forgets to. */
 html {
   color-scheme: light;
   background: var(--page-sky, var(--bg));
@@ -70,11 +89,11 @@ html {
   min-height: 100%;
 }
 
-/* The starfield, when a theme supplies one. Two tilings of one file at
-   different sizes and offsets, which is what stops a 400px tile from reading as
-   a 400px grid. Fixed, so the sky sits still while the page scrolls over it.
-   In light `--page-stars` is unset, so this paints nothing and animates
-   nothing — the rule exists once and both themes decide whether it applies. */
+/* The starfield. Two tilings of one file at different sizes and offsets, which
+   is what stops a single tile from reading as a grid. Fixed, so the sky sits
+   still while the page scrolls over it. One rule for both themes: they differ
+   only in which tile `--page-stars` names, and a theme that names none paints
+   and animates nothing. */
 body::before {
   content: '';
   position: fixed;
@@ -214,17 +233,22 @@ pre.code {
   box-shadow: var(--shadow-sm);
 }
 
-/* Dark is the night palette the demo wears, so a reader whose system asks for
-   dark gets the same sky the demo put them under rather than a dimmed cream.
-   It follows the system and nothing else: no toggle, so no stored preference,
-   no inline script, and no first paint in the wrong theme.
+/* Night, on either of two triggers: the system asks for it and the reader has
+   not overridden that, or the reader picked it outright with the switch.
+   `data-theme` is absent while the reader is following their device, which is
+   the default and needs no script to be correct — the media query alone gets a
+   reader with no JavaScript the right theme.
 
-   Last in the file on purpose. Every rule here is a plain `:root`/`html`, the
-   same specificity as the light rules it is overriding, so it wins on source
-   order and has to stay after them — `html { color-scheme: light }` above would
-   otherwise outrank the dark one and the form controls would stay light. */
+   The mapping is written twice because a media query and an attribute selector
+   cannot share one selector list, and plain CSS cannot branch a block of
+   declarations on a variable. Only the pointing repeats; the colours themselves
+   are still declared once, at the top of this file.
+
+   Last in the file on purpose. `:root:not([data-theme='light'])` and
+   `:root[data-theme='dark']` are both (0,2,0), the same weight as the light
+   rules above, so these win on source order and have to stay after them. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme='light']) {
     --bg: var(--night-bg);
     --bg-tint: var(--night-bg-tint);
     --panel: var(--night-panel);
@@ -249,8 +273,40 @@ pre.code {
     --page-stars: var(--night-stars);
     --sky-breathe: sky-breathe 11s ease-in-out infinite alternate;
   }
+}
 
-  html {
+:root[data-theme='dark'] {
+  --bg: var(--night-bg);
+  --bg-tint: var(--night-bg-tint);
+  --panel: var(--night-panel);
+  --border: var(--night-border);
+  --text: var(--night-text);
+  --text-dim: var(--night-text-dim);
+  --accent-ink: var(--accent);
+  --code-bg: var(--night-code-bg);
+  --code-text: var(--night-code-text);
+  --code-border: var(--night-code-border);
+  --star-tile: url('/star-tile-night.svg');
+  --shadow-sm: var(--night-shadow-sm);
+  --shadow-md: var(--night-shadow-md);
+  --page-sky: var(--night-sky);
+  --page-stars: var(--night-stars);
+  --sky-breathe: sky-breathe 11s ease-in-out infinite alternate;
+}
+
+/* Form controls and scrollbars. `html[data-theme]` is (0,1,1) and the plain
+   `html` above is (0,0,1), so these do not depend on order the way the token
+   blocks do. */
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme='light']) {
     color-scheme: dark;
   }
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+html[data-theme='light'] {
+  color-scheme: light;
 }
