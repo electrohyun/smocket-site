@@ -11,7 +11,7 @@
 .stream {
   position: absolute;
   inset: -15%;
-  background: url('/star-tile.svg') repeat;
+  background: var(--star-tile) repeat;
   background-size: 300px 300px;
   animation: stream 7s linear infinite;
 }

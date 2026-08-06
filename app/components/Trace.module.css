@@ -20,7 +20,7 @@
   margin-top: 20px;
   background: var(--code-bg);
   color: var(--code-text);
-  border: 1px solid #3f2c1d;
+  border: 1px solid var(--code-border);
   border-radius: 10px;
   padding: 24px;
   font-family: var(--font-mono), ui-monospace, monospace;

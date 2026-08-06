@@ -10,9 +10,42 @@
 
   --code-bg: #2e2016;
   --code-text: #f2e8d6;
+  --code-border: #3f2c1d;
+
+  --star-tile: url('/star-tile.svg');
 
   --shadow-sm: 0 1px 2px rgba(58, 42, 28, 0.06);
   --shadow-md: 0 2px 4px rgba(58, 42, 28, 0.05), 0 12px 28px rgba(58, 42, 28, 0.08);
+
+  /* The night palette, by value, in one place. Two contexts wear it — /demo
+     always, and the landing when the reader's system asks for dark — and a
+     second copy of these numbers is a second thing to keep in step, so both
+     assign from here instead. Nothing below is in effect until something maps
+     a real token onto it. */
+  --night-bg: #232043;
+  --night-bg-tint: rgba(30, 27, 57, 0.62);
+  --night-panel: rgba(44, 41, 84, 0.82);
+  --night-border: #423e6b;
+  --night-text: #e9ebf4;
+  --night-text-dim: #aeaac9;
+  --night-code-bg: #191635;
+  --night-code-text: #e6e2f5;
+  --night-code-border: #2b2652;
+  --night-shadow-sm: 0 1px 2px rgba(8, 6, 20, 0.45);
+  --night-shadow-md: 0 2px 4px rgba(8, 6, 20, 0.38), 0 12px 28px rgba(8, 6, 20, 0.42);
+
+  /* Amber along the bottom is the warmth the palette otherwise has nowhere;
+     the violet at the top keeps the sky from being one flat wash. */
+  --night-sky:
+    radial-gradient(
+      125% 55% at 50% 106%,
+      rgba(244, 162, 89, 0.22),
+      rgba(244, 162, 89, 0.07) 44%,
+      rgba(244, 162, 89, 0) 72%
+    ),
+    radial-gradient(80% 55% at 82% -12%, rgba(150, 130, 224, 0.18), rgba(150, 130, 224, 0) 62%),
+    linear-gradient(180deg, #1e1b3a 0%, #232043 46%, #2a2450 100%);
+  --night-stars: url('/star-tile-night.svg'), url('/star-tile-night.svg');
 
   --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
     Arial, sans-serif;
@@ -27,13 +60,52 @@
   box-sizing: border-box;
 }
 
+/* The page ground lives on html so body::before can lie between it and the
+   content without either needing a stacking context. `--page-sky` is unset in
+   light, where the ground is simply the background colour. */
 html {
   color-scheme: light;
+  background: var(--page-sky, var(--bg));
+  background-attachment: fixed;
+  min-height: 100%;
+}
+
+/* The starfield, when a theme supplies one. Two tilings of one file at
+   different sizes and offsets, which is what stops a 400px tile from reading as
+   a 400px grid. Fixed, so the sky sits still while the page scrolls over it.
+   In light `--page-stars` is unset, so this paints nothing and animates
+   nothing — the rule exists once and both themes decide whether it applies. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: var(--page-stars, none);
+  background-size:
+    400px 400px,
+    247px 247px;
+  background-position:
+    0 0,
+    123px 71px;
+  animation: var(--sky-breathe, none);
+}
+
+/* Not a twinkle per star — that needs one element each. The field as a whole
+   comes up and down a little, which at this speed reads as air rather than as
+   an animation. */
+@keyframes sky-breathe {
+  from {
+    opacity: 0.72;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 body {
   margin: 0;
-  background: var(--bg);
+  background: transparent;
   color: var(--text);
   font-family: var(--font-sans);
   font-size: 16px;
@@ -132,7 +204,7 @@ pre {
 pre.code {
   background: var(--code-bg);
   color: var(--code-text);
-  border: 1px solid #3f2c1d;
+  border: 1px solid var(--code-border);
   border-radius: 10px;
   padding: 16px;
   margin: 0;
@@ -140,4 +212,45 @@ pre.code {
   line-height: 1.55;
   white-space: pre;
   box-shadow: var(--shadow-sm);
+}
+
+/* Dark is the night palette the demo wears, so a reader whose system asks for
+   dark gets the same sky the demo put them under rather than a dimmed cream.
+   It follows the system and nothing else: no toggle, so no stored preference,
+   no inline script, and no first paint in the wrong theme.
+
+   Last in the file on purpose. Every rule here is a plain `:root`/`html`, the
+   same specificity as the light rules it is overriding, so it wins on source
+   order and has to stay after them — `html { color-scheme: light }` above would
+   otherwise outrank the dark one and the form controls would stay light. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: var(--night-bg);
+    --bg-tint: var(--night-bg-tint);
+    --panel: var(--night-panel);
+    --border: var(--night-border);
+    --text: var(--night-text);
+    --text-dim: var(--night-text-dim);
+
+    /* Cream needs a darkened accent for text to clear 4.5:1; night does not,
+       and the darkened one would fail against it. */
+    --accent-ink: var(--accent);
+
+    --code-bg: var(--night-code-bg);
+    --code-text: var(--night-code-text);
+    --code-border: var(--night-code-border);
+
+    --star-tile: url('/star-tile-night.svg');
+
+    --shadow-sm: var(--night-shadow-sm);
+    --shadow-md: var(--night-shadow-md);
+
+    --page-sky: var(--night-sky);
+    --page-stars: var(--night-stars);
+    --sky-breathe: sky-breathe 11s ease-in-out infinite alternate;
+  }
+
+  html {
+    color-scheme: dark;
+  }
 }
