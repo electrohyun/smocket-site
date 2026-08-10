@@ -110,6 +110,7 @@ const c = connect('http://localhost:3000');`,
 
 export const features = {
   id: 'features',
+  title: 'Built to behave like socket.io.',
   cards: [
     {
       title: 'Delivery fidelity',

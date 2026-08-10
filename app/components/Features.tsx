@@ -10,8 +10,8 @@ export default function Features() {
       className="section"
     >
       <div className="inner">
-        <h2 id="features-title" className="srOnly">
-          Features
+        <h2 id="features-title" className="h2">
+          {features.title}
         </h2>
         <ul className={styles.grid}>
           {features.cards.map((card) => (
