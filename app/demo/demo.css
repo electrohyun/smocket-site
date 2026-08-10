@@ -1,0 +1,74 @@
+/* Loaded only on /demo, so it re-points the same token names globals.css sets
+   for the landing. Everything built on those tokens — .section, .h2, .lead,
+   .todo, .dashed, pre.code — re-themes without knowing this file exists.
+
+   The tone is a night sky rather than deep space (기획 §9): the earlier
+   near-black read as cold and empty, and the page it frames is a drawing game.
+   The landing wears this same night when the reader's system asks for dark, so
+   the colours live in globals.css as `--night-*` and both places assign from
+   there. What is here is the mapping and the things only the demo has.
+
+   The demo wears it in either system theme and whatever the landing's switch is
+   set to, which is the whole reason this file exists: /demo is night at noon.
+   A reader who picked light did so for the landing; the stage is not a document
+   and turning it cream would leave the drawing on paper.
+
+   Tripled :root wins on specificity rather than on source order, so the theme
+   does not depend on how the bundler happens to order two global stylesheets.
+   It needs all three: globals.css sets the same tokens from `:root` (0,1,0) for
+   light and from `:root[data-theme='dark']` / `:root:not([data-theme='light'])`
+   (0,2,0) for night, and this has to outrank the highest of them. */
+
+:root:root:root {
+  color-scheme: dark;
+
+  --bg: var(--night-bg);
+  --bg-tint: var(--night-bg-tint);
+  --panel: var(--night-panel);
+  --border: var(--night-border);
+  --text: var(--night-text);
+  --text-dim: var(--night-text-dim);
+
+  /* Shared with the landing on purpose: one accent across both pages is the
+     signal that the demo and the landing are the same world. */
+  --accent: #f4a259;
+  --accent-ink: #f4a259;
+
+  --code-bg: var(--night-code-bg);
+  --code-text: var(--night-code-text);
+  --code-border: var(--night-code-border);
+
+  --shadow-sm: var(--night-shadow-sm);
+  --shadow-md: var(--night-shadow-md);
+
+  /* The strip the situation panel sits in, top right. It is a row of 48px discs
+     with a label under each, so 12px of offset + 48 + 5 + a line of label, and a
+     little air. Both views reserve it rather than guessing at 60px, which is
+     what they did when the panel was text pills and what left the labels lying
+     over the delivery record once it was not. */
+  --stage-top: 88px;
+  /* Under 900px the panel drops to the bottom instead, so the reserve does too. */
+  --stage-bottom: 20px;
+
+  --page-sky: var(--night-sky);
+  --page-stars: var(--night-stars);
+  --sky-breathe: sky-breathe 11s ease-in-out infinite alternate;
+
+  /* The socket colours are not re-pointed here: they are night-tuned values that
+     only ever land on a night ground, so they live in globals.css `:root` and
+     this page inherits them. The landing's demo preview wears the same night and
+     reads the same three — one copy, for the same reason --night-* is one copy. */
+}
+
+a:hover {
+  color: var(--text);
+}
+
+/* The panel is fixed to the bottom right below this width (SituationPanel), so the
+   reserve swaps ends with it. */
+@media (max-width: 900px) {
+  :root:root:root {
+    --stage-top: 60px;
+    --stage-bottom: 88px;
+  }
+}

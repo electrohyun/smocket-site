@@ -1,0 +1,97 @@
+/* Centred on the drawing, over everything, catching nothing: the round keeps
+   running underneath and the board is only there to be read. */
+/* The winner's colour, set once here and read by the board and the fireworks
+   both — the same colour that socket wears at its desk and in the record. */
+.wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  --socket: var(--text-dim);
+}
+
+.wrap[data-socket='A'] {
+  --socket: var(--sock-a);
+}
+
+.wrap[data-socket='B'] {
+  --socket: var(--sock-b);
+}
+
+.wrap[data-socket='C'] {
+  --socket: var(--sock-c);
+}
+
+.board {
+  /* Above the fireworks: they are absolutely positioned and would otherwise
+     paint over this, which is in flow. */
+  position: relative;
+  z-index: 1;
+  padding: 20px 38px;
+  border: 1px solid var(--socket);
+  border-radius: 16px;
+  /* The same glass every other surface here is, so it sits in the sky rather
+     than on top of the page. */
+  background: var(--panel);
+  box-shadow:
+    var(--shadow-md),
+    0 0 48px -14px var(--socket);
+  text-align: center;
+  animation:
+    fanfare-in 0.34s cubic-bezier(0.2, 0.8, 0.3, 1.2) both,
+    fanfare-out 0.4s ease-in 2.4s both;
+}
+
+.eyebrow {
+  color: var(--text-dim);
+  font-size: 0.74rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* The winner's own colour, the one their desk and their label in the record
+   already wear. */
+.word {
+  margin-top: 4px;
+  color: var(--socket);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 1.9rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+@keyframes fanfare-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fanfare-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .board {
+    padding: 16px 26px;
+  }
+
+  .word {
+    font-size: 1.5rem;
+  }
+}
+
+/* Still arrives and still leaves — it just stops moving to do it. */
+@media (prefers-reduced-motion: reduce) {
+  .board {
+    animation: fanfare-out 0.3s ease-in 2.5s both;
+  }
+}

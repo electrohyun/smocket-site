@@ -1,0 +1,27 @@
+name: 'Maintenance: refactoring'
+description: Restructure site code without changing behavior or presentation
+labels: ['refactor']
+body:
+  - type: textarea
+    id: current
+    attributes:
+      label: Current state
+      description: What does the code or structure look like today?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: What would change, and why would the result be easier to maintain?
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: behavior
+    attributes:
+      label: Behavior
+      options:
+        - label: This does not intentionally change presentation, interaction, routing, or demo behavior
+          required: true

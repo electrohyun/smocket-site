@@ -1,0 +1,323 @@
+:root {
+  --bg: #f5ecdb;
+  --bg-tint: #efe3ce;
+  --panel: #fffdf8;
+  --border: #ddcdb0;
+  --text: #241608;
+  --text-dim: #55442f;
+  --accent: #f4a259;
+  --accent-ink: #b45f18;
+
+  --code-bg: #2e2016;
+  --code-text: #f2e8d6;
+  --code-border: #3f2c1d;
+
+  --star-tile: url('/star-tile.svg');
+
+  --shadow-sm: 0 1px 2px rgba(58, 42, 28, 0.06);
+  --shadow-md: 0 2px 4px rgba(58, 42, 28, 0.05), 0 12px 28px rgba(58, 42, 28, 0.08);
+
+  /* Day gets the same sky night does, which is the point: the constellation was
+     the hero's alone and the rest of the page was flat cream under it. Same
+     shape as --night-sky, same amber low on the page — cream is a daylit sky,
+     not a different idea. Kept faint, because this one is behind black text. */
+  --day-sky:
+    radial-gradient(
+      125% 55% at 50% 106%,
+      rgba(244, 162, 89, 0.2),
+      rgba(244, 162, 89, 0.06) 44%,
+      rgba(244, 162, 89, 0) 72%
+    ),
+    radial-gradient(80% 55% at 82% -12%, rgba(206, 152, 96, 0.14), rgba(206, 152, 96, 0) 62%),
+    linear-gradient(180deg, #f9f1e2 0%, #f5ecdb 46%, #f0e3cd 100%);
+  --day-stars: url('/star-tile.svg'), url('/star-tile.svg');
+
+  --page-sky: var(--day-sky);
+  --page-stars: var(--day-stars);
+  --sky-breathe: sky-breathe 11s ease-in-out infinite alternate;
+
+  /* The night palette, by value, in one place. Two contexts wear it — /demo
+     always, and the landing when the reader's system asks for dark — and a
+     second copy of these numbers is a second thing to keep in step, so both
+     assign from here instead. Nothing below is in effect until something maps
+     a real token onto it. */
+  --night-bg: #232043;
+  --night-bg-tint: rgba(30, 27, 57, 0.62);
+  --night-panel: rgba(44, 41, 84, 0.82);
+  --night-border: #423e6b;
+  --night-text: #e9ebf4;
+  --night-text-dim: #aeaac9;
+  --night-code-bg: #191635;
+  --night-code-text: #e6e2f5;
+  --night-code-border: #2b2652;
+  --night-shadow-sm: 0 1px 2px rgba(8, 6, 20, 0.45);
+  --night-shadow-md: 0 2px 4px rgba(8, 6, 20, 0.38), 0 12px 28px rgba(8, 6, 20, 0.42);
+
+  /* Amber along the bottom is the warmth the palette otherwise has nowhere;
+     the violet at the top keeps the sky from being one flat wash. */
+  --night-sky:
+    radial-gradient(
+      125% 55% at 50% 106%,
+      rgba(244, 162, 89, 0.22),
+      rgba(244, 162, 89, 0.07) 44%,
+      rgba(244, 162, 89, 0) 72%
+    ),
+    radial-gradient(80% 55% at 82% -12%, rgba(150, 130, 224, 0.18), rgba(150, 130, 224, 0) 62%),
+    linear-gradient(180deg, #1e1b3a 0%, #232043 46%, #2a2450 100%);
+  --night-stars: url('/star-tile-night.svg'), url('/star-tile-night.svg');
+
+  /* One colour per socket, worn by its trace label and by everything it does on
+     screen. That shared colour is the link between the record and the picture
+     (기획 §9), so these are read from both and never inlined. None of them go near
+     the accent, which already means something else. They are tuned against the
+     night ground and only ever appear on one: /demo always, and the landing's
+     demo preview, which is night whatever the switch says. Here rather than in
+     demo.css because both now read them and one copy is the whole point. */
+  --sock-a: #93c0ff;
+  --sock-b: #9dedb5;
+  --sock-c: #d3aaff;
+
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif;
+
+  --maxw: 1040px;
+  --pad: 24px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* The page ground lives on html so body::before can lie between it and the
+   content without either needing a stacking context. Both themes set
+   `--page-sky`; the fallback is only for a theme that forgets to. */
+html {
+  color-scheme: light;
+  background: var(--page-sky, var(--bg));
+  background-attachment: fixed;
+  min-height: 100%;
+}
+
+/* The starfield. Two tilings of one file at different sizes and offsets, which
+   is what stops a single tile from reading as a grid. Fixed, so the sky sits
+   still while the page scrolls over it. One rule for both themes: they differ
+   only in which tile `--page-stars` names, and a theme that names none paints
+   and animates nothing. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: var(--page-stars, none);
+  background-size:
+    400px 400px,
+    247px 247px;
+  background-position:
+    0 0,
+    123px 71px;
+  animation: var(--sky-breathe, none);
+}
+
+/* Not a twinkle per star — that needs one element each. The field as a whole
+   comes up and down a little, which at this speed reads as air rather than as
+   an animation. */
+@keyframes sky-breathe {
+  from {
+    opacity: 0.72;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+body {
+  margin: 0;
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--accent-ink);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+a:hover {
+  color: var(--text);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: 2px;
+}
+
+code,
+pre {
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+pre {
+  overflow-x: auto;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.section {
+  padding: 72px var(--pad);
+  border-top: 1px solid var(--border);
+}
+
+.inner {
+  max-width: var(--maxw);
+  margin: 0 auto;
+}
+
+.h2 {
+  font-size: 1.85rem;
+  font-weight: 800;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+}
+
+.lead {
+  margin-top: 12px;
+  max-width: 60ch;
+  color: var(--text-dim);
+  font-size: 1.02rem;
+}
+
+.todo {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.8rem;
+  color: var(--accent-ink);
+  background: rgba(244, 162, 89, 0.14);
+  border: 1px dashed var(--accent);
+  border-radius: 4px;
+  padding: 6px 10px;
+  display: inline-block;
+}
+
+.dashed {
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+pre.code {
+  background: var(--code-bg);
+  color: var(--code-text);
+  border: 1px solid var(--code-border);
+  border-radius: 10px;
+  padding: 16px;
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  white-space: pre;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Night, on either of two triggers: the system asks for it and the reader has
+   not overridden that, or the reader picked it outright with the switch.
+   `data-theme` is absent while the reader is following their device, which is
+   the default and needs no script to be correct — the media query alone gets a
+   reader with no JavaScript the right theme.
+
+   The mapping is written twice because a media query and an attribute selector
+   cannot share one selector list, and plain CSS cannot branch a block of
+   declarations on a variable. Only the pointing repeats; the colours themselves
+   are still declared once, at the top of this file.
+
+   Last in the file on purpose. `:root:not([data-theme='light'])` and
+   `:root[data-theme='dark']` are both (0,2,0), the same weight as the light
+   rules above, so these win on source order and have to stay after them. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: var(--night-bg);
+    --bg-tint: var(--night-bg-tint);
+    --panel: var(--night-panel);
+    --border: var(--night-border);
+    --text: var(--night-text);
+    --text-dim: var(--night-text-dim);
+
+    /* Cream needs a darkened accent for text to clear 4.5:1; night does not,
+       and the darkened one would fail against it. */
+    --accent-ink: var(--accent);
+
+    --code-bg: var(--night-code-bg);
+    --code-text: var(--night-code-text);
+    --code-border: var(--night-code-border);
+
+    --star-tile: url('/star-tile-night.svg');
+
+    --shadow-sm: var(--night-shadow-sm);
+    --shadow-md: var(--night-shadow-md);
+
+    --page-sky: var(--night-sky);
+    --page-stars: var(--night-stars);
+    --sky-breathe: sky-breathe 11s ease-in-out infinite alternate;
+  }
+}
+
+:root[data-theme='dark'] {
+  --bg: var(--night-bg);
+  --bg-tint: var(--night-bg-tint);
+  --panel: var(--night-panel);
+  --border: var(--night-border);
+  --text: var(--night-text);
+  --text-dim: var(--night-text-dim);
+  --accent-ink: var(--accent);
+  --code-bg: var(--night-code-bg);
+  --code-text: var(--night-code-text);
+  --code-border: var(--night-code-border);
+  --star-tile: url('/star-tile-night.svg');
+  --shadow-sm: var(--night-shadow-sm);
+  --shadow-md: var(--night-shadow-md);
+  --page-sky: var(--night-sky);
+  --page-stars: var(--night-stars);
+  --sky-breathe: sky-breathe 11s ease-in-out infinite alternate;
+}
+
+/* Form controls and scrollbars. `html[data-theme]` is (0,1,1) and the plain
+   `html` above is (0,0,1), so these do not depend on order the way the token
+   blocks do. */
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme='light']) {
+    color-scheme: dark;
+  }
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+html[data-theme='light'] {
+  color-scheme: light;
+}

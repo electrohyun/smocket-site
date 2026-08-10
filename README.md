@@ -1,0 +1,67 @@
+# smocket-site
+
+The landing page and interactive demo for [smocket](https://github.com/electrohyun/smocket), an in-memory Socket.IO mock for testing rooms, broadcasts, acknowledgements, and multiple clients without opening a server.
+
+[Visit the site](https://smocket-site.vercel.app) · [Try the demo](https://smocket-site.vercel.app/demo) · [Read the smocket docs](https://github.com/electrohyun/smocket#readme)
+
+<!-- Add the locally captured landing image here after uploading it to a CDN.
+![smocket landing page](https://your-cdn.example/smocket-landing.png)
+-->
+
+## What lives here
+
+- A responsive product landing page with light, dark, and system themes
+- A self-playing preview backed by a real in-memory smocket round
+- An interactive `/demo` with drawer and observer viewpoints
+- A delivery trace that exposes rooms, recipients, exclusions, and acknowledgements
+- Metadata, social images, a web manifest, robots.txt, and a sitemap
+
+The library implementation and public API documentation live in the [smocket repository](https://github.com/electrohyun/smocket).
+
+## Development
+
+This project uses Next.js, React, TypeScript, and pnpm.
+
+```bash
+pnpm install
+pnpm dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) for the landing page or [http://localhost:3000/demo](http://localhost:3000/demo) for the interactive demo.
+
+| Command | What it does |
+| --- | --- |
+| `pnpm dev` | Start the development server |
+| `pnpm build` | Create a production build |
+| `pnpm start` | Serve the production build |
+| `pnpm lint` | Run ESLint |
+| `pnpm typecheck` | Type-check without emitting files |
+| `pnpm test` | Run the test suite once |
+| `pnpm test:watch` | Run tests in watch mode |
+| `pnpm seed:draw` | Regenerate the recorded drawing seed |
+
+## Project structure
+
+```text
+app/
+├── components/       Landing page sections and shared UI
+├── demo/             Interactive demo, playback, trace, and tests
+├── layout.tsx        Site metadata, fonts, and theme bootstrap
+└── page.tsx          Landing page composition
+content/
+└── landing.ts        Landing copy and code samples
+public/               Static images and icons
+scripts/              Drawing seed tooling
+```
+
+Most landing copy belongs in `content/landing.ts`. Reusable presentation belongs in `app/components`, while behavior specific to the playground belongs in `app/demo`.
+
+## Contributing
+
+Bug reports, documentation fixes, design polish, accessibility improvements, and focused demo changes are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
+
+For smocket API or delivery behavior changes, use the [library issue tracker](https://github.com/electrohyun/smocket/issues).
+
+## License
+
+[MIT](LICENSE)

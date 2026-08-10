@@ -1,0 +1,214 @@
+.figure {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
+
+.scene {
+  width: 100%;
+  max-width: 500px;
+  aspect-ratio: 1 / 1;
+  perspective: 1100px;
+  overflow: visible;
+}
+
+.stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transform-style: preserve-3d;
+  transition: transform 0.25s ease-out;
+
+  --tw: #fdf7ec;
+  --tc: #6b4a2f;
+  --tg: #cf9a55;
+}
+
+.aura {
+  position: absolute;
+  inset: -6%;
+  transform: translateZ(10px);
+  background: radial-gradient(
+    circle at 54% 46%,
+    rgba(244, 162, 89, 0.28),
+    rgba(244, 162, 89, 0.08) 42%,
+    rgba(244, 162, 89, 0) 66%
+  );
+  filter: blur(6px);
+  pointer-events: none;
+  animation: auraPulse 2.6s ease-in-out infinite;
+}
+
+.floatZ,
+.floatY,
+.floatX {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  transform-style: preserve-3d;
+}
+.floatZ {
+  animation: floatZ 6.7s ease-in-out infinite;
+}
+.floatY {
+  animation: floatY 8.3s ease-in-out infinite;
+}
+.floatX {
+  animation: floatX 5.9s ease-in-out infinite;
+}
+
+.rocket {
+  width: 84%;
+  transform: translate(var(--mx, 0), var(--my, 0));
+  transition: transform 0.25s ease-out;
+  filter: drop-shadow(0 22px 26px rgba(36, 22, 8, 0.24));
+  will-change: transform;
+}
+
+.trail {
+  position: absolute;
+  inset: 0;
+  transform: translateZ(48px);
+  pointer-events: none;
+}
+.crumb {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0;
+  box-shadow: 0 1px 2px rgba(36, 22, 8, 0.25);
+  animation: drift 2.6s ease-in infinite;
+}
+
+.orbit {
+  position: absolute;
+  inset: 0;
+  transform: translateZ(60px);
+  animation: spin 16s linear infinite;
+  pointer-events: none;
+}
+.orbitStar {
+  position: absolute;
+  top: 8%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  margin-left: -4px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px rgba(244, 162, 89, 0.7);
+}
+
+@keyframes floatZ {
+  0%,
+  100% {
+    transform: translateZ(60px);
+  }
+  50% {
+    transform: translateZ(210px);
+  }
+}
+@keyframes floatY {
+  0%,
+  100% {
+    transform: translateY(18px);
+  }
+  50% {
+    transform: translateY(-18px);
+  }
+}
+@keyframes floatX {
+  0%,
+  100% {
+    transform: translateX(-20px);
+  }
+  50% {
+    transform: translateX(20px);
+  }
+}
+@keyframes auraPulse {
+  0%,
+  100% {
+    opacity: 0.8;
+    transform: translateZ(10px) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateZ(10px) scale(1.06);
+  }
+}
+@keyframes drift {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(1);
+  }
+  15% {
+    opacity: 0.95;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-46px, 54px) scale(0.4);
+  }
+}
+@keyframes spin {
+  to {
+    transform: translateZ(60px) rotate(360deg);
+  }
+}
+.twinkle {
+  animation: twinkle 4.5s ease-in-out infinite;
+}
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.caption {
+  max-width: 42ch;
+  text-align: center;
+  font-style: italic;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--text-dim);
+  text-wrap: balance;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floatZ,
+  .floatY,
+  .floatX,
+  .aura,
+  .crumb,
+  .twinkle,
+  .orbit {
+    animation: none;
+  }
+  .stage {
+    transition: none;
+  }
+  .crumb {
+    opacity: 0.6;
+  }
+}
+
+@media (max-width: 900px) {
+  .scene {
+    max-width: 440px;
+  }
+}
+@media (max-width: 768px) {
+  .scene {
+    max-width: 360px;
+  }
+  .caption {
+    font-size: 0.88rem;
+  }
+}

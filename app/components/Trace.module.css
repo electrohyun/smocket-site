@@ -1,0 +1,71 @@
+.legend {
+  display: flex;
+  gap: 8px;
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.9rem;
+}
+
+.socket {
+  --socket: var(--text);
+  color: var(--socket);
+  font-weight: 700;
+}
+
+.socket[data-socket='A'] {
+  --socket: var(--sock-a);
+}
+
+.socket[data-socket='B'] {
+  --socket: var(--sock-b);
+}
+
+.socket[data-socket='C'] {
+  --socket: var(--sock-c);
+}
+
+.legend .socket {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  color: var(--code-bg);
+  background: var(--socket);
+}
+
+.record {
+  margin-top: 20px;
+  background: var(--code-bg);
+  color: var(--code-text);
+  border: 1px solid var(--code-border);
+  border-radius: 10px;
+  padding: 24px;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  overflow-x: auto;
+  box-shadow: var(--shadow-md);
+}
+
+.block + .block {
+  margin-top: 20px;
+}
+
+.call {
+  color: var(--code-text);
+  white-space: pre;
+}
+
+.reach {
+  margin-top: 4px;
+  padding-left: 2ch;
+  color: var(--code-text);
+  white-space: pre;
+}
+
+.except {
+  color: #bcae9b;
+}

@@ -1,0 +1,83 @@
+.character {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 12px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-tint);
+  --socket: var(--text-dim);
+}
+
+.character[data-socket='B'] {
+  --socket: var(--sock-b);
+}
+
+.character[data-socket='C'] {
+  --socket: var(--sock-c);
+}
+
+/* The win reaches one desk and outlines it in that socket's colour. */
+.win {
+  border-color: var(--socket);
+  box-shadow: 0 0 0 1px var(--socket), 0 0 24px -6px var(--socket);
+}
+
+.figure {
+  width: 52px;
+  height: 52px;
+  fill: var(--socket);
+}
+
+.desk {
+  width: 82%;
+  height: 8px;
+  border-radius: 4px 4px 0 0;
+  background: var(--border);
+}
+
+.name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--socket);
+}
+
+/* Above the head, with a tail. Appears on a message, fades on a timer (the view
+   clears it), so the screen reads like speech and not a running log. */
+.bubble {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 8px;
+  max-width: 90%;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--panel);
+  color: var(--text);
+  font-size: 0.82rem;
+  white-space: nowrap;
+  box-shadow: var(--shadow-md);
+}
+
+.bubble::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--panel);
+}

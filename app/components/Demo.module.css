@@ -1,0 +1,52 @@
+/* The demo itself lives at /demo; this section is its entrance. The frame above
+   the link runs a round of it — its own styling is DemoPreview.module.css, and it
+   is night in there, with none of that leaking out to this cream section. */
+
+.entry {
+  margin-top: 28px;
+}
+
+.foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-top: 12px;
+}
+
+/* An admission, so it is quiet: the drawing is a recording, and the page says so
+   rather than letting someone discover it. */
+.note {
+  color: var(--text-dim);
+  font-size: 0.86rem;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  color: var(--accent-ink);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.arrow {
+  transition: transform 160ms ease-out;
+}
+
+.cta:hover,
+.cta:focus-visible {
+  text-decoration: underline;
+}
+
+.cta:hover .arrow,
+.cta:focus-visible .arrow {
+  transform: translateX(3px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arrow {
+    transition: none;
+  }
+}

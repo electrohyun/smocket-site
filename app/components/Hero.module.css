@@ -1,0 +1,153 @@
+.hero {
+  border-top: none;
+  padding-top: 96px;
+  padding-bottom: 96px;
+  position: relative;
+  overflow: hidden;
+}
+
+.grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  gap: 40px;
+  align-items: center;
+}
+
+.copy {
+  min-width: 0;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 40px;
+}
+
+.mascot {
+  width: 48px;
+  height: 48px;
+  flex: none;
+  display: block;
+  border-radius: 50%;
+}
+
+.wordmark {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.h1 {
+  font-size: 3.3rem;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  max-width: 16ch;
+  color: var(--text);
+}
+
+.accent {
+  color: var(--accent-ink);
+}
+
+.sub {
+  margin-top: 22px;
+  max-width: 54ch;
+  font-size: 1.1rem;
+  line-height: 1.55;
+  color: var(--text-dim);
+}
+
+.tagline {
+  margin-top: 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--accent-ink);
+}
+
+.spark {
+  color: var(--accent);
+}
+
+.ctas {
+  display: flex;
+  gap: 12px;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+
+.primary,
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  padding: 12px 22px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.98rem;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.primary {
+  background: var(--accent);
+  color: #2e1c07;
+  box-shadow: 0 2px 0 #d07f34, var(--shadow-sm);
+}
+
+.primary:hover {
+  background: #ffb066;
+  transform: translateY(-1px);
+}
+
+.secondary {
+  border: 1.5px solid var(--text);
+  color: var(--text);
+  background: var(--panel);
+}
+
+.secondary:hover {
+  border-color: var(--accent-ink);
+  color: var(--accent-ink);
+  transform: translateY(-1px);
+}
+
+.chips {
+  display: flex;
+  gap: 8px;
+  margin: 30px 0 0;
+  padding: 0;
+  list-style: none;
+  flex-wrap: wrap;
+}
+
+.chip {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 5px 13px;
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .h1 {
+    font-size: 2.4rem;
+  }
+}

@@ -1,0 +1,27 @@
+name: 'Maintenance: tooling, CI, dependencies'
+description: Build config, CI, dependencies, deployment, or tooling
+labels: ['chore']
+body:
+  - type: textarea
+    id: current
+    attributes:
+      label: Current state
+      description: What does the setup look like today?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: What would change, and what problem would it solve?
+    validations:
+      required: true
+
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification
+      description: How will we know the build, deployment, or tooling still works?
+    validations:
+      required: true

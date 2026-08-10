@@ -1,0 +1,54 @@
+.drift {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  transform: translate(calc(var(--mx, 0px) * -0.3), calc(var(--my, 0px) * -0.3));
+  transition: transform 0.3s ease-out;
+}
+
+.track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  animation: drift 21s linear infinite;
+}
+
+.kw,
+.emoji {
+  position: absolute;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.kw {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  color: var(--accent-ink);
+  opacity: 0.3;
+  letter-spacing: 0.02em;
+}
+
+.emoji {
+  opacity: 0.6;
+}
+
+@keyframes drift {
+  from {
+    transform: translate(0, 0);
+  }
+  to {
+    transform: translate(-900px, 900px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    animation: none;
+  }
+  .drift {
+    transition: none;
+  }
+}

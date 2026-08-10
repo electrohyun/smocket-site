@@ -1,0 +1,26 @@
+name: Documentation
+description: Report unclear, missing, or incorrect site documentation
+labels: ['documentation']
+body:
+  - type: input
+    id: location
+    attributes:
+      label: Location
+      description: Which route, section, or repository document?
+      placeholder: Landing page, Quickstart section
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What is unclear, missing, or incorrect?
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested change
+      description: Proposed wording, structure, or references.

@@ -1,0 +1,15 @@
+/* Neutral on purpose: 기획 §9 keeps brand colour off the app area, because the
+   claim is that your app is left alone and smocket is slotted in underneath. */
+
+.canvas {
+  --ink: var(--text);
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: crosshair;
+  /* Otherwise a drag on a touch screen scrolls the page instead of drawing. */
+  touch-action: none;
+}

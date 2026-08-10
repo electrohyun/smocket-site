@@ -1,0 +1,31 @@
+name: Feature request
+description: Suggest a landing page or interactive demo improvement
+labels: ['enhancement']
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What is difficult to understand, demonstrate, or do on the site today?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed experience
+      description: What should the page or demo do instead?
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: Which route, section, viewport, or interaction would change?
+
+  - type: checkboxes
+    id: library
+    attributes:
+      label: Repository check
+      options:
+        - label: This request changes the site or demo, not the public smocket API
+          required: true

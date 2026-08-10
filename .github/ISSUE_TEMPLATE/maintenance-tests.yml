@@ -1,0 +1,27 @@
+name: 'Maintenance: tests'
+description: Improve test coverage, fixtures, or browser verification
+labels: ['test']
+body:
+  - type: textarea
+    id: current
+    attributes:
+      label: Current state
+      description: Which behavior or route lacks useful verification today?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed coverage
+      description: What should the test prove, and at which level?
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: behavior
+    attributes:
+      label: Behavior
+      options:
+        - label: This issue is about verification and does not intentionally change user-visible behavior
+          required: true

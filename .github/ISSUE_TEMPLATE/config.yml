@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: smocket API or behavior
+    url: https://github.com/electrohyun/smocket/issues/new/choose
+    about: Report library API, routing, room, broadcast, or acknowledgement issues in the smocket repository
+  - name: Question or discussion
+    url: https://github.com/electrohyun/smocket/discussions/new?category=q-a
+    about: Ask about smocket usage or start a broader discussion
+  - name: Contributing guide
+    url: https://github.com/electrohyun/smocket-site/blob/main/CONTRIBUTING.md
+    about: Setup, verification, commit conventions, and pull requests

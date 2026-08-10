@@ -1,0 +1,35 @@
+.field {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  transform: translate(calc(var(--mx, 0px) * -0.3), calc(var(--my, 0px) * -0.3));
+  transition: transform 0.3s ease-out;
+}
+
+.stream {
+  position: absolute;
+  inset: -15%;
+  background: var(--star-tile) repeat;
+  background-size: 300px 300px;
+  animation: stream 7s linear infinite;
+}
+
+@keyframes stream {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: -300px 300px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stream {
+    animation: none;
+  }
+  .field {
+    transition: none;
+  }
+}
