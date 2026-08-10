@@ -1,3 +1,8 @@
+<img width="1200" src="https://github.com/user-attachments/assets/51d07a05-c4ef-4895-bbd5-d54cb40e9b8b" />
+<img width="1200" src="https://github.com/user-attachments/assets/1171d999-8e12-4503-a9d6-f5ed64e7537c" />
+<img width="1200" src="https://github.com/user-attachments/assets/24ffe375-2bca-4b90-aa47-380f7680b052" />
+
+
 # smocket-site
 
 The landing page and interactive demo for [smocket](https://github.com/electrohyun/smocket), an in-memory Socket.IO mock for testing rooms, broadcasts, acknowledgements, and multiple clients without opening a server.
