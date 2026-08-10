@@ -3,5 +3,3 @@
 allowBuilds:
   sharp: false
   unrs-resolver: false
-minimumReleaseAgeExclude:
-  - smocket@0.4.0
