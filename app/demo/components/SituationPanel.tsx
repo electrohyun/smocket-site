@@ -94,7 +94,9 @@ export default function SituationPanel({
               />
               <span className={styles.value}>{delayMs}ms</span>
             </div>
-            <span className={styles.label}>delay B</span>
+            <span className={styles.label}>
+              <span className={styles.adapter}>DelayingAdapter</span> · B
+            </span>
           </div>
         </>
       )}
