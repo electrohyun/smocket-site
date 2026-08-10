@@ -43,21 +43,34 @@
   --shadow-sm: var(--night-shadow-sm);
   --shadow-md: var(--night-shadow-md);
 
+  /* The strip the situation panel sits in, top right. It is a row of 48px discs
+     with a label under each, so 12px of offset + 48 + 5 + a line of label, and a
+     little air. Both views reserve it rather than guessing at 60px, which is
+     what they did when the panel was text pills and what left the labels lying
+     over the delivery record once it was not. */
+  --stage-top: 88px;
+  /* Under 900px the panel drops to the bottom instead, so the reserve does too. */
+  --stage-bottom: 20px;
+
   --page-sky: var(--night-sky);
   --page-stars: var(--night-stars);
   --sky-breathe: sky-breathe 11s ease-in-out infinite alternate;
 
-  /* One colour per socket, worn by its trace label and by everything it does on
-     screen. That shared colour is the link between the record and the picture
-     (기획 §9), so these are read from both and never inlined. None of them go
-     near the accent, which already means something else on this page. They sit
-     this high because the ground did: on the old near-black the darker mixes
-     cleared it easily, and the ground moved up, not down. */
-  --sock-a: #93c0ff;
-  --sock-b: #9dedb5;
-  --sock-c: #d3aaff;
+  /* The socket colours are not re-pointed here: they are night-tuned values that
+     only ever land on a night ground, so they live in globals.css `:root` and
+     this page inherits them. The landing's demo preview wears the same night and
+     reads the same three — one copy, for the same reason --night-* is one copy. */
 }
 
 a:hover {
   color: var(--text);
+}
+
+/* The panel is fixed to the bottom right below this width (SituationPanel), so the
+   reserve swaps ends with it. */
+@media (max-width: 900px) {
+  :root:root:root {
+    --stage-top: 60px;
+    --stage-bottom: 88px;
+  }
 }

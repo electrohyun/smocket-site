@@ -3,7 +3,7 @@
   grid-template-columns: minmax(0, 1fr) 380px;
   gap: 16px;
   height: 100dvh;
-  padding: 60px var(--pad) 20px;
+  padding: var(--stage-top) var(--pad) var(--stage-bottom);
 }
 
 .board {

@@ -1,0 +1,254 @@
+/* The frame is night whatever the switch says, for the same reason /demo is
+   (demo.css): what it holds is a stage, not a document, and turning it cream
+   would leave the drawing on paper. It is a window with the demo's weather
+   behind it — so it maps the same `--night-*` tokens onto the names the demo's
+   own components read, and the canvas and the delivery record re-theme without
+   knowing they have been moved onto the landing.
+
+   The socket colours are not re-pointed: they live in globals.css `:root` at
+   their night values, and this is a night ground, so they arrive correct. That
+   shared colour is what ties a label in the record to the thing it did on the
+   canvas beside it (기획 §9), and it now has to hold across two pages. */
+
+/* Nothing but a container to measure against. A container query styles a
+   container's descendants and never the container itself, so the frame — whose
+   own shape has to change when it gets narrow — cannot be the container. */
+.shell {
+  container-type: inline-size;
+}
+
+.frame {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  /* One cell, sized rather than left to its contents. `Canvas` is `height: 100%`,
+     and a percentage against a row that is itself sized by its contents has
+     nothing to resolve against — the canvas then falls back to its own width and
+     height *attributes*, which the resize handler sets from the box it just
+     measured. That is a loop, and it runs away: the canvas grew past the frame
+     and the drawing was cut off at the bottom border. `1fr` against a definite
+     block size is a definite row, which is what breaks it. */
+  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+  /* The seed was drawn for 1271×693 (~1.83:1), so 16/9 is within a hair of its
+     design space and the giraffe lands as it was authored (scripts/draw-seed.mjs). */
+  aspect-ratio: 16 / 9;
+  padding: clamp(10px, 1.4vw, 16px);
+  border: 1px solid var(--night-border);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--night-sky);
+  box-shadow: var(--night-shadow-md);
+  color: var(--night-text);
+
+  --panel: var(--night-panel);
+  --border: var(--night-border);
+  --text: var(--night-text);
+  --text-dim: var(--night-text-dim);
+  --code-bg: var(--night-code-bg);
+  --code-text: var(--night-code-text);
+  --code-border: var(--night-code-border);
+  --shadow-sm: var(--night-shadow-sm);
+  --shadow-md: var(--night-shadow-md);
+}
+
+/* The same two tilings the page's own sky uses, scoped to the frame and scrolling
+   with it rather than fixed behind everything. */
+.frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: var(--night-stars);
+  background-size:
+    400px 400px,
+    247px 247px;
+  background-position:
+    0 0,
+    123px 71px;
+  animation: var(--sky-breathe, none);
+}
+
+/* Canvas, record and guesses share the one cell: the record floats over the
+   drawing rather than taking width from it, which is what keeps the picture the
+   size it was drawn at. */
+.frame > * {
+  grid-area: 1 / 1;
+  z-index: 1;
+}
+
+/* The row has to be spelled out here for the same reason it is on `.frame`: the
+   canvas is `height: 100%`, and a percentage against a row sized by its contents
+   sends it back to its own width/height attributes — which the resize handler
+   writes from the box it just measured, and the two then chase each other. */
+.picture {
+  display: grid;
+  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+}
+
+/* Top left, over the drawing's own empty corner — the giraffe starts at 0.295 of
+   the width, so nothing of it is under this. The disc itself is IconButton's;
+   only where it sits is this file's business. */
+.replay {
+  z-index: 2;
+  justify-self: start;
+  align-self: start;
+}
+
+.frame canvas {
+  cursor: default;
+  /* `Canvas` sets `touch-action: none` so a drag draws instead of scrolling. Here
+     nothing takes a pointer, and a box this size holding the scroll would trap a
+     reader on their way past the section. */
+  touch-action: auto;
+}
+
+/* The record, down the right (where it sits on /demo, 기획 §12).
+ *
+ * Full height, and its own strip: it shared a column with the guesses and took
+ * whatever they left, so each guess that arrived shortened the record by a line
+ * — under the eyes of whoever was reading it. Nothing that happens in the round
+ * changes this box now. It scrolls instead, to its newest line.
+ *
+ * The drawing runs from 0.295 to 0.704 of the canvas width, so the strips either
+ * side of it are free and this stays inside the right one: an overlay wide enough
+ * to read comfortably would cover the giraffe's head, and the head is the half of
+ * the picture the guesses are about. It is narrower than the demo's own 380px
+ * column and the longer calls wrap over two lines, which is that price. */
+.frame > aside {
+  justify-self: end;
+  align-self: stretch;
+  width: min(29%, 300px);
+  min-height: 0;
+  /* A wheel over the record scrolls the page past it, which is what a reader on
+     a landing page means by it. */
+  pointer-events: none;
+}
+
+/* The guesses take the other free strip. On the left they can grow upward as far
+   as they like without the record ever knowing. */
+.feed {
+  justify-self: start;
+  align-self: end;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  width: min(28%, 240px);
+  pointer-events: none;
+}
+
+/* A block with inline spans rather than a flex row: at narrow widths these have
+   to collapse to one line with an ellipsis, and `text-overflow` needs a block to
+   act on. The spans sit on the baseline on their own. */
+.line {
+  max-width: 100%;
+  margin: 0;
+  padding: 5px 10px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  /* The record's ground, opaque. These were `--night-panel`, which is 82% of a
+     colour the night sky is already nearly made of — a bubble over the sky was
+     the sky. Everything that floats in this frame now sits on the one surface:
+     the record, the replay button, and these. */
+  background: var(--code-bg);
+  font-size: clamp(0.66rem, 1.1vw, 0.82rem);
+  line-height: 1.35;
+  box-shadow: var(--night-shadow-md);
+  animation: said 240ms ease-out both;
+}
+
+.line[data-socket='B'] {
+  --socket: var(--sock-b);
+}
+
+.line[data-socket='C'] {
+  --socket: var(--sock-c);
+}
+
+/* The win is outlined in the winner's own colour, which is the demo's rule for
+   saying who something reached (기획 §9). */
+.line[data-won='true'] {
+  border-color: var(--socket);
+  box-shadow:
+    0 0 0 1px var(--socket),
+    0 0 24px -8px var(--socket);
+}
+
+.who {
+  margin-right: 6px;
+  font-weight: 600;
+  color: var(--socket, var(--night-text-dim));
+}
+
+.mark {
+  margin-left: 6px;
+  font-weight: 700;
+  color: var(--socket);
+}
+
+@keyframes said {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Keyed on the frame, not on the viewport, because the frame is what the layout
+   actually depends on: the strip is a percentage of it, and the same frame at the
+   same width fails the same way whatever the window around it is doing.
+
+   Below this the strip is about 130px. Every guess wraps over three or four lines
+   and the stack grows taller than the frame, and the record is too narrow to be
+   a record — a delivery expression at that width is more line breaks than call.
+   So the overlay is given up: the frame turns tall, the record takes a row of its
+   own at full width, and the guesses stay over the drawing as the two most recent,
+   one line each. The picture gets slimmer, which is the direction the seed
+   forgives (scripts/draw-seed.mjs), and nothing is dropped to make room. */
+@container (max-width: 520px) {
+  .frame {
+    aspect-ratio: 4 / 5;
+    grid-template: minmax(0, 1fr) 38% / minmax(0, 1fr);
+    row-gap: 10px;
+  }
+
+  /* The record takes the second row outright; the guesses stay over the picture
+     in the first, so the two still never share a height. */
+  .frame > aside {
+    grid-area: 2 / 1;
+    justify-self: stretch;
+    width: auto;
+  }
+
+  .feed {
+    grid-area: 1 / 1;
+    width: 100%;
+  }
+
+  .line {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .line:nth-last-child(n + 3) {
+    display: none;
+  }
+
+}
+
+/* The component already answers this in JavaScript — it skips the replay and
+   arrives at the finished round in one pass. What is left here is the sky and the
+   arrival of each line, neither of which the component knows about. */
+@media (prefers-reduced-motion: reduce) {
+  .frame::before {
+    animation: none;
+  }
+  .line {
+    animation: none;
+  }
+}

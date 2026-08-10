@@ -13,7 +13,9 @@
  * winning guess beat simply does not fire when its player is the user.
  */
 
-import { WORD, type Label } from './room';
+/* From `game.ts`, not `room.ts`: the landing's preview runs this same script and
+   must not pull a socket server into its bundle (기획 §8). */
+import { WORD, type Label } from './game';
 
 export interface Beat {
   /** Fires once this many strokes have been drawn. */

@@ -3,7 +3,7 @@
   grid-template-columns: minmax(0, 1fr) 380px;
   gap: 16px;
   height: 100dvh;
-  padding: 60px var(--pad) 20px;
+  padding: var(--stage-top) var(--pad) var(--stage-bottom);
 }
 
 .board {
@@ -135,23 +135,6 @@
 .hint {
   color: var(--text-dim);
   font-size: 0.82rem;
-}
-
-/* Dev control (recorder export / replay again). Plain on purpose — 기획 3단계 §3. */
-.dev {
-  flex: none;
-  padding: 5px 12px;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: var(--panel);
-  color: var(--text-dim);
-  font-size: 0.74rem;
-  cursor: pointer;
-}
-
-.dev:hover {
-  color: var(--text);
-  border-color: var(--text-dim);
 }
 
 @media (max-width: 900px) {

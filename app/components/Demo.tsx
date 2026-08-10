@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { demo } from '@/content/landing';
+import DemoPreview from './DemoPreview';
 import styles from './Demo.module.css';
 
 export default function Demo() {
@@ -16,12 +17,24 @@ export default function Demo() {
         </h2>
         <p className="lead">{demo.desc}</p>
 
-        <Link href={demo.href} className={styles.entry}>
-          <span className={`dashed ${styles.shot}`}>
-            <span className="todo">{demo.shotTodo}</span>
-          </span>
-          <span className={`todo ${styles.label}`}>{demo.linkTodo}</span>
-        </Link>
+        {/* The frame used to be the door — the whole thing was the link, on the
+            reasoning that someone who has just watched the round end is already
+            pointing at the picture. It cannot be now: it holds a button, a button
+            inside an anchor is not valid HTML, and a reader who means to replay
+            and lands on /demo instead has been tricked by their own click. The
+            frame is the thing to watch and the line under it is the way in. */}
+        <div className={styles.entry}>
+          <DemoPreview />
+          <div className={styles.foot}>
+            <span className={styles.note}>{demo.preview.note}</span>
+            <Link href={demo.href} className={styles.cta}>
+              {demo.cta}
+              <span className={styles.arrow} aria-hidden="true">
+                →
+              </span>
+            </Link>
+          </div>
+        </div>
       </div>
     </section>
   );

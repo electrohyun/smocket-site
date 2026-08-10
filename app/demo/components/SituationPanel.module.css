@@ -4,47 +4,60 @@
   right: 20px;
   z-index: 20;
   display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+/* The slider's column, so its pill and label line up with the discs beside it. */
+.control {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-dim);
+}
+
+/* Disc height, so the row of labels is one line rather than a stagger. */
+.pill {
+  display: flex;
   align-items: center;
   gap: 10px;
-}
-
-.button {
-  padding: 6px 14px;
+  height: 48px;
+  padding: 0 16px;
   border: 1px solid var(--border);
   border-radius: 999px;
-  background: var(--panel);
-  color: var(--text-dim);
-  font-size: 0.76rem;
-  cursor: pointer;
+  background: var(--code-bg);
 }
 
-.button:hover {
-  color: var(--text);
-  border-color: var(--text-dim);
-}
-
-/* An engaged toggle wears the accent, so on/off reads at a glance. */
-.active {
+/* A delay in effect is an engaged control, and wears the accent like one. */
+.on {
   color: var(--accent);
   border-color: var(--accent);
 }
 
-.slider {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 5px 14px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: var(--panel);
-  color: var(--text-dim);
-  font-size: 0.74rem;
-  white-space: nowrap;
+.pillIcon {
+  flex: none;
+  width: 20px;
+  height: 20px;
 }
 
-.slider input {
-  width: 96px;
+.range {
+  width: 110px;
   accent-color: var(--accent);
+}
+
+.value {
+  min-width: 5ch;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.74rem;
+  text-align: right;
+}
+
+.label {
+  font-size: 0.68rem;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 @media (max-width: 900px) {
@@ -54,5 +67,10 @@
     right: 12px;
     flex-wrap: wrap;
     justify-content: flex-end;
+  }
+
+  /* The number is the part that has to survive; the track can give up width. */
+  .range {
+    width: 68px;
   }
 }

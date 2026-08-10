@@ -124,10 +124,26 @@ export const features = {
 export const demo = {
   id: 'demo',
   title: 'Three players, one page, no server.',
-  desc: 'One person draws, two watch, and the delivery record on the right shows which socket received each event.',
+  /* The delivery record is the section above this one's argument; saying it twice
+     would make the demo a second Trace. What this section has that Trace does not
+     is the other two people — so the copy is about them. */
+  desc: 'One person draws. The other two watch the lines arrive and say what they think it is. Every stroke and every guess is a socket.io event, routed here in the page.',
   href: '/demo',
-  shotTodo: 'TODO(hyun): demo screenshot',
-  linkTodo: 'TODO(hyun): copy needed — demo entry link',
+  cta: 'Take the pen',
+  preview: {
+    /* The drawing is a recording and the frame says so. The routing is not — it
+       runs again on every visit — so the sentence is about the round, not about
+       what the reader is watching happen to it.
+
+       No claim about speed: it plays at the speed it was drawn, so there is
+       nothing to declare, and a reader who has asked for reduced motion is shown
+       the finished round with no replay in it at all. */
+    note: 'A recorded round, replayed.',
+    replay: 'Play again',
+    /* The frame is a single image to a screen reader, so this has to carry what
+       the drawing and the guesses together say. */
+    alt: 'A recorded round of the drawing game: a giraffe appears stroke by stroke while two players guess — a horse, then a deer — until the spots land and the second player answers giraffe.',
+  },
 } as const;
 
 export const quickstart = {

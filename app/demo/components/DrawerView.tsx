@@ -1,6 +1,8 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import IconButton from '@/app/components/IconButton';
+import { CheckIcon, CopyIcon, RepeatIcon } from '@/app/components/icons';
 import { Bots } from '../lib/bots';
 import { play, type Playback } from '../lib/playback';
 import type { RecordedSession } from '../lib/record';
@@ -254,14 +256,24 @@ export default function DrawerView({ replay = false }: { replay?: boolean }) {
                 ? 'Round over. The drawing is stroke by stroke, the record delivery by delivery.'
                 : 'Draw. The record on the right shows who each stroke reached.'}
           </p>
+          {/* `copy session` was a deliberately plain dev control (기획 3단계 §3):
+              it exports the recording, and nobody visiting the demo wants it. It
+              is a disc now on 기현's instruction — the panel's controls became
+              discs and this one was named among the marks nobody could find. */}
           {replay ? (
-            <button type="button" className={styles.dev} onClick={() => setRunId((n) => n + 1)}>
-              replay again
-            </button>
+            <IconButton
+              icon={RepeatIcon}
+              label="again"
+              title="play the round again"
+              onClick={() => setRunId((n) => n + 1)}
+            />
           ) : (
-            <button type="button" className={styles.dev} onClick={copySession}>
-              {copied ? 'copied' : 'copy session'}
-            </button>
+            <IconButton
+              icon={copied ? CheckIcon : CopyIcon}
+              label={copied ? 'copied' : 'session'}
+              title={copied ? 'session copied' : 'copy the session'}
+              onClick={copySession}
+            />
           )}
         </div>
       </section>

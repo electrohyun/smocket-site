@@ -66,6 +66,17 @@
     linear-gradient(180deg, #1e1b3a 0%, #232043 46%, #2a2450 100%);
   --night-stars: url('/star-tile-night.svg'), url('/star-tile-night.svg');
 
+  /* One colour per socket, worn by its trace label and by everything it does on
+     screen. That shared colour is the link between the record and the picture
+     (기획 §9), so these are read from both and never inlined. None of them go near
+     the accent, which already means something else. They are tuned against the
+     night ground and only ever appear on one: /demo always, and the landing's
+     demo preview, which is night whatever the switch says. Here rather than in
+     demo.css because both now read them and one copy is the whole point. */
+  --sock-a: #93c0ff;
+  --sock-b: #9dedb5;
+  --sock-c: #d3aaff;
+
   --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
     Arial, sans-serif;
 

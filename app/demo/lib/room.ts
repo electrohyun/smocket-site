@@ -1,6 +1,7 @@
 import { connect, Server } from 'smocket';
 import { TraceAdapter } from './trace-adapter';
 import { TraceStore } from './trace';
+import { DRAWER, LABELS, ROOM, WORD, type Label } from './game';
 import type { StrokePayload } from './stroke';
 
 /* One round of the drawing game, as socket traffic. There is no scoring, no
@@ -13,14 +14,11 @@ import type { StrokePayload } from './stroke';
    its delivery cannot drift apart unnoticed (계획서 §1-1 규칙 4). */
 
 export const DEMO_URL = 'http://localhost:4000';
-export const ROOM = 'room-1';
-export const WORD = 'giraffe';
 
-/** A draws, B and C guess. Fixed for one round; there is no rotation (기획 §1). */
-export const LABELS = ['A', 'B', 'C'] as const;
-export type Label = (typeof LABELS)[number];
-
-export const DRAWER: Label = 'A';
+/* The round's constants come from `game.ts` and are re-exported here, so every
+   existing `from './room'` still finds them. They were moved because the landing
+   preview needs the bot script and this file's first line is smocket. */
+export { DRAWER, LABELS, ROOM, WORD, type Label } from './game';
 
 export interface Round {
   trace: TraceStore;

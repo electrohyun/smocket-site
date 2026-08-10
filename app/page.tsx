@@ -20,8 +20,13 @@ export default function Home() {
         <Hero />
         <Trace />
         <Pain />
-        <Features />
+        {/* Directly after Pain, which ends on "a second player was out of reach":
+            the demo is that sentence answered, and reading the four feature cards
+            in between made the answer arrive long after the question. Features
+            explains how it holds up, which is a thing to want only once the
+            reader has seen it hold up. */}
         <Demo />
+        <Features />
         <Quickstart />
         <Scope />
       </main>
