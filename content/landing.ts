@@ -13,7 +13,7 @@ export const hero = {
   h1Accent: 'without a server.',
   sub: "smocket reimplements socket.io's rooms, broadcasts, and acknowledgements in memory — and every release is verified against the real library.",
   tagline: 'Sweet setup, rocket speed.',
-  chips: ['MIT', 'v0.4.0', 'dual-run CI'],
+  chips: ['v0.4.1', 'dual-run CI', 'browser-tested'],
   ctas: [
     { label: 'Read the docs', href: `${REPO_URL}#readme`, primary: true },
     { label: 'View on GitHub', href: REPO_URL, primary: false },
@@ -105,7 +105,7 @@ const a = connect('http://localhost:3000');
 const b = connect('http://localhost:3000');
 const c = connect('http://localhost:3000');`,
   },
-  caption: '190 lines of hand-written mock, and still only one player could connect.',
+  caption: 'One handler map, and still nowhere for the second player to go.',
 } as const;
 
 export const features = {
@@ -157,7 +157,7 @@ export const demo = {
 
 export const quickstart = {
   id: 'quickstart',
-  title: 'Three steps.',
+  title: 'Switch in three steps.',
   steps: [
     {
       n: 1,
@@ -167,46 +167,47 @@ export const quickstart = {
     },
     {
       n: 2,
-      title: 'Change the import',
-      code: `- import { Server } from 'socket.io';
-+ import { Server } from 'smocket';`,
+      title: 'Alias the client',
+      code: `// vitest.config.ts
+import { defineConfig } from 'vitest/config';
+
+export default defineConfig({
+  resolve: {
+    alias: { 'socket.io-client': 'smocket' },
+  },
+});`,
       isTodo: false,
     },
     {
       n: 3,
-      title: 'Run the test',
+      title: 'Run your app code',
       code: `import { expect, it } from 'vitest';
-import { connect, Server } from 'smocket';
+import { Server, type ServerSocketContract } from 'smocket';
+import { joinChat } from '../src/chat';
 
-const received = (client, event) =>
-  new Promise((resolve) => client.once(event, resolve));
+it('delivers a room message to the other member', async () => {
+  const url = 'http://localhost:3000';
+  const io = new Server(url);
 
-it('a room broadcast reaches the room and excludes the sender', async () => {
-  const io = new Server('http://localhost:3000');
+  io.on('connection', (socket: ServerSocketContract) => {
+    socket.on('join', (room: string, ack: () => void) => {
+      void socket.join(room);
+      ack();
+      socket.on('message', (text: string) => {
+        socket.to(room).emit('message', text);
+      });
+    });
+  });
 
-  const a = connect('http://localhost:3000');
-  const b = connect('http://localhost:3000');
-  const c = connect('http://localhost:3000');
+  // joinChat still imports io from socket.io-client.
+  const a = joinChat(url, 'alice', 'general');
+  const b = joinChat(url, 'bob', 'general');
+  await Promise.all([a.ready, b.ready]);
 
-  const socketA = await io.nextConnection();
-  const socketB = await io.nextConnection();
-  const socketC = await io.nextConnection();
+  const heard = new Promise((resolve) => b.onMessage(resolve));
+  a.send('hello');
 
-  await socketA.join('room-1');
-  await socketB.join('room-1');
-  await socketC.join('room-1');
-
-  let aReceived = false;
-  a.on('stroke', () => (aReceived = true));
-  const onB = received(b, 'stroke');
-  const onC = received(c, 'stroke');
-
-  // socket.to(room) delivers to the room and excludes the sender.
-  socketA.to('room-1').emit('stroke', { x: 1, y: 2 });
-
-  expect(await onB).toEqual({ x: 1, y: 2 });
-  expect(await onC).toEqual({ x: 1, y: 2 });
-  expect(aReceived).toBe(false);
+  await expect(heard).resolves.toBe('hello');
 });`,
       isTodo: false,
     },
@@ -220,7 +221,8 @@ export const scope = {
     'Rooms and namespaces',
     'Broadcast, with and without exclusions',
     'Targeted emits by socket id',
-    'Acknowledgements',
+    'Acknowledgements, including timeouts',
+    'Middleware, handshake, and per-socket data',
     'Disconnect cleanup',
   ],
   cannotTitle: 'What a mock cannot have',
