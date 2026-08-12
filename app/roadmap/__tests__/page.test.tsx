@@ -8,6 +8,9 @@ import RoadmapPage from '../page';
 
 const markup = renderToStaticMarkup(<RoadmapPage />);
 const stylesheet = readFileSync(new URL('../page.module.css', import.meta.url), 'utf8');
+const journeyStyles = stylesheet.slice(stylesheet.indexOf('/* Vertical journey revision'));
+const desktopJourneyStyles = journeyStyles.slice(0, journeyStyles.indexOf('@media'));
+const mobileJourneyStyles = journeyStyles.slice(journeyStyles.indexOf('@media (max-width: 720px)'));
 
 describe('/roadmap', () => {
   it('opens as a reading-first project-direction report', () => {
@@ -76,6 +79,35 @@ describe('/roadmap', () => {
   it('removes journey motion when the reader requests reduced motion', () => {
     expect(stylesheet).toMatch(/@media \(prefers-reduced-motion: reduce\)/);
     expect(stylesheet).toMatch(/[.]journeyNavTrack span,[\s\S]*transition: none !important/);
+  });
+
+  it('keeps the desktop journey navigator out of the reading column', () => {
+    expect(desktopJourneyStyles).toMatch(/[.]journeyLayout\s*{[^}]*display: block/);
+    expect(desktopJourneyStyles).toMatch(/[.]journeyNav\s*{[^}]*display: grid/);
+    expect(desktopJourneyStyles).toMatch(/[.]journeyNav\s*{[^}]*grid-template-columns:/);
+    expect(desktopJourneyStyles).toMatch(/[.]journeyNav\s*{[^}]*position: sticky/);
+  });
+
+  it('uses a compact section rhythm with headings on the content baseline', () => {
+    expect(desktopJourneyStyles).toMatch(/[.]section\s*{[^}]*min-height: 0/);
+    expect(desktopJourneyStyles).toMatch(/[.]sectionHeading\s*{[^}]*display: block/);
+    expect(desktopJourneyStyles).toMatch(
+      /[.]disclosureGrid\s*{[^}]*grid-template-columns: 1fr 1fr/,
+    );
+  });
+
+  it('lifts interactive panels without requiring motion', () => {
+    expect(journeyStyles).toMatch(/stageCard:hover[\s\S]*transform: translateY\(-4px\)/);
+    expect(journeyStyles).toMatch(/focus-visible[\s\S]*outline:/);
+    expect(journeyStyles).toMatch(
+      /prefers-reduced-motion: reduce[\s\S]*transform: none !important/,
+    );
+  });
+
+  it('starts the mobile journey tabs at the first stop', () => {
+    expect(mobileJourneyStyles).toMatch(
+      /[.]journeyNav ol\s*{[^}]*justify-content: flex-start/,
+    );
   });
 
   it('publishes route metadata', () => {

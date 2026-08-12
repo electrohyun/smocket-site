@@ -694,33 +694,37 @@
 }
 
 .journeyLayout {
-  display: grid;
-  grid-template-columns: 190px minmax(0, 1fr);
-  align-items: start;
+  position: relative;
+  display: block;
   border-top: 1px solid var(--border);
 }
 
 .journeyNav {
   position: sticky;
-  top: 54px;
-  z-index: 5;
-  align-self: start;
-  margin: 42px 0 0 24px;
-  padding: 20px 18px 22px;
+  top: 12px;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: minmax(150px, 0.7fr) minmax(0, 2fr);
+  gap: 20px;
+  width: calc(100% - 32px);
+  align-items: center;
+  margin: 0 auto;
+  padding: 12px 16px;
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 14px;
   background: color-mix(in srgb, var(--panel) 94%, transparent);
-  box-shadow: var(--shadow-sm);
-  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(16px);
+  transform: translateY(18px);
 }
 
 .journeyNavHeader {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 10px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid var(--border);
+  padding-right: 18px;
+  border-right: 1px solid var(--border);
 }
 
 .journeyNavHeader p,
@@ -729,7 +733,7 @@
 }
 
 .journeyNavHeader p {
-  max-width: 16ch;
+  max-width: none;
   color: var(--text);
   font-size: 0.69rem;
   font-weight: 800;
@@ -745,10 +749,10 @@
 
 .journeyNavTrack {
   position: absolute;
-  top: 74px;
-  bottom: 30px;
-  left: 25px;
-  width: 2px;
+  right: 16px;
+  bottom: -1px;
+  left: 16px;
+  height: 2px;
   overflow: hidden;
   border-radius: 999px;
   background: var(--border);
@@ -756,64 +760,52 @@
 
 .journeyNavTrack span {
   position: absolute;
-  inset: 0 0 auto;
-  height: calc(var(--journey-progress) * 100%);
+  inset: 0 auto 0 0;
+  width: calc(var(--journey-progress) * 100%);
   border-radius: inherit;
   background: var(--accent);
-  transition: height 0.18s linear;
+  transition: width 0.18s linear;
 }
 
 .journeyNav ol {
-  display: grid;
+  display: flex;
+  justify-content: flex-end;
   gap: 4px;
-  margin: 15px 0 0;
+  margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .journeyNav a {
   position: relative;
-  display: grid;
-  grid-template-columns: 24px minmax(0, 1fr);
+  display: inline-flex;
   gap: 8px;
   min-height: 42px;
   align-items: center;
-  border-radius: 7px;
+  padding: 0 11px;
+  border-radius: 999px;
   color: var(--text-dim);
   font: 700 0.69rem/1.25 var(--font-mono), monospace;
 }
 
 .journeyNav a::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 1px;
-  width: 10px;
-  height: 10px;
-  border: 2px solid var(--border);
-  border-radius: 50%;
-  background: var(--panel);
-  transform: translateY(-50%);
-  transition:
-    border-color 0.16s ease,
-    background 0.16s ease,
-    transform 0.16s ease;
+  display: none;
 }
 
 .journeyNav a span {
-  padding-left: 5px;
+  padding-left: 0;
   color: var(--text-dim);
   font-size: 0.61rem;
 }
 
 .journeyNav a[aria-current='step'] {
+  background: color-mix(in srgb, var(--accent) 15%, var(--panel));
   color: var(--text);
 }
 
-.journeyNav a[aria-current='step']::before {
-  border-color: var(--accent-ink);
-  background: var(--accent);
-  transform: translateY(-50%) scale(1.18);
+.journeyNav a:hover {
+  background: color-mix(in srgb, var(--accent) 10%, var(--panel));
+  color: var(--text);
 }
 
 .journeyRoute {
@@ -826,7 +818,7 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 43px;
+  left: 34px;
   width: 2px;
   background: linear-gradient(
     180deg,
@@ -840,8 +832,8 @@
 
 .section {
   position: relative;
-  min-height: 620px;
-  padding: 128px 58px 146px 108px;
+  min-height: 0;
+  padding: 92px clamp(28px, 5vw, 68px) 104px 68px;
 }
 
 .section + .section {
@@ -851,8 +843,8 @@
 .section::before {
   content: '';
   position: absolute;
-  top: 137px;
-  left: 34px;
+  top: 101px;
+  left: 25px;
   z-index: 1;
   width: 20px;
   height: 20px;
@@ -867,14 +859,20 @@
 .section::after {
   content: '';
   position: absolute;
-  top: 146px;
-  left: 53px;
-  width: 39px;
+  top: 110px;
+  left: 44px;
+  width: 16px;
   border-top: 1px solid var(--accent);
 }
 
 .sectionHeading {
-  margin-bottom: 42px;
+  display: block;
+  margin-bottom: 30px;
+}
+
+.sectionHeading > p {
+  margin-bottom: 12px;
+  padding-top: 0;
 }
 
 .sectionHeading h2 {
@@ -883,33 +881,35 @@
 
 .sectionHeading div > p {
   max-width: 66ch;
-  margin-top: 10px;
+  margin-top: 8px;
   font-size: 1rem;
 }
 
 .guaranteeStatement {
   max-width: 790px;
-  padding-block: 28px;
+  padding-block: 20px;
   font-size: clamp(1.25rem, 2.5vw, 1.72rem);
 }
 
 .boundaryGrid {
-  gap: 20px;
-  margin-top: 40px;
+  gap: 16px;
+  margin-top: 28px;
 }
 
 .boundaryPanel {
-  padding: 28px;
+  padding: 24px;
+  background: color-mix(in srgb, var(--panel) 97%, transparent);
+  box-shadow: var(--shadow-sm);
 }
 
 .disclosureGrid {
-  grid-template-columns: 1fr;
-  gap: 16px;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
 }
 
 .disclosure summary {
-  min-height: 96px;
-  padding: 20px 22px;
+  min-height: 82px;
+  padding: 17px 19px;
 }
 
 .disclosure summary strong {
@@ -923,7 +923,7 @@
 }
 
 .disclosureBody {
-  padding: 22px 24px 25px;
+  padding: 18px 20px 21px;
 }
 
 .disclosureBody > p {
@@ -932,8 +932,8 @@
 }
 
 .boundaryNote {
-  margin-top: 30px;
-  padding: 20px 22px;
+  margin-top: 22px;
+  padding: 17px 19px;
   font-size: 0.89rem;
 }
 
@@ -959,8 +959,8 @@
   position: relative;
   display: block;
   width: calc(50% - 54px);
-  min-height: 250px;
-  margin: 0 auto 98px 0;
+  min-height: 210px;
+  margin: 0 auto 64px 0;
 }
 
 .releaseFlow > li:nth-child(even),
@@ -1028,7 +1028,7 @@
 
 .stageCard,
 .stageDisclosure {
-  min-height: 250px;
+  min-height: 210px;
   height: auto;
   border-radius: 14px;
   box-shadow: var(--shadow-sm);
@@ -1036,8 +1036,8 @@
 
 .stageCard,
 .stageDisclosure summary {
-  min-height: 250px;
-  padding: 26px;
+  min-height: 210px;
+  padding: 23px;
 }
 
 .stageDisclosure[open] summary {
@@ -1045,7 +1045,7 @@
 }
 
 .stageDisclosure > p {
-  padding: 22px 26px 26px;
+  padding: 19px 23px 23px;
   font-size: 0.8rem;
 }
 
@@ -1065,7 +1065,7 @@
 .nextRoute {
   display: block;
   margin-top: auto;
-  padding-top: 24px;
+  padding-top: 18px;
   color: var(--text-dim);
   font: 650 0.7rem/1.45 var(--font-mono), monospace;
 }
@@ -1104,7 +1104,7 @@
 }
 
 .releaseFigure figcaption {
-  margin-top: 8px;
+  margin-top: 2px;
   padding: 18px 22px;
   border-left: 3px solid var(--accent);
   background: var(--bg-tint);
@@ -1112,13 +1112,14 @@
 }
 
 .releaseRule {
-  margin-top: 32px;
+  margin-top: 20px;
   padding: 20px 22px;
 }
 
 .dependencyList {
   display: grid;
-  gap: 18px;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
   border-block: 0;
 }
 
@@ -1132,49 +1133,107 @@
 }
 
 .dependencyList .disclosure:nth-child(4) {
-  margin-left: 38px;
+  margin-left: 0;
   border-style: dashed;
   background: var(--bg-tint);
 }
 
 .changeSteps {
   grid-template-columns: 1fr 1fr;
-  gap: 18px;
+  gap: 12px;
 }
 
 .changeSteps li {
-  min-height: 174px;
-  padding: 24px;
+  min-height: 146px;
+  padding: 21px;
 }
 
 .changeSteps p {
-  margin-top: 26px;
+  margin-top: 18px;
   font-size: 0.9rem;
 }
 
 .sourcePanel {
-  margin-top: 42px;
-  padding: 30px;
+  margin-top: 28px;
+  padding: 26px;
+}
+
+.boundaryPanel,
+.disclosure,
+.stageCard,
+.stageDisclosure,
+.changeSteps li,
+.sourcePanel,
+.sourceNote {
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease;
+}
+
+.boundaryPanel:hover,
+.disclosure:hover,
+.stageCard:hover,
+.stageDisclosure:hover,
+.changeSteps li:hover,
+.sourcePanel:hover,
+.sourceNote:hover {
+  border-color: color-mix(in srgb, var(--accent) 70%, var(--border));
+  box-shadow: var(--shadow-md);
+  transform: translateY(-4px);
+}
+
+.disclosure:focus-within,
+.stageDisclosure:focus-within {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-md);
+}
+
+.journeyNav a:focus-visible,
+.disclosure summary:focus-visible,
+.stageDisclosure summary:focus-visible,
+.inlineLinks a:focus-visible,
+.sourceLinks a:focus-visible,
+.releaseRule a:focus-visible {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: 3px;
+}
+
+.inlineLinks a,
+.sourceLinks a,
+.releaseRule a {
+  transition:
+    color 0.16s ease,
+    transform 0.16s ease;
+}
+
+.inlineLinks a:hover,
+.sourceLinks a:hover,
+.releaseRule a:hover {
+  color: var(--text);
+  transform: translateX(3px);
 }
 
 @media (max-width: 900px) {
-  .journeyLayout {
-    grid-template-columns: 154px minmax(0, 1fr);
-  }
-
   .journeyNav {
-    margin-left: 16px;
-    padding-inline: 14px;
+    grid-template-columns: minmax(130px, 0.6fr) minmax(0, 2fr);
+    gap: 10px;
+    width: calc(100% - 24px);
+    margin-inline: auto;
+    padding-inline: 12px;
   }
 
   .journeyNav a {
-    grid-template-columns: 20px minmax(0, 1fr);
+    gap: 5px;
+    padding-inline: 7px;
     font-size: 0.64rem;
   }
 
   .section {
     padding-right: 34px;
-    padding-left: 88px;
+    padding-left: 68px;
   }
 
   .boundaryGrid {
@@ -1191,16 +1250,22 @@
     position: sticky;
     top: 0;
     z-index: 20;
+    display: block;
+    width: 100%;
     margin: 0;
     padding: 10px 14px 9px;
     border-width: 0 0 1px;
     border-radius: 0;
     background: color-mix(in srgb, var(--panel) 94%, transparent);
+    transform: none;
   }
 
   .journeyNavHeader {
     align-items: center;
+    padding-right: 0;
     padding-bottom: 7px;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
   }
 
   .journeyNavHeader p {
@@ -1225,6 +1290,7 @@
 
   .journeyNav ol {
     display: flex;
+    justify-content: flex-start;
     gap: 2px;
     margin-top: 6px;
     overflow-x: auto;
@@ -1268,24 +1334,22 @@
 
   .section {
     min-height: 0;
-    padding: 96px 18px 126px 64px;
+    padding: 72px 18px 88px 64px;
   }
 
   .section::before {
-    top: 105px;
+    top: 81px;
     left: 16px;
   }
 
   .section::after {
-    top: 114px;
+    top: 90px;
     left: 35px;
     width: 20px;
   }
 
   .sectionHeading {
-    grid-template-columns: 1fr;
-    gap: 9px;
-    margin-bottom: 32px;
+    margin-bottom: 24px;
   }
 
   .sectionHeading > p {
@@ -1301,7 +1365,7 @@
   }
 
   .disclosure summary {
-    min-height: 88px;
+    min-height: 82px;
     padding: 17px;
   }
 
@@ -1320,7 +1384,7 @@
     display: block;
     width: calc(100% - 50px);
     min-height: 0;
-    margin: 0 0 76px 50px;
+    margin: 0 0 54px 50px;
   }
 
   .releaseFlow > li:not(:last-child)::after,
@@ -1345,7 +1409,7 @@
   .stageCard,
   .stageDisclosure,
   .stageDisclosure summary {
-    min-height: 222px;
+    min-height: 196px;
   }
 
   .stageCard,
@@ -1359,9 +1423,11 @@
   }
 
   .dependencyList .disclosure:nth-child(4) {
-    margin-left: 18px;
+    margin-left: 0;
   }
 
+  .disclosureGrid,
+  .dependencyList,
   .changeSteps,
   .sourcePanel,
   .sourceLinks {
@@ -1375,7 +1441,18 @@
 
 @media (prefers-reduced-motion: reduce) {
   .journeyNavTrack span,
-  .journeyNav a::before {
+  .journeyNav a::before,
+  .boundaryPanel,
+  .disclosure,
+  .stageCard,
+  .stageDisclosure,
+  .changeSteps li,
+  .sourcePanel,
+  .sourceNote,
+  .inlineLinks a,
+  .sourceLinks a,
+  .releaseRule a {
     transition: none !important;
+    transform: none !important;
   }
 }
