@@ -1,7 +1,9 @@
 import Link from 'next/link';
-import { roadmap, roadmapLinks, type RoadmapDisclosure } from '../../content/roadmap';
+import { roadmap, roadmapLinks } from '../../content/roadmap';
 import Footer from '../components/Footer';
 import ThemeToggle from '../components/ThemeToggle';
+import ReleaseStage from './components/ReleaseStage';
+import RoadmapDisclosure from './components/RoadmapDisclosure';
 import styles from './page.module.css';
 
 function SectionHeading({
@@ -21,32 +23,6 @@ function SectionHeading({
         <p>{description}</p>
       </div>
     </div>
-  );
-}
-
-function Disclosure({ item }: { item: RoadmapDisclosure }) {
-  return (
-    <details className={styles.disclosure}>
-      <summary>
-        <span>
-          <strong>{item.title}</strong>
-          <small>{item.summary}</small>
-        </span>
-        <span className={styles.disclosureMark} aria-hidden="true">
-          +
-        </span>
-      </summary>
-      <div className={styles.disclosureBody}>
-        <p>{item.detail}</p>
-        <div className={styles.inlineLinks}>
-          {item.links.map((link) => (
-            <a key={link.href} href={link.href}>
-              {link.label} <span aria-hidden="true">↗</span>
-            </a>
-          ))}
-        </div>
-      </div>
-    </details>
   );
 }
 
@@ -127,7 +103,7 @@ export default function RoadmapPage() {
             />
             <div className={styles.disclosureGrid}>
               {roadmap.classifications.map((item) => (
-                <Disclosure key={item.id} item={item} />
+                <RoadmapDisclosure key={item.id} item={item} group="classification-outcome" />
               ))}
             </div>
             <p className={styles.boundaryNote}>
@@ -146,29 +122,7 @@ export default function RoadmapPage() {
             <figure className={styles.releaseFigure}>
               <ol className={styles.releaseFlow}>
                 {roadmap.releaseStages.map((stage, index) => (
-                  <li
-                    key={stage.id}
-                    className={stage.conditional ? styles.conditionalStage : undefined}
-                    data-step={String(index + 1).padStart(2, '0')}
-                  >
-                    {stage.detail ? (
-                      <details className={styles.stageDisclosure}>
-                        <summary>
-                          <span className={styles.stageEyebrow}>{stage.eyebrow}</span>
-                          <strong>{stage.label}</strong>
-                          <small>{stage.summary}</small>
-                          <span className={styles.stagePrompt}>Read release rule</span>
-                        </summary>
-                        <p>{stage.detail}</p>
-                      </details>
-                    ) : (
-                      <div className={styles.stageCard}>
-                        <span className={styles.stageEyebrow}>{stage.eyebrow}</span>
-                        <strong>{stage.label}</strong>
-                        <small>{stage.summary}</small>
-                      </div>
-                    )}
-                  </li>
+                  <ReleaseStage key={stage.id} stage={stage} index={index} />
                 ))}
               </ol>
               <figcaption>
@@ -194,7 +148,7 @@ export default function RoadmapPage() {
             />
             <div className={styles.dependencyList}>
               {roadmap.dependencies.map((item) => (
-                <Disclosure key={item.id} item={item} />
+                <RoadmapDisclosure key={item.id} item={item} />
               ))}
             </div>
           </section>
