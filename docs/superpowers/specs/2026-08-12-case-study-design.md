@@ -1,170 +1,275 @@
-# Interactive application case study design
+# Comparison-first application case study design
 
-## Purpose
+## Purpose and correction
 
-Add an English `/case-study` page to `smocket-site` that presents the recorded
-moderated chat-room comparison from `electrohyun/smocket#218` as an interactive
-form. The static Markdown case study remains the authoritative interpretation;
-the site must preserve its observations, evidence boundaries, qualifications,
-and limitations without adding conclusions or marketing metrics.
+Build `/case-study` as an interactive technical report answering the research
+question in `electrohyun/smocket#218`: for one selected application workflow,
+what setup, test-support code, mock behavior, workarounds, debugging paths, and
+maintenance surfaces does each approach require?
 
-The page compares Real Socket.IO 4.8.3, exact published Smocket 0.4.2, and a
-handwritten mock. It must state that all three produced the same observable
-result for the selected workflow, while making clear that this is neither an
-overall Socket.IO compatibility proof nor a transport comparison.
+The first implementation made the shared transcript its dominant interaction.
+That interaction did not explain how Real Socket.IO, exact published Smocket,
+and the handwritten mock differ. This revision makes owned test-support surface
+and implementation evidence the page's main subject. The common observation is
+still essential, but it becomes the behavioral baseline against which the three
+approaches are compared.
 
-## Source and reproducibility
+The report must not rank the approaches, convert source lines into a
+productivity score, imply a transport comparison, claim historical reliability,
+or extend the result beyond this workflow. The static Markdown case study
+remains the authoritative interpretation.
 
-Vendor the exact bytes of `case-studies/chat-room/observations.json` from Smocket
-commit `fa90e07e272c7fd0db64ebfd73cbb104664ddb81`. Vendoring is preferred to a
-build-time fetch because the existing site build has no network preparation
-step, and a checked-in artifact makes local builds and previews deterministic.
+## Immutable evidence and two source revisions
 
-The expected observation SHA-256 is
+Two immutable Smocket revisions serve different purposes and must not be
+conflated:
+
+- Observation and compared source revision:
+  `fa90e07e272c7fd0db64ebfd73cbb104664ddb81`.
+- Authoritative Markdown publication revision:
+  `6a17477beef33fb014ab629b914d80a6f144b31b`.
+
+The observation JSON remains vendored byte-for-byte and must retain SHA-256
 `414b07fb27b70cc836d8b71d78d63a0f530d2cae28dbd32b60e77462a64f4bad`.
-The expected combined application-source SHA-256 recorded inside the artifact
-is `e3884c42af5987b4db154c7f13538054e405e12b496803b8d321ac9a409b62d5`.
+The combined shared application source hash remains
+`e3884c42af5987b4db154c7f13538054e405e12b496803b8d321ac9a409b62d5`.
 
-A repository script must validate the vendored file before production builds.
-It will check:
+Vendor these exact compared source files from the observation revision:
 
-- the exact file SHA-256;
-- schema version 1 and case-study identifier `moderated-chat-room`;
-- the required environment, reproduction, application, target, result,
-  observation, and claim-boundary shapes;
-- the recorded combined application-source hash;
-- the exact three target identifiers;
-- passed assertions and matching repeated runs for each target; and
-- deep equality of all three structured observations.
+- shared `examples/chat-room/app.js`, `scenario.js`, and `assertions.js`;
+- Real Socket.IO `bootstrap.js`;
+- published Smocket `bootstrap.js`;
+- handwritten `bootstrap.js` and `handwritten-socket-io.js`.
 
-The validator must be reusable from Vitest. A `prebuild` script will run it so a
-hash or schema mismatch prevents deployment rather than rendering potentially
-misleading evidence. The page performs no runtime request to GitHub or `main`.
+The build validator must verify every vendored source file against the
+corresponding per-file SHA-256 recorded in `observations.json`. Source excerpts
+must be derived from these vendored files, never copied into JSX or fetched at
+runtime. Direct links must use the same immutable revision. The authoritative
+Markdown link alone uses its publication revision.
 
-## Information architecture
+The existing semantic validation remains: schema version, case-study ID,
+application hash, exact targets, passing assertions, repeat matches, and equal
+structured observations. Any mismatch is a build failure.
 
-The page follows the landing page's established cream/night space palette,
-JetBrains Mono details, bordered cards, code surfaces, global spacing, theme
-toggle, footer, and responsive breakpoints. It consists of these sections:
+## Report hierarchy
 
-1. **Hero and boundary.** Introduce “one workflow, three approaches, the same
-   observable result.” State prominently that the static Markdown document is
-   authoritative and this page is an interactive expression of its pinned
-   observation data. Link to the static document and source record.
-2. **Approach comparison.** Show three target cards derived from the JSON:
-   exact dependencies, bootstrap source lines, additional authored mock source,
-   assertion outcome, and repeat-match result. Accompany these facts with the
-   static document's target-ownership explanations: only the real target uses
-   a local HTTP transport; the published package uses an in-memory bootstrap;
-   the handwritten target has no dependency or port but owns its mock.
-3. **Shared observable result.** Present one shared transcript rather than
-   repeating identical copies per target. A target selector demonstrates that
-   each target maps to the same record and keeps the selected target's label
-   visible. Participant and observation-category filters make the ten transcript
-   lines understandable without changing their order or wording.
-4. **Structured observation explorer.** Let readers switch among joins,
-   welcomes, room message, authorization, multi-room announcement, and departure.
-   Each view is rendered from the canonical observation object and describes
-   recipients, acknowledgements, non-receipt, or rejection explicitly.
-5. **Evidence lenses.** Give Fidelity, Reliability, and Productivity separate
-   cards. Each repeats the static document's boundary: selected-workflow
-   agreement only; one repeatable snapshot rather than historical reliability;
-   and descriptive source surfaces rather than a productivity score.
-6. **Owned surfaces.** Compare dependency installation, bootstrap, server/port
-   ownership, and authored source. Preserve neutral or unfavorable findings:
-   the handwritten target has simpler dependency and port setup, while the real
-   target supplies reference behavior without application-owned mock logic.
-   Any future-maintenance statement is explicitly labeled an inference.
-7. **Limitations.** Retain scenario selection, recorded-version and environment
-   constraints, handwritten-boundary author judgment, absence of transport
-   comparison, and limits on generalization and historical reliability.
-8. **Reproduce and provenance.** Derive commands, environment, source revision,
-   target versions, recorded timestamp, file hashes, observation hash, and
-   combined application hash from the validated data plus the one pinned source
-   constant. Provide copy controls for commands and hashes where useful.
+### Report header and abstract
 
-Add a `Case study` link to the landing footer and `/case-study` to the sitemap.
-The case-study route uses the shared footer and theme toggle, while leaving the
-landing-only reading progress indicator on the landing page.
+Use a compact document header rather than a marketing hero. It contains:
 
-## Components and data flow
+- `Chat-room application case study` as the title;
+- a one-paragraph abstract stating that observable behavior matched while owned
+  test-support surfaces differed;
+- recorded date, environment, three exact dependency versions, and report
+  status;
+- a prominent authoritative-document link using the verified publication
+  revision; and
+- the claim boundary from the observation JSON.
 
-Keep the route's content and behavior locally bounded under `app/case-study/`.
-The server page loads the vendored JSON through a typed data module and derives
-the presentation model. Static interpretation copy lives in a dedicated content
-module rather than JSX. Numeric values, versions, dependencies, commands,
-transcript lines, structured events, environment fields, and hashes come from
-the validated artifact wherever they exist.
+Do not use a giant display headline, decorative orbit, or a viewport-height
+hero. The report body must begin within the initial desktop viewport.
 
-A focused client explorer receives serializable target summaries and the common
-observation. It owns only user selection state:
+### 1. Research question and method
 
-- selected target;
-- participant filter; and
-- structured observation category.
+Explain that all targets use the same application, scenario, and assertions,
+and that only dependency wiring and target bootstrap differ; the handwritten
+fixture additionally owns the compared mock implementation. Show the three
+shared files with their roles, physical line counts, hashes, and pinned links.
 
-The initial server-rendered state shows the complete transcript and the first
-target, so the evidence remains readable without client-side interaction.
-Target selection must not imply behavioral differences: the UI explicitly says
-the displayed observation is shared and changes only the inspected approach.
+State that listeners register before actions and acknowledgements plus later
+per-socket markers establish completion/non-receipt without delays or timeouts.
+State that the runner executes the same assertions twice per target.
 
-Use native buttons with `aria-pressed` or a native tab pattern where appropriate,
-visible focus indicators, named regions, semantic tables/lists, and an announced
-empty-filter state. Do not auto-play a timeline. Transitions are small surface
-or color changes and are removed under `prefers-reduced-motion`.
+### 2. Authored surface comparison
 
-## Responsive behavior
+This is the report's primary visualization. Show the exact authored target
+surface as contextual stacked bars on one shared scale:
 
-At desktop widths, the three approach cards and evidence lenses use three-column
-grids, while the observation explorer can place controls beside the transcript.
-At tablet and mobile widths, all comparisons become single-column reading order,
-wide factual tables become stacked definition lists or horizontally scrollable
-regions with labels, and filter controls wrap without shrinking below accessible
-touch targets. Long commands and hashes wrap or scroll within their own code
-surface without widening the page.
+- Real Socket.IO: 61 bootstrap lines;
+- exact published Smocket: 28 bootstrap lines;
+- handwritten: 28 bootstrap lines plus 212 mock-implementation lines.
 
-The page must be visually checked at a desktop viewport and at 375 px, in light
-and dark themes. Keyboard focus order and reduced-motion rendering must also be
-checked in a real browser.
+Every bar includes exact numbers and segment labels in text; width alone never
+carries meaning. Explain immediately that these are physical source lines,
+including blank and comment lines, observed for this workflow. They are not a
+productivity score, generated lockfiles are excluded from authored-source
+comparison, and the counts cannot be generalized.
 
-## Failure handling
+Below the visualization, use one comparison table with rows for:
 
-Invalid or changed evidence is a build failure. The validator reports which
-contract failed without logging or rewriting the artifact. There is no runtime
-fallback to unverified data and no network retry path.
+- exact dependencies and clean-install inputs;
+- bootstrap/runtime setup;
+- HTTP server and ephemeral port ownership;
+- client activation and shutdown ownership;
+- authored fixture files;
+- application-owned mock implementation;
+- shared application/assertion changes or branches;
+- explicit target-owned failure/debugging paths visible in the pinned source;
+- locations that change when target wiring or exercised semantics change; and
+- directly observed simpler aspects for each target.
 
-An interactive filter with no matching transcript lines shows a plain empty
-message and a control to return to all participants. Since the underlying data
-is static and already validated, the client does not need loading or network
-error states.
+The table preserves neutral and unfavorable findings. The handwritten target is
+simpler in dependency installation and port setup. The Real target provides
+reference behavior without application-owned mock logic. Smocket avoids server
+and port setup while retaining a package dependency. Statements about possible
+future handwritten maintenance are labeled `Inference` and tied to the observed
+212-line owned implementation.
 
-## Testing and verification
+Do not invent encountered failures. If the record contains no observed
+target-specific workaround, say so: the shared application, scenario, and
+assertions contain no target branch or workaround; integration differences are
+isolated in fixture wiring and bootstrap. Distinguish that observation from
+explicit error paths present in target-owned source.
 
-Use test-driven implementation for the feature. Add tests for:
+### 3. Pinned implementation evidence
 
-- successful validation of the vendored artifact;
-- rejection of a wrong file hash, schema version, application hash, missing
-  required fields, unexpected targets, failed assertions, or unequal results;
-- derivation of dependency labels, authored code surfaces, common transcript,
-  filters, and structured observation categories from the artifact;
-- page-level presence of the authoritative-document notice, all three targets,
-  evidence lenses, limitations, provenance, and reproduction commands; and
-- core target, participant, and category interactions in the smallest practical
-  DOM test setup supported by the repository.
+Provide an approach selector that changes actual comparison evidence, not just a
+label. Selecting Real, Smocket, or handwritten shows:
 
-Run all repository-required checks: `pnpm lint`, `pnpm typecheck`, `pnpm test`,
-and `pnpm build`. Then inspect `/case-study` in a real browser at desktop and
-mobile sizes, including keyboard, reduced motion, and both themes.
+- dependency/setup summary;
+- owned file list and per-file responsibility;
+- the actual pinned bootstrap excerpt;
+- explicit setup/debugging paths present in that source;
+- a pinned direct-source link; and
+- for handwritten, a second selectable excerpt from the mock implementation.
 
-## Git and delivery
+The handwritten mock view maps required behaviors to concrete source regions:
 
-Keep changes scoped to the case study and its discoverability. Use Conventional
-Commits split by meaning: the design specification, the data/validation contract,
-the interactive page, and any final verification or metadata adjustment when it
-stands independently. Do not modify the Smocket repository.
+- room membership maps and joins;
+- union routing across rooms;
+- sender exclusion;
+- acknowledgements;
+- disconnect notification and cleanup.
 
-Open a pull request against `main` whose body uses
-`Refs electrohyun/smocket#218`, never `Closes`. Report the pinned source commit,
-both verified hashes, all verification results, the PR URL, and the preview or
-deployment URL. Issue #218 remains open because deployment confirmation and the
-follow-up update to Smocket #213 are outside this repository change.
+It also lists deliberately omitted behavior from the authoritative report:
+namespaces, middleware, reconnection, transport behavior, and all other
+unexercised Socket.IO APIs. Supported and omitted behaviors must be visually and
+semantically distinct.
+
+Source code is evidence, not decoration. Excerpts have a file name, line range,
+responsibility caption, horizontally scrollable code surface, and immutable
+source link. Excerpt line ranges are centrally defined and tested against the
+vendored source.
+
+### 4. Workflow behavior matrix
+
+Show rows for acknowledged joins, private welcomes, room message delivery,
+authorization rejection, multi-room union announcement, and disconnect
+notification. Columns show Real, Smocket, and handwritten. Every cell reports
+`Passed · same observation`; the matrix caption limits that statement to the
+shared assertion.
+
+Selecting a row opens evidence specific to that behavior:
+
+- expected structured value derived from `observations.json`;
+- the relevant assertion or scenario excerpt;
+- the shared application implementation excerpt; and
+- handwritten implementation evidence only where the behavior is modeled
+  there.
+
+This is the principal behavioral interaction. It connects equal observable
+results to the code and assertions that establish them while making clear that
+all targets share application and assertion code without a target branch.
+
+### 5. Supporting transcript evidence
+
+Move the transcript below the comparison and matrix. Present it in a collapsed
+native `details` region titled `Supporting evidence: shared transcript`.
+Participant and event filters may remain inside, but there is no target selector
+because target selection cannot change the identical transcript. The full
+canonical order is available when expanded.
+
+### 6. Interpretation and limitations
+
+Present Fidelity, Reliability, and Productivity as report subsections rather
+than feature cards:
+
+- Fidelity: agreement only within the selected assertions; the conformance
+  report remains authoritative for declared compatibility.
+- Reliability: one repeatable snapshot with two matching executions in one
+  process; not continued evidence over time.
+- Productivity: observed setup and authored surfaces, not a score.
+
+Keep all limitations: one moderated two-room scenario, exact recorded versions
+and environment, author judgment in handwritten scope, no transport comparison,
+no generalization, and no historical reliability claim.
+
+### 7. Reproduction and provenance
+
+Keep all recorded commands, environment, observation and application hashes,
+the compared source revision, and direct source links. Show the authoritative
+publication revision separately so readers understand why it differs from the
+observation source revision.
+
+## Visual language and responsive behavior
+
+Reuse the site's design tokens, typography, theme toggle, code surface, footer,
+and star field only as a quiet page background. The report itself uses a bounded
+document surface, restrained type scale, numbered headings, tables, rules, and
+figure captions. Decorative elements must not displace evidence.
+
+Desktop uses a compact report header, optional sticky section navigation, and a
+reading column wide enough for comparison tables (approximately 1040px outer,
+760–820px prose). At 375px, navigation becomes an inline section list, tables
+use labeled stacked rows or controlled horizontal scrolling, bars retain exact
+labels, and code scrolls within its own region. There must be no page-level
+horizontal overflow.
+
+All controls use native buttons or disclosure elements, 44px minimum targets,
+visible focus, correct `aria-pressed` state, and meaningful accessible names.
+Color never carries pass/support/omit state alone. Motion is limited to small
+state transitions and removed with `prefers-reduced-motion`.
+
+## Testing and visual verification
+
+Retain validator, model, static report, lint, typecheck, full test, and build
+coverage. Add a DOM-capable test environment with React Testing Library and
+user-event for actual interaction tests:
+
+- clicking and keyboard-activating approach selectors changes file/code/setup
+  evidence;
+- clicking and keyboard-activating matrix rows changes assertion/application/
+  implementation evidence;
+- disclosure and transcript filters work in the DOM;
+- focus order reaches navigation, selectors, matrix, disclosure, and source
+  links; and
+- selected/expanded states expose correct accessibility attributes.
+
+Run real-browser visual QA on the deployed or local page at desktop and 375px,
+in light and dark themes, and with reduced motion. Capture screenshots and
+record the checked viewport/theme combinations. A protected preview or missing
+browser connection does not satisfy this condition; do not claim completion
+until the page itself has been visually inspected.
+
+## Requirements traceability self-review
+
+| #218 requirement | Report location |
+| --- | --- |
+| Installation, dependency, setup, and configuration | Authored surface table; implementation evidence |
+| Server bootstrap and test-support code | Stacked bars; comparison table; pinned excerpts |
+| Application and assertion code shared without branches | Method file table; matrix evidence |
+| Mock-specific implementation code | Handwritten source view and behavior map |
+| Reproduced and omitted behavior | Handwritten supported/omitted lists; behavior matrix |
+| Workarounds and target-specific branches | Method and comparison table: none in shared code; wiring isolated in bootstrap |
+| Files or locations changed as workflow changes | Owned file/responsibility and change-location rows |
+| Failure/debugging surfaces | Explicit source error-path row and source evidence, without claiming encountered failures |
+| Cases where an approach is simpler | Neutral findings in comparison table and interpretation |
+| Fidelity | Behavior matrix and interpretation boundary |
+| Reliability | Recorded repeat result and single-snapshot boundary |
+| Productivity | Contextual authored surface and non-score boundary |
+| Transcript and structured observation exploration | Behavior matrix first; collapsed supporting transcript second |
+| Reproduction, environment, commit, hashes | Final provenance section |
+| Limitations and unfavorable findings | Interpretation/limitations and comparison table |
+
+Self-review result: the new hierarchy answers the research question before
+showing the shared transcript; every primary interaction changes comparison or
+implementation evidence; each quantitative surface is contextualized; and no
+section adds an unsupported ranking, metric, or compatibility conclusion.
+
+## Delivery
+
+Update the existing PR rather than opening a replacement. Keep commits split by
+meaning: revised design/plan, pinned source contract, comparison report, DOM
+interaction tests, and QA corrections. Preserve unrelated changes from the
+current remote `main`. The PR continues to use
+`Refs electrohyun/smocket#218`, never `Closes`.
