@@ -173,5 +173,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  :global(body)::before { animation: none !important; }
   .report *, .report *::before, .report *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
 }
