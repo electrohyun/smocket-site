@@ -170,3 +170,81 @@ and confirm the reduced-motion rule is active.
 Self-review result: the design has no progress calculation or duplicate status
 source, the conditional release is not presented as scheduled, every interaction
 is optional to comprehension, and no unrelated landing or demo behavior changes.
+
+## Revision: a continuous vertical roadmap journey
+
+The first implementation compressed the seven release stages into one desktop
+row and placed the five subjects in adjacent report sections. It was accurate,
+but it read as a short summary dashboard rather than a roadmap. The revision
+keeps every source boundary above while changing the page's spatial argument:
+the reader now travels through one long, connected route.
+
+### Continuous route
+
+The route begins below the canonical-source notice and continues through the
+guarantee, classification, release sequence, dependencies, and change process.
+Every major section is a named stop on the same vertical rail. Section borders
+no longer end one subject before the next; generous approach/departure spacing,
+numbered nodes, and a continuous line make the relationship visible.
+
+On desktop the rail sits in a dedicated left gutter and the content opens to
+its right. The seven release stages form the route's most detailed passage:
+large alternating cards sit beside a central line, with each stage's purpose,
+governing rule, and next decision readable without opening anything. The
+conditional v0.5.0 card uses a dashed branch and rejoins stabilization. On
+mobile all cards align to a left rail in document order.
+
+### Distributed information density
+
+Do not pad the page with invented copy. Distribute the canonical roadmap's
+existing information across more legible stops:
+
+- the guarantee stop names the documents that own scope, measured behavior,
+  intentional differences, and version judgments;
+- each classification outcome gets its own full-width stop rather than sharing
+  a 2x2 dashboard;
+- each release stage shows its summary plus a plain-text `Next` route label;
+- release-rule details remain disclosures, now inside cards with enough room to
+  read them; and
+- dependency groups become a vertical chain, including the Adapter
+  non-dependency as an explicit side branch.
+
+No issue count, date, completion state, percent, or inferred schedule is added.
+The only percentage on the page is the reader's private position through the
+document, exposed accessibly as reading progress and never described as project
+progress.
+
+### Subtle interaction
+
+Add an integrated journey navigator rather than a floating decorative widget.
+It contains links to the five major stops, marks the current stop with
+`aria-current="step"`, and fills the route line according to document scroll.
+The interaction has three jobs only: show reading position, identify the current
+subject, and provide keyboard-accessible jumps. It does not alter roadmap data.
+
+Native disclosures remain for classification, release-rule, and dependency
+detail. Hover and focus bring the nearby route node forward; opening a detail
+visually connects its panel to the rail. Reduced motion removes progress and
+marker transitions while preserving all position and state information.
+
+### Revised responsive behavior
+
+The desktop page is intentionally taller: release stages are no longer forced
+into 130px columns, prose retains readable measures, and each major stop has
+space before the next. At 375px the rail occupies 28px, the cards use the
+remaining width, the journey navigator remains horizontally scrollable without
+a visible scrollbar, and no page-level overflow is allowed.
+
+### Revised checks
+
+Add test-first coverage for the ordered route labels, semantic major stops,
+reading-position calculation, current-stop navigation, and the conditional
+branch/rejoin copy. Repeat real-browser review at desktop and 375px in both
+themes, including mid-route screenshots, scrolling, anchor jumps, disclosure
+keyboard behavior, focus visibility, reduced-motion CSS, and horizontal
+overflow.
+
+Revision self-review: the longer page comes from readable structure and
+canonical detail rather than repetition; the path remains understandable with
+JavaScript and motion disabled; the conditional branch still does not promise
+v0.5.0; and the site remains a presentation of the GitHub roadmap.
