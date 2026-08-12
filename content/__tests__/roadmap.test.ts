@@ -15,6 +15,23 @@ describe('public roadmap content', () => {
   it('keeps the documented guarantee and non-goals intact', () => {
     expect(roadmap.guarantee).toContain('stable observable behavior and public types');
     expect(roadmap.guarantee).toContain('documented Socket.IO logic-layer subset');
+    expect(roadmap.stabilizes).toEqual([
+      {
+        id: 'behavior',
+        title: 'Observable behavior',
+        detail: 'Inside the documented Socket.IO logic-layer scope.',
+      },
+      {
+        id: 'types',
+        title: 'Public types',
+        detail: 'The application compile-against surface.',
+      },
+      {
+        id: 'differences',
+        title: 'Published differences',
+        detail: 'Intentional differences and smocket-only APIs under explicit version rules.',
+      },
+    ]);
     expect(roadmap.nonGoals.map((item) => item.id)).toEqual([
       'transport',
       'heartbeat',

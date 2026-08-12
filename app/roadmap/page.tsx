@@ -69,7 +69,10 @@ export default function RoadmapPage() {
                 <p className={styles.overline}>What v1.0.0 aims to stabilize</p>
                 <ul>
                   {roadmap.stabilizes.map((item) => (
-                    <li key={item}>{item}</li>
+                    <li key={item.id}>
+                      <strong>{item.title}</strong>
+                      <span>{item.detail}</span>
+                    </li>
                   ))}
                 </ul>
                 <div className={styles.inlineLinks}>

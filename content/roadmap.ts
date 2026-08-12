@@ -48,9 +48,21 @@ export const roadmap = {
   guarantee:
     'v1.0.0 aims to provide stable observable behavior and public types within the documented Socket.IO logic-layer subset.',
   stabilizes: [
-    'Observable behavior inside the documented logic-layer scope',
-    'Public types that applications compile against',
-    'Published intentional differences and smocket-only APIs under explicit version rules',
+    {
+      id: 'behavior',
+      title: 'Observable behavior',
+      detail: 'Inside the documented Socket.IO logic-layer scope.',
+    },
+    {
+      id: 'types',
+      title: 'Public types',
+      detail: 'The application compile-against surface.',
+    },
+    {
+      id: 'differences',
+      title: 'Published differences',
+      detail: 'Intentional differences and smocket-only APIs under explicit version rules.',
+    },
   ],
   nonGoals: [
     {

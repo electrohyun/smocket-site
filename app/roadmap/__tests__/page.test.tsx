@@ -96,12 +96,24 @@ describe('/roadmap', () => {
     );
   });
 
-  it('lifts interactive panels without requiring motion', () => {
-    expect(journeyStyles).toMatch(/stageCard:hover[\s\S]*transform: translateY\(-4px\)/);
-    expect(journeyStyles).toMatch(/focus-visible[\s\S]*outline:/);
-    expect(journeyStyles).toMatch(
-      /prefers-reduced-motion: reduce[\s\S]*transform: none !important/,
+  it('colors interactive panels without moving their borders', () => {
+    expect(desktopJourneyStyles).toMatch(
+      /[.]stageCard:hover,[\s\S]*background: color-mix\(in srgb, var\(--accent\) 22%/,
     );
+    expect(desktopJourneyStyles).not.toMatch(
+      /[.]stageCard:hover,[^{]*{[^}]*transform:/,
+    );
+    expect(journeyStyles).toMatch(/focus-visible[\s\S]*outline:/);
+  });
+
+  it('aligns section nodes with titles without a connector line', () => {
+    expect(desktopJourneyStyles).toMatch(/[.]section::before\s*{[^}]*top: 127px/);
+    expect(desktopJourneyStyles).toMatch(/[.]section::after\s*{[^}]*display: none/);
+  });
+
+  it('keeps the sticky reading gauge attached to the viewport scroll container', () => {
+    expect(desktopJourneyStyles).toMatch(/[.]report\s*{[^}]*overflow: clip/);
+    expect(desktopJourneyStyles).toMatch(/[.]journeyNav\s*{[^}]*position: sticky/);
   });
 
   it('starts the mobile journey tabs at the first stop', () => {
