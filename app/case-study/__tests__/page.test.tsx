@@ -1,5 +1,8 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
+import sitemap from '../../sitemap';
+import { footer, SITE_URL } from '../../../content/landing';
+import { metadata } from '../layout';
 import CaseStudyPage from '../page';
 
 const markup = renderToStaticMarkup(<CaseStudyPage />);
@@ -46,5 +49,24 @@ describe('/case-study', () => {
     expect(markup).toContain('Filter transcript by event');
     expect(markup).toContain('Explore structured observations');
     expect(markup).toContain('aria-pressed="true"');
+  });
+
+  it('publishes route metadata with the selected-workflow boundary', () => {
+    expect(metadata.title).toBe('Application case study');
+    expect(metadata.description).toContain('selected moderated chat-room workflow');
+    expect(metadata.alternates).toEqual({ canonical: '/case-study' });
+  });
+
+  it('is discoverable from the footer and sitemap', () => {
+    expect(footer.links).toContainEqual({
+      label: 'Case study',
+      href: '/case-study',
+      todo: null,
+    });
+    expect(sitemap()).toContainEqual({
+      url: `${SITE_URL}/case-study`,
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    });
   });
 });

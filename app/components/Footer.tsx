@@ -1,4 +1,4 @@
-import { footer } from '@/content/landing';
+import { footer } from '../../content/landing';
 import styles from './Footer.module.css';
 
 export default function Footer() {
