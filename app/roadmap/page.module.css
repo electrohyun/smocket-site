@@ -1212,6 +1212,68 @@
   color: var(--text);
 }
 
+@media (min-width: 1360px) {
+  .journeyNav {
+    position: fixed;
+    top: 50%;
+    right: max(18px, calc((100vw - 1180px) / 2 - 158px));
+    display: block;
+    width: 140px;
+    margin: 0;
+    padding: 14px 12px;
+    border-radius: 18px;
+    transform: translateY(-50%);
+  }
+
+  .journeyNavHeader {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    padding: 0 2px 12px;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .journeyNavHeader p {
+    font-size: 0.59rem;
+    line-height: 1.35;
+  }
+
+  .journeyNavTrack {
+    top: 66px;
+    right: auto;
+    bottom: 18px;
+    left: 10px;
+    width: 2px;
+    height: auto;
+  }
+
+  .journeyNavTrack span {
+    inset: 0 0 auto;
+    width: 100%;
+    height: calc(var(--journey-progress) * 100%);
+    transition-property: height;
+  }
+
+  .journeyNav ol {
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 3px;
+    margin-top: 8px;
+    padding-left: 6px;
+  }
+
+  .journeyNav a {
+    display: flex;
+    width: 100%;
+    min-height: 42px;
+    gap: 7px;
+    padding: 0 9px;
+    border-radius: 10px;
+    font-size: 0.64rem;
+  }
+}
+
 @media (max-width: 900px) {
   .journeyNav {
     grid-template-columns: minmax(130px, 0.6fr) minmax(0, 2fr);

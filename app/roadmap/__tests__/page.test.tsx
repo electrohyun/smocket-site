@@ -81,11 +81,18 @@ describe('/roadmap', () => {
     expect(stylesheet).toMatch(/[.]journeyNavTrack span,[\s\S]*transition: none !important/);
   });
 
-  it('keeps the desktop journey navigator out of the reading column', () => {
+  it('keeps the desktop journey navigator beside the reading column like a remote', () => {
     expect(desktopJourneyStyles).toMatch(/[.]journeyLayout\s*{[^}]*display: block/);
-    expect(desktopJourneyStyles).toMatch(/[.]journeyNav\s*{[^}]*display: grid/);
-    expect(desktopJourneyStyles).toMatch(/[.]journeyNav\s*{[^}]*grid-template-columns:/);
-    expect(desktopJourneyStyles).toMatch(/[.]journeyNav\s*{[^}]*position: sticky/);
+    expect(journeyStyles).toMatch(
+      /@media \(min-width: 1360px\)[\s\S]*[.]journeyNav\s*{[^}]*position: fixed/,
+    );
+    expect(journeyStyles).toMatch(
+      /@media \(min-width: 1360px\)[\s\S]*[.]journeyNav\s*{[^}]*right: max\(18px/,
+    );
+    expect(journeyStyles).toMatch(
+      /@media \(min-width: 1360px\)[\s\S]*[.]journeyNav ol\s*{[^}]*flex-direction: column/,
+    );
+    expect(mobileJourneyStyles).toMatch(/[.]journeyNav\s*{[^}]*position: sticky/);
   });
 
   it('uses a compact section rhythm with headings on the content baseline', () => {
@@ -111,9 +118,14 @@ describe('/roadmap', () => {
     expect(desktopJourneyStyles).toMatch(/[.]section::after\s*{[^}]*display: none/);
   });
 
-  it('keeps the sticky reading gauge attached to the viewport scroll container', () => {
+  it('keeps the reading gauge attached to the viewport while scrolling', () => {
     expect(desktopJourneyStyles).toMatch(/[.]report\s*{[^}]*overflow: clip/);
-    expect(desktopJourneyStyles).toMatch(/[.]journeyNav\s*{[^}]*position: sticky/);
+    expect(journeyStyles).toMatch(
+      /@media \(min-width: 1360px\)[\s\S]*[.]journeyNav\s*{[^}]*top: 50%/,
+    );
+    expect(journeyStyles).toMatch(
+      /@media \(min-width: 1360px\)[\s\S]*[.]journeyNavTrack span\s*{[^}]*height: calc\(var\(--journey-progress\) \* 100%\)/,
+    );
   });
 
   it('starts the mobile journey tabs at the first stop', () => {
