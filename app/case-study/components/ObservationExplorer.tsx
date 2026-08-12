@@ -1,6 +1,6 @@
 'use client';
 
-import { useReducer } from 'react';
+import { useReducer, useRef } from 'react';
 import {
   filterTranscript,
   initialExplorerState,
@@ -17,6 +17,7 @@ function label(value: string): string {
 }
 
 export default function ObservationExplorer({ model }: { model: CaseStudyModel }) {
+  const detailsRef = useRef<HTMLDetailsElement>(null);
   const [state, dispatch] = useReducer(
     (current: typeof initialExplorerState, action: ExplorerAction) =>
       reduceExplorerState(model, current, action),
@@ -30,8 +31,13 @@ export default function ObservationExplorer({ model }: { model: CaseStudyModel }
         <p>05</p>
         <div><h2 id="transcript-heading">Supporting observation evidence</h2><p>The shared transcript is secondary because target selection cannot change it.</p></div>
       </div>
-      <details className={styles.disclosure}>
-        <summary>Supporting evidence: shared transcript <span>{model.transcript.length} canonical lines</span></summary>
+      <details ref={detailsRef} className={styles.disclosure}>
+        <summary onKeyDown={(event) => {
+          if ((event.key === 'Enter' || event.key === ' ') && detailsRef.current) {
+            event.preventDefault();
+            detailsRef.current.open = !detailsRef.current.open;
+          }
+        }}>Supporting evidence: shared transcript <span>{model.transcript.length} canonical lines</span></summary>
         <div className={styles.disclosureBody}>
           <div className={styles.filterBlock}>
             <p id="participant-filter-label">Filter transcript by participant</p>

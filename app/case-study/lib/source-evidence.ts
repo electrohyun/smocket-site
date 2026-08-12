@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 export const SOURCE_PATHS = [
   'examples/chat-room/app.js',
@@ -13,11 +14,12 @@ export const SOURCE_PATHS = [
 export type SourcePath = (typeof SOURCE_PATHS)[number];
 export type CaseStudySources = Record<SourcePath, string>;
 
-const sourceRoot = new URL('../../../content/case-study-sources/', import.meta.url);
-
 export function loadCaseStudySources(): CaseStudySources {
   return Object.fromEntries(
-    SOURCE_PATHS.map((path) => [path, readFileSync(new URL(path, sourceRoot), 'utf8')]),
+    SOURCE_PATHS.map((path) => [
+      path,
+      readFileSync(join(process.cwd(), 'content', 'case-study-sources', path), 'utf8'),
+    ]),
   ) as CaseStudySources;
 }
 
