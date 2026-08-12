@@ -5,10 +5,65 @@ export const OBSERVATION_SHA256 =
 
 const SMOCKET_ROOT = 'https://github.com/electrohyun/smocket';
 
+export function pinnedSourceUrl(path: string, startLine?: number, endLine?: number) {
+  const lines = startLine ? `#L${startLine}${endLine ? `-L${endLine}` : ''}` : '';
+  return `${SMOCKET_ROOT}/blob/${PINNED_SOURCE_COMMIT}/${path}${lines}`;
+}
+
 export const caseStudyLinks = {
   authoritativeDocument: `${SMOCKET_ROOT}/blob/${AUTHORITATIVE_DOCUMENT_COMMIT}/docs/application-case-study.md`,
   observation: `${SMOCKET_ROOT}/blob/${PINNED_SOURCE_COMMIT}/case-studies/chat-room/observations.json`,
   source: `${SMOCKET_ROOT}/tree/${PINNED_SOURCE_COMMIT}/case-studies/chat-room`,
+} as const;
+
+export const caseStudyTargetDetails = {
+  'socket-io': {
+    setup: 'Local HTTP server, real Socket.IO server/client, and an ephemeral loopback TCP port.',
+    serverPort: 'Fixture owns HTTP server creation, listen(0), address lookup, and the port.',
+    lifecycle: 'Fixture disables auto-connect/reconnection, activates each client, and closes the server.',
+    mockOwnership: 'No application-owned mock implementation.',
+    debugging:
+      'Observed source paths: listen errors, missing TCP address, and close callback errors are explicit.',
+    changeLocations: 'Dependency manifest/lock and fixture bootstrap when target wiring changes.',
+    simpler: 'Reference behavior without application-owned mock logic.',
+  },
+  'published-smocket': {
+    setup: 'Published smocket package with an in-memory Server/connect bootstrap.',
+    serverPort: 'No HTTP server or port setup in the fixture.',
+    lifecycle: 'Connection is available in memory; activate is empty and the fixture closes Smocket.',
+    mockOwnership: 'No application-owned mock implementation; the published package is the dependency.',
+    debugging: 'Observed source path: this bootstrap adds no target-specific error branch.',
+    changeLocations: 'Dependency manifest/lock and fixture bootstrap when target wiring changes.',
+    simpler: 'Avoids HTTP server, ephemeral port, and explicit client activation setup.',
+  },
+  handwritten: {
+    setup: 'No package dependency; an in-memory fixture imports its own Socket.IO-shaped mock.',
+    serverPort: 'No HTTP server or port setup in the fixture.',
+    lifecycle: 'Connection is available in memory; activate is empty and the fixture closes its server.',
+    mockOwnership: 'Application fixture owns the 212-line handwritten-socket-io.js implementation.',
+    debugging:
+      'Observed source paths: missing registered server and disconnected emitWithAck reject explicitly.',
+    changeLocations:
+      'Fixture bootstrap plus handwritten-socket-io.js when exercised mock semantics change.',
+    simpler: 'Simplest dependency installation and port setup of the three recorded fixtures.',
+  },
+} as const;
+
+export const handwrittenBehaviorBoundary = {
+  supported: [
+    'Room membership and joins',
+    'Union routing across rooms',
+    'Sender exclusion',
+    'Acknowledgements',
+    'Disconnect notification and room cleanup',
+  ],
+  omitted: [
+    'Namespaces',
+    'Middleware',
+    'Reconnection',
+    'Transport behavior',
+    'All other unexercised Socket.IO APIs',
+  ],
 } as const;
 
 export const caseStudyCopy = {

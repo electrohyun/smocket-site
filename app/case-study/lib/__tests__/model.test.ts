@@ -7,8 +7,9 @@ import {
   initialExplorerState,
   reduceExplorerState,
 } from '../model';
+import { loadCaseStudySources } from '../source-evidence';
 
-const model = createCaseStudyModel(observations);
+const model = createCaseStudyModel(observations, loadCaseStudySources());
 
 describe('createCaseStudyModel', () => {
   it('derives the ordered target comparison from the observation record', () => {
@@ -46,6 +47,99 @@ describe('createCaseStudyModel', () => {
       'departure',
     ]);
     expect(model.observation).toBe(observations.targets[0].result.observation);
+  });
+
+  it('derives authored target surfaces on one shared scale', () => {
+    expect(model.authoredSurfaces).toEqual([
+      {
+        id: 'socket-io',
+        label: 'Real Socket.IO',
+        segments: [{ role: 'bootstrap', lines: 61 }],
+        total: 61,
+      },
+      {
+        id: 'published-smocket',
+        label: 'Exact published Smocket',
+        segments: [{ role: 'bootstrap', lines: 28 }],
+        total: 28,
+      },
+      {
+        id: 'handwritten',
+        label: 'Handwritten mock',
+        segments: [
+          { role: 'bootstrap', lines: 28 },
+          { role: 'mock implementation', lines: 212 },
+        ],
+        total: 240,
+      },
+    ]);
+    expect(model.maxAuthoredLines).toBe(240);
+  });
+
+  it('maps the research-question comparison rows across all targets', () => {
+    expect(model.comparisonRows.map((row) => row.id)).toEqual([
+      'dependencies',
+      'runtime-setup',
+      'server-port',
+      'activation-shutdown',
+      'authored-files',
+      'mock-ownership',
+      'shared-branches',
+      'debugging-surface',
+      'change-locations',
+      'simpler-here',
+    ]);
+    expect(model.comparisonRows.find((row) => row.id === 'shared-branches')?.values).toEqual({
+      'socket-io': 'None in shared app, scenario, or assertions',
+      'published-smocket': 'None in shared app, scenario, or assertions',
+      handwritten: 'None in shared app, scenario, or assertions',
+    });
+  });
+
+  it('derives pinned approach excerpts from the vendored source files', () => {
+    expect(model.approachEvidence['socket-io'].excerpts[0]).toMatchObject({
+      path: 'case-studies/chat-room/fixtures/socket-io/bootstrap.js',
+      startLine: 1,
+      endLine: 61,
+    });
+    expect(model.approachEvidence['socket-io'].excerpts[0].code).toContain(
+      "import { createServer } from 'node:http';",
+    );
+    expect(model.approachEvidence.handwritten.excerpts.map((excerpt) => excerpt.id)).toEqual([
+      'bootstrap',
+      'routing',
+      'acknowledgements',
+      'disconnect-cleanup',
+    ]);
+    expect(model.approachEvidence.handwritten.omittedBehaviors).toEqual([
+      'Namespaces',
+      'Middleware',
+      'Reconnection',
+      'Transport behavior',
+      'All other unexercised Socket.IO APIs',
+    ]);
+  });
+
+  it('maps six workflow behaviors to shared and handwritten evidence', () => {
+    expect(model.behaviorRows.map((row) => row.id)).toEqual([
+      'join',
+      'welcome',
+      'message',
+      'authorization',
+      'announcement',
+      'disconnect',
+    ]);
+    for (const row of model.behaviorRows) {
+      expect(Object.values(row.results)).toEqual([
+        'Passed · same observation',
+        'Passed · same observation',
+        'Passed · same observation',
+      ]);
+      expect(row.evidence.assertion.code.length).toBeGreaterThan(0);
+      expect(row.evidence.application.code.length).toBeGreaterThan(0);
+    }
+    expect(model.behaviorRows.find((row) => row.id === 'message')?.evidence.handwritten?.code)
+      .toContain('excludedSocketIds');
   });
 });
 
