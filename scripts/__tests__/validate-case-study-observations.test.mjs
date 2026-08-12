@@ -5,12 +5,17 @@ import { describe, expect, it } from 'vitest';
 import {
   EXPECTED_OBSERVATION_SHA256,
   validateObservationBytes,
+  validateSourceFiles,
 } from '../validate-case-study-observations.mjs';
 
 const observationPath = fileURLToPath(
   new URL('../../content/case-study-observations.json', import.meta.url),
 );
 const canonicalBytes = await readFile(observationPath);
+const canonicalRecord = JSON.parse(canonicalBytes.toString('utf8'));
+const sourceRoot = new URL('../../content/case-study-sources/', import.meta.url);
+
+const readVendoredSource = (path) => readFile(new URL(path, sourceRoot));
 
 function sha256(bytes) {
   return createHash('sha256').update(bytes).digest('hex');
@@ -92,5 +97,43 @@ describe('validateObservationBytes', () => {
     });
 
     expect(() => validateObservationBytes(bytes, hash)).toThrow(/observations differ/);
+  });
+});
+
+describe('validateSourceFiles', () => {
+  it('verifies every vendored compared JavaScript source against the record', async () => {
+    const paths = await validateSourceFiles(canonicalRecord, readVendoredSource);
+
+    expect(paths).toEqual([
+      'examples/chat-room/app.js',
+      'examples/chat-room/scenario.js',
+      'examples/chat-room/assertions.js',
+      'case-studies/chat-room/fixtures/socket-io/bootstrap.js',
+      'case-studies/chat-room/fixtures/published-smocket/bootstrap.js',
+      'case-studies/chat-room/fixtures/handwritten/bootstrap.js',
+      'case-studies/chat-room/fixtures/handwritten/handwritten-socket-io.js',
+    ]);
+  });
+
+  it('identifies a missing source by its pinned repository path', async () => {
+    await expect(
+      validateSourceFiles(canonicalRecord, async (path) => {
+        if (path.endsWith('published-smocket/bootstrap.js')) {
+          throw new Error('ENOENT');
+        }
+        return readVendoredSource(path);
+      }),
+    ).rejects.toThrow(/published-smocket\/bootstrap\.js.*missing/i);
+  });
+
+  it('identifies a changed source by its pinned repository path', async () => {
+    await expect(
+      validateSourceFiles(canonicalRecord, async (path) => {
+        const bytes = await readVendoredSource(path);
+        return path.endsWith('handwritten-socket-io.js')
+          ? Buffer.concat([bytes, Buffer.from(' ')])
+          : bytes;
+      }),
+    ).rejects.toThrow(/handwritten-socket-io\.js.*SHA-256/i);
   });
 });

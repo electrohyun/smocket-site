@@ -1,11 +1,12 @@
 export const PINNED_SOURCE_COMMIT = 'fa90e07e272c7fd0db64ebfd73cbb104664ddb81';
+export const AUTHORITATIVE_DOCUMENT_COMMIT = '6a17477beef33fb014ab629b914d80a6f144b31b';
 export const OBSERVATION_SHA256 =
   '414b07fb27b70cc836d8b71d78d63a0f530d2cae28dbd32b60e77462a64f4bad';
 
 const SMOCKET_ROOT = 'https://github.com/electrohyun/smocket';
 
 export const caseStudyLinks = {
-  authoritativeDocument: `${SMOCKET_ROOT}/blob/${PINNED_SOURCE_COMMIT}/docs/application-case-study.md`,
+  authoritativeDocument: `${SMOCKET_ROOT}/blob/${AUTHORITATIVE_DOCUMENT_COMMIT}/docs/application-case-study.md`,
   observation: `${SMOCKET_ROOT}/blob/${PINNED_SOURCE_COMMIT}/case-studies/chat-room/observations.json`,
   source: `${SMOCKET_ROOT}/tree/${PINNED_SOURCE_COMMIT}/case-studies/chat-room`,
 } as const;
