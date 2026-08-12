@@ -1,5 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
+import sitemap from '../../sitemap';
+import { footer, SITE_URL } from '../../../content/landing';
 import { metadata } from '../layout';
 import RoadmapPage from '../page';
 
@@ -63,5 +65,18 @@ describe('/roadmap', () => {
     expect(metadata.title).toBe('Roadmap to v1.0.0');
     expect(metadata.description).toContain('conditional release path');
     expect(metadata.alternates).toEqual({ canonical: '/roadmap' });
+  });
+
+  it('is discoverable from the shared footer and sitemap', () => {
+    expect(footer.links).toContainEqual({
+      label: 'Roadmap',
+      href: '/roadmap',
+      todo: null,
+    });
+    expect(sitemap()).toContainEqual({
+      url: `${SITE_URL}/roadmap`,
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    });
   });
 });

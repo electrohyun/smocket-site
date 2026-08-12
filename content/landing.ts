@@ -243,6 +243,7 @@ export const footer = {
   tagline: 'Sweet setup, rocket speed.',
   links: [
     { label: 'Docs', href: `${REPO_URL}#readme`, todo: null },
+    { label: 'Roadmap', href: '/roadmap', todo: null },
     { label: 'Case study', href: '/case-study', todo: null },
     { label: 'GitHub', href: REPO_URL, todo: null },
     { label: 'npm', href: 'https://www.npmjs.com/package/smocket', todo: null },
