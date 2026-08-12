@@ -1,270 +1,28 @@
-.methodNote {
-  max-width: 78ch;
-  margin-top: 20px;
-  padding: 14px 16px;
-  border-left: 2px solid var(--accent);
-  background: color-mix(in srgb, var(--accent) 8%, transparent);
-  color: var(--text-dim);
-  font-size: 0.86rem;
-}
-
-.methodNote strong {
-  display: block;
-  margin-bottom: 3px;
-  color: var(--text);
-  font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: 0.7rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.targetPicker {
-  margin-top: 30px;
-  padding: 18px;
+.disclosure {
   border: 1px solid var(--border);
   border-radius: 12px;
   background: var(--panel);
-  box-shadow: var(--shadow-sm);
 }
 
-.buttonGroup {
+.disclosure summary {
+  min-height: 56px;
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.buttonGroup button,
-.categoryList button,
-.empty button {
-  min-height: 44px;
-  padding: 9px 13px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: var(--panel);
-  color: var(--text-dim);
-  font: 600 0.76rem/1.2 var(--font-mono), ui-monospace, monospace;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 14px 18px;
   cursor: pointer;
-  transition:
-    color 140ms ease,
-    border-color 140ms ease,
-    background-color 140ms ease;
+  font-weight: 750;
 }
 
-.buttonGroup button:hover,
-.categoryList button:hover,
-.empty button:hover {
-  border-color: var(--accent);
-  color: var(--text);
-}
-
-.buttonGroup button[aria-pressed='true'],
-.categoryList button[aria-pressed='true'] {
-  border-color: var(--accent-ink);
-  background: color-mix(in srgb, var(--accent) 16%, var(--panel));
-  color: var(--accent-ink);
-}
-
-.sharedNote {
-  margin-top: 13px;
-  color: var(--text-dim);
-  font-size: 0.84rem;
-}
-
-.sharedNote strong {
-  color: var(--text);
-}
-
-.explorerGrid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.12fr) minmax(320px, 0.88fr);
-  gap: 24px;
-  align-items: start;
-  margin-top: 28px;
-}
-
-.filterBlock + .filterBlock {
-  margin-top: 18px;
-}
-
-.filterBlock > p,
-.structured > p {
-  margin-bottom: 8px;
-  color: var(--text-dim);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.status {
-  margin-top: 18px;
-  color: var(--text-dim);
-  font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: 0.74rem;
-}
-
-.structured {
-  min-width: 0;
-  padding: 20px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--panel);
-  box-shadow: var(--shadow-sm);
-}
-
-.categoryList {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 7px;
-}
-
-.categoryList button {
-  border-radius: 8px;
-  text-align: left;
-}
-
-.structuredPanel {
-  margin-top: 18px;
-  padding-top: 18px;
-  border-top: 1px solid var(--border);
-}
-
-.observationList,
-.recipientGrid ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.observationList {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.observationList li {
-  display: grid;
-  grid-template-columns: 58px minmax(0, 1fr);
-  gap: 2px 8px;
-  padding: 10px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-}
-
-.observationList strong,
-.recipientGrid h4 {
-  text-transform: capitalize;
-}
-
-.observationList span {
-  font-size: 0.86rem;
-}
-
-.observationList code {
-  grid-column: 2;
-  color: var(--text-dim);
-  font-size: 0.7rem;
-}
-
-.recipientGrid {
-  display: grid;
-  gap: 8px;
-}
-
-.recipientGrid article,
-.decisionGrid article {
-  min-width: 0;
-  padding: 12px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--bg-tint);
-}
-
-.recipientGrid h4 {
-  font-size: 0.78rem;
-  font-family: var(--font-mono), ui-monospace, monospace;
-}
-
-.recipientGrid ul,
-.none {
-  display: block;
-  margin-top: 6px;
-  color: var(--text-dim);
-  font-size: 0.8rem;
-}
-
-.recipientGrid li + li {
-  margin-top: 4px;
-}
-
-.recipientGrid li {
-  overflow-wrap: anywhere;
-}
-
-.none {
-  font-style: italic;
-}
-
-.decisionGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-
-.decisionGrid article {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.miniLabel {
-  color: var(--text-dim);
-  font-size: 0.68rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.decisionGrid code,
-.decisionGrid span {
-  color: var(--text-dim);
-  font-size: 0.74rem;
-  overflow-wrap: anywhere;
-}
-
-.empty {
-  margin-top: 18px;
-  padding: 28px;
-  border: 1px dashed var(--border);
-  border-radius: 12px;
-  text-align: center;
-  color: var(--text-dim);
-}
-
-.empty button {
-  margin-top: 12px;
-}
-
-@media (max-width: 900px) {
-  .explorerGrid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 520px) {
-  .categoryList,
-  .decisionGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .buttonGroup button {
-    flex: 1 1 auto;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .buttonGroup button,
-  .categoryList button,
-  .empty button {
-    transition: none;
-  }
-}
+.disclosure summary span { color: var(--text-dim); font: 600 .72rem/1.3 var(--font-mono), monospace; }
+.disclosureBody { padding: 20px; border-top: 1px solid var(--border); }
+.filterBlock + .filterBlock { margin-top: 18px; }
+.filterBlock > p { margin-bottom: 8px; color: var(--text-dim); font-size: .72rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+.buttonGroup { display: flex; flex-wrap: wrap; gap: 8px; }
+.buttonGroup button, .empty button { min-height: 44px; padding: 9px 13px; border: 1px solid var(--border); border-radius: 999px; background: var(--panel); color: var(--text-dim); font: 650 .76rem/1.2 var(--font-mono), monospace; cursor: pointer; }
+.buttonGroup button[aria-pressed='true'] { border-color: var(--accent-ink); background: color-mix(in srgb, var(--accent) 16%, var(--panel)); color: var(--accent-ink); }
+.status { margin-top: 18px; color: var(--text-dim); font: .74rem var(--font-mono), monospace; }
+.empty { margin-top: 18px; padding: 28px; border: 1px dashed var(--border); border-radius: 10px; text-align: center; color: var(--text-dim); }
+.empty button { margin-top: 12px; }
+@media (max-width: 520px) { .buttonGroup button { flex: 1 1 auto; } .disclosure summary { align-items: flex-start; flex-direction: column; gap: 4px; } }

@@ -1,46 +1,38 @@
-import Link from 'next/link';
 import observations from '../../content/case-study-observations.json';
-import { caseStudyCopy, caseStudyLinks } from '../../content/case-study';
 import Footer from '../components/Footer';
 import ThemeToggle from '../components/ThemeToggle';
-import ApproachComparison from './components/ApproachComparison';
+import ApproachEvidence from './components/ApproachEvidence';
+import AuthoredSurface from './components/AuthoredSurface';
+import BehaviorMatrix from './components/BehaviorMatrix';
 import EvidenceBoundaries from './components/EvidenceBoundaries';
+import Method from './components/Method';
 import ObservationExplorer from './components/ObservationExplorer';
 import Provenance from './components/Provenance';
+import ReportHeader from './components/ReportHeader';
 import { createCaseStudyModel, type CaseStudyRecord } from './lib/model';
+import { loadCaseStudySources } from './lib/source-evidence';
 import styles from './page.module.css';
 
-const model = createCaseStudyModel(observations as CaseStudyRecord);
+const model = createCaseStudyModel(observations as CaseStudyRecord, loadCaseStudySources());
 
 export default function CaseStudyPage() {
   return (
     <>
       <ThemeToggle />
-      <main>
-        <section className={`section ${styles.hero}`} aria-labelledby="case-study-title">
-          <div className={`inner ${styles.heroInner}`}>
-            <Link className={styles.brand} href="/" aria-label="smocket home">
-              <img src="/cat.webp" alt="" width={38} height={38} />
-              <span>smocket</span>
-            </Link>
-            <p className={styles.kicker}>{caseStudyCopy.hero.eyebrow}</p>
-            <h1 id="case-study-title">{caseStudyCopy.hero.title}</h1>
-            <p className={styles.heroLead}>{caseStudyCopy.hero.lead}</p>
-            <div className={styles.resultStrip}>
-              <strong>Same observable result</strong>
-              <span>Assertions passed · repeat matches · all three targets</span>
-            </div>
-            <p className={styles.authority}>
-              {caseStudyCopy.hero.authority}{' '}
-              <a href={caseStudyLinks.authoritativeDocument}>Read the authoritative interpretation.</a>
-            </p>
-            <p className={styles.claimBoundary}>{model.record.claimBoundary}</p>
-          </div>
-        </section>
-        <ApproachComparison model={model} />
-        <ObservationExplorer model={model} />
-        <EvidenceBoundaries />
-        <Provenance model={model} />
+      <main className={styles.pageShell}>
+        <article className={styles.report}>
+          <ReportHeader model={model} />
+          <nav className={styles.reportNav} aria-label="Case study sections">
+            <a href="#method">Method</a><a href="#surface">Owned surface</a><a href="#implementation">Implementation</a><a href="#behavior">Behavior</a><a href="#boundaries">Boundaries</a><a href="#provenance">Provenance</a>
+          </nav>
+          <Method model={model} />
+          <AuthoredSurface model={model} />
+          <ApproachEvidence model={model} />
+          <BehaviorMatrix model={model} />
+          <ObservationExplorer model={model} />
+          <EvidenceBoundaries />
+          <Provenance model={model} />
+        </article>
       </main>
       <Footer />
     </>

@@ -8,13 +8,44 @@ import CaseStudyPage from '../page';
 const markup = renderToStaticMarkup(<CaseStudyPage />);
 
 describe('/case-study', () => {
-  it('renders the selected-workflow result and all three approaches', () => {
-    expect(markup).toContain('Same observable result');
+  it('opens as a compact comparison report, not a marketing hero', () => {
+    expect(markup).toContain('Chat-room application case study');
+    expect(markup).toContain('Abstract');
+    expect(markup).toContain('observable behavior matched');
+    expect(markup).toContain('owned test-support surface differed');
+    expect(markup).toContain('<p>01</p>');
+    expect(markup).toContain('Research question &amp; method');
+    expect(markup).toContain('<p>02</p>');
+    expect(markup).toContain('Authored support surface');
+    expect(markup).not.toContain('Same observable result. Different test support.');
+  });
+
+  it('makes the exact authored-surface comparison primary', () => {
     expect(markup).toContain('Real Socket.IO');
     expect(markup).toContain('Exact published Smocket');
     expect(markup).toContain('Handwritten mock');
     expect(markup).toContain('socket.io@4.8.3');
     expect(markup).toContain('smocket@0.4.2');
+    expect(markup).toContain('61 lines');
+    expect(markup).toContain('28 lines');
+    expect(markup).toContain('28 + 212 lines');
+    expect(markup).toContain('<table');
+    expect(markup).toContain('HTTP server / port ownership');
+    expect(markup).toContain('Explicit failure / debugging surface');
+    expect(markup).toContain('Shared branches / workarounds');
+  });
+
+  it('connects shared code and workflow results to pinned implementation evidence', () => {
+    expect(markup).toContain('<p>03</p>');
+    expect(markup).toContain('Pinned implementation evidence');
+    expect(markup).toContain('Select Real Socket.IO evidence');
+    expect(markup).toContain('Real Socket.IO bootstrap');
+    expect(markup).toContain('createServer');
+    expect(markup).toContain('<p>04</p>');
+    expect(markup).toContain('Workflow behavior matrix');
+    expect(markup).toContain('Acknowledged joins');
+    expect(markup).toContain('Passed · same observation');
+    expect(markup).toContain('Shared expected value used by all three targets');
   });
 
   it('preserves the authoritative interpretation and evidence boundaries', () => {
@@ -55,12 +86,12 @@ describe('/case-study', () => {
     );
   });
 
-  it('renders accessible controls for exploring the shared observation', () => {
-    expect(markup).toContain('Inspect Real Socket.IO');
+  it('demotes the identical transcript to supporting evidence without a target selector', () => {
+    expect(markup).toContain('<details');
+    expect(markup).toContain('Supporting evidence: shared transcript');
     expect(markup).toContain('Filter transcript by participant');
     expect(markup).toContain('Filter transcript by event');
-    expect(markup).toContain('Explore structured observations');
-    expect(markup).toContain('aria-pressed="true"');
+    expect(markup).not.toContain('Inspect Real Socket.IO');
   });
 
   it('publishes route metadata with the selected-workflow boundary', () => {

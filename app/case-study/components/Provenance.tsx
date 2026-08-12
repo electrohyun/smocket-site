@@ -1,4 +1,5 @@
 import {
+  AUTHORITATIVE_DOCUMENT_COMMIT,
   OBSERVATION_SHA256,
   PINNED_SOURCE_COMMIT,
   caseStudyLinks,
@@ -27,15 +28,13 @@ export default function Provenance({ model }: { model: CaseStudyModel }) {
   ];
 
   return (
-    <section className="section" aria-labelledby="provenance-title">
-      <div className="inner">
-        <h2 id="provenance-title" className="h2">
-          Reproduce the record.
-        </h2>
-        <p className="lead">
+    <section id="provenance" className={styles.reportSection} aria-labelledby="provenance-title">
+      <div className={styles.sectionHeading}>
+        <p>07</p><div><h2 id="provenance-title">Reproduction &amp; provenance</h2><p>
           Run these commands in the pinned Smocket source. Recording replaces the canonical
           snapshot, so use it only intentionally.
-        </p>
+        </p></div>
+      </div>
 
         <div className={styles.provenanceGrid}>
           <div>
@@ -72,6 +71,7 @@ export default function Provenance({ model }: { model: CaseStudyModel }) {
                 value={`${record.environment.platform} ${record.environment.architecture}; Node ${record.environment.node}; npm ${record.environment.npm}`}
               />
               <CodeFact label="Pinned source commit" value={PINNED_SOURCE_COMMIT} />
+              <CodeFact label="Authoritative publication commit" value={AUTHORITATIVE_DOCUMENT_COMMIT} />
               <CodeFact label="Observation SHA-256" value={OBSERVATION_SHA256} />
               <CodeFact
                 label="Application source SHA-256"
@@ -86,7 +86,6 @@ export default function Provenance({ model }: { model: CaseStudyModel }) {
           <a href={caseStudyLinks.observation}>Pinned observation JSON</a>
           <a href={caseStudyLinks.source}>Pinned case-study source</a>
         </nav>
-      </div>
     </section>
   );
 }
