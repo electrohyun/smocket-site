@@ -1,366 +1,290 @@
-# Interactive Case Study Implementation Plan
+# Comparison-first Case Study Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build and publish a responsive, accessible `/case-study` explorer backed by the pinned and hash-verified Smocket chat-room observation record.
+**Goal:** Replace the transcript-led `/case-study` draft with a technical report whose primary subject is the setup, authored code, implementation evidence, and maintenance surface owned by Real Socket.IO, published Smocket, and a handwritten mock.
 
-**Architecture:** Vendor the exact observation JSON and enforce its byte hash and semantic contract with a Node validator before every production build. A typed pure model derives all numeric facts, target summaries, transcript filters, and structured categories for a mostly server-rendered route; one focused client component owns only target, participant, and category selection state.
+**Architecture:** Keep the existing pinned observation validator, then add hash-verified vendored source snapshots and derive all comparison figures, tables, excerpts, and behavior evidence from those sources plus `observations.json`. Render a compact server report with two focused client interactions—approach evidence and workflow evidence—while moving the identical transcript into a supporting disclosure.
 
-**Tech Stack:** Next.js 16 App Router, React 19, TypeScript 5, CSS Modules, Node `crypto`, Vitest 4, existing site design tokens.
+**Tech Stack:** Next.js 16 App Router, React 19, TypeScript 5, CSS Modules, Node `crypto`, Vitest 4, jsdom, React Testing Library, user-event.
 
 ---
 
 ## File map
 
-- Create `content/case-study-observations.json`: exact vendored bytes from the pinned Smocket commit.
-- Create `scripts/validate-case-study-observations.mjs`: reusable byte-hash and schema/semantic validator plus CLI entry point.
-- Create `scripts/__tests__/validate-case-study-observations.test.mjs`: validator contract tests.
-- Modify `package.json`: run the validator through `case-study:validate` and `prebuild`.
-- Create `content/case-study.ts`: pinned source constants and authoritative static interpretation copy only.
-- Create `app/case-study/lib/model.ts`: observation types and pure presentation derivation/filter functions.
-- Create `app/case-study/lib/__tests__/model.test.ts`: model and transcript-filter tests.
-- Create `app/case-study/components/ApproachComparison.tsx`: target dependency and owned-source comparison.
-- Create `app/case-study/components/ObservationExplorer.tsx`: the only client component; target, participant, and category controls.
-- Create `app/case-study/components/ObservationExplorer.module.css`: accessible explorer layout and control states.
-- Create `app/case-study/components/EvidenceBoundaries.tsx`: Fidelity, Reliability, Productivity, neutral findings, and limitations.
-- Create `app/case-study/components/Provenance.tsx`: reproduction commands, environment, source revision, and hashes.
-- Create `app/case-study/page.tsx`: route composition and page metadata content.
-- Create `app/case-study/layout.tsx`: route metadata and canonical URL.
-- Create `app/case-study/page.module.css`: page-wide established visual language and responsive layout.
-- Create `app/case-study/__tests__/page.test.tsx`: static render coverage for required claims and evidence.
-- Modify `content/landing.ts`: add the footer case-study link.
-- Modify `app/sitemap.ts`: add `/case-study`.
+- Modify `content/case-study.ts`: separate source/document revisions and static interpretation copy.
+- Create `content/case-study-sources/**`: exact pinned shared and target-owned JavaScript snapshots.
+- Modify `scripts/validate-case-study-observations.mjs`: validate every vendored source against JSON file hashes.
+- Modify `scripts/__tests__/validate-case-study-observations.test.mjs`: source-hash contract tests.
+- Refactor `app/case-study/lib/model.ts`: derive authored-surface segments, comparison rows, excerpts, behavior matrix, and evidence panels.
+- Refactor `app/case-study/lib/__tests__/model.test.ts`: exact comparison and excerpt derivation tests.
+- Create `app/case-study/components/ReportHeader.tsx`: compact abstract and record metadata.
+- Create `app/case-study/components/Method.tsx`: research question, method, and shared-file evidence.
+- Create `app/case-study/components/AuthoredSurface.tsx`: contextual stacked bars and comparison table.
+- Create `app/case-study/components/ApproachEvidence.tsx`: interactive pinned setup/code evidence.
+- Create `app/case-study/components/BehaviorMatrix.tsx`: interactive workflow pass/evidence matrix.
+- Refactor `app/case-study/components/ObservationExplorer.tsx`: supporting transcript disclosure only.
+- Modify `app/case-study/components/EvidenceBoundaries.tsx`: report-style interpretation and limitations.
+- Modify `app/case-study/components/Provenance.tsx`: correct two-revision provenance.
+- Refactor `app/case-study/page.tsx` and `page.module.css`: report hierarchy and document visual system.
+- Add `app/case-study/__tests__/interactions.test.tsx`: real DOM click/keyboard/focus tests.
+- Add `vitest.config.ts` and modify `package.json`/`pnpm-lock.yaml`: jsdom and Testing Library setup.
 
-### Task 1: Pin and validate the observation artifact
+### Task 1: Pin and validate compared source files
 
 **Files:**
-- Create: `content/case-study-observations.json`
-- Create: `scripts/validate-case-study-observations.mjs`
-- Create: `scripts/__tests__/validate-case-study-observations.test.mjs`
-- Modify: `package.json`
+- Create: `content/case-study-sources/examples/chat-room/app.js`
+- Create: `content/case-study-sources/examples/chat-room/scenario.js`
+- Create: `content/case-study-sources/examples/chat-room/assertions.js`
+- Create: `content/case-study-sources/case-studies/chat-room/fixtures/socket-io/bootstrap.js`
+- Create: `content/case-study-sources/case-studies/chat-room/fixtures/published-smocket/bootstrap.js`
+- Create: `content/case-study-sources/case-studies/chat-room/fixtures/handwritten/bootstrap.js`
+- Create: `content/case-study-sources/case-studies/chat-room/fixtures/handwritten/handwritten-socket-io.js`
+- Modify: `scripts/validate-case-study-observations.mjs`
+- Modify: `scripts/__tests__/validate-case-study-observations.test.mjs`
+- Modify: `content/case-study.ts`
 
-- [ ] **Step 1: Vendor the source bytes and confirm the supplied hash**
+- [ ] **Step 1: Add failing source-contract tests**
 
-Fetch only the immutable URL below into a temporary file, verify it, then add the exact bytes with `apply_patch`:
+Test `validateSourceFiles(record, readSource)` with real vendored paths and mutations. Require successful verification of all seven files and field-specific failure for missing files or changed SHA-256. Also assert the authoritative document URL uses `6a17477beef33fb014ab629b914d80a6f144b31b`, while observation/source URLs use `fa90e07e272c7fd0db64ebfd73cbb104664ddb81`.
 
-```text
-https://raw.githubusercontent.com/electrohyun/smocket/fa90e07e272c7fd0db64ebfd73cbb104664ddb81/case-studies/chat-room/observations.json
-```
+- [ ] **Step 2: Run the validator suite and observe RED**
 
-Run:
+Run: `node_modules\.bin\vitest.CMD run scripts\__tests__\validate-case-study-observations.test.mjs`
 
-```powershell
-(Get-FileHash -Algorithm SHA256 content\case-study-observations.json).Hash.ToLowerInvariant()
-```
+Expected: FAIL because `validateSourceFiles` and corrected document revision are absent.
 
-Expected: `414b07fb27b70cc836d8b71d78d63a0f530d2cae28dbd32b60e77462a64f4bad`.
+- [ ] **Step 3: Vendor exact source bytes**
 
-- [ ] **Step 2: Write failing validator tests**
+Fetch only immutable `raw.githubusercontent.com/electrohyun/smocket/fa90e07.../<path>` URLs, add the returned bytes with `apply_patch`, and verify each local SHA-256 equals its `observations.json` file entry. Preserve line endings and terminal newline exactly.
 
-Export `validateObservationBytes(bytes, expectedHash)` and assert the canonical file succeeds. Add independent mutation tests for wrong byte hash, `schemaVersion`, `application.combinedSha256`, target IDs, failed assertions, `repeatedRunMatches`, and unequal target observations. Each test must assert a specific error fragment such as `SHA-256`, `schemaVersion`, or `observations differ`.
+- [ ] **Step 4: Implement reusable source verification**
 
-- [ ] **Step 3: Run validator tests to verify failure**
-
-Run: `pnpm vitest run scripts/__tests__/validate-case-study-observations.test.mjs`
-
-Expected: FAIL because the validator module does not exist.
-
-- [ ] **Step 4: Implement the minimal validator**
-
-Use `createHash('sha256')`, guarded object/array checks, an exact target-ID set, and `isDeepStrictEqual`. Export the two constants below and a `validateObservationBytes(bytes, expectedHash = EXPECTED_OBSERVATION_SHA256)` function that returns the parsed record after every check succeeds and throws a field-specific `Error` on the first failed check:
+Export:
 
 ```js
-export const EXPECTED_OBSERVATION_SHA256 = '414b07fb27b70cc836d8b71d78d63a0f530d2cae28dbd32b60e77462a64f4bad';
-export const EXPECTED_APPLICATION_SHA256 = 'e3884c42af5987b4db154c7f13538054e405e12b496803b8d321ac9a409b62d5';
+export async function validateSourceFiles(record, readSource) {
+  // Resolve shared files from record.application.files and target-owned files
+  // from record.targets[*].files, excluding package manifests/lockfiles.
+  // Hash each vendored file and throw with its source path on mismatch.
+}
 ```
 
-The CLI reads `content/case-study-observations.json`, validates it, and prints the verified observation and application hashes. It must execute only when the module is the process entry point so tests can import without side effects.
+The CLI calls it after `validateObservationBytes` and prints the count of verified source files. Correct `caseStudyLinks.authoritativeDocument` to the publication revision.
 
-- [ ] **Step 5: Add build enforcement**
+- [ ] **Step 5: Verify and commit**
 
-Add these scripts without changing existing commands:
+Run `pnpm.cmd case-study:validate` and the focused validator tests. Expected: seven source snapshots and both aggregate hashes verified.
 
-```json
-"case-study:validate": "node scripts/validate-case-study-observations.mjs",
-"prebuild": "pnpm case-study:validate"
-```
+Commit: `test: verify pinned case study source evidence`
 
-- [ ] **Step 6: Verify and commit the data contract**
-
-Run:
-
-```powershell
-pnpm case-study:validate
-pnpm vitest run scripts/__tests__/validate-case-study-observations.test.mjs
-```
-
-Expected: both PASS and print both supplied hashes.
-
-Commit:
-
-```bash
-git add package.json content/case-study-observations.json scripts/validate-case-study-observations.mjs scripts/__tests__/validate-case-study-observations.test.mjs
-git commit -m "test: verify pinned case study observations"
-```
-
-### Task 2: Derive a typed presentation model
+### Task 2: Derive the comparison report model
 
 **Files:**
-- Create: `content/case-study.ts`
-- Create: `app/case-study/lib/model.ts`
-- Create: `app/case-study/lib/__tests__/model.test.ts`
-
-- [ ] **Step 1: Write failing model tests**
-
-Import the JSON and require `createCaseStudyModel()` to produce:
-
-- three summaries in `socket-io`, `published-smocket`, `handwritten` order;
-- dependencies `socket.io@4.8.3, socket.io-client@4.8.3`, `smocket@0.4.2`, and `None`;
-- bootstrap surfaces 61, 28, and 28 lines;
-- additional mock surface 212 only for handwritten;
-- one shared ten-line transcript;
-- participant filters `all`, `alice`, `bob`, `carol` derived from line prefixes;
-- categories `all`, `welcome`, `message`, `authorization`, `announcement`, `departure` derived from transcript syntax; and
-- structured category models derived from joins, welcomes, messages, authorization acknowledgements, announcements, and departures.
-
-Also test `filterTranscript()` preserves original order and correctly combines participant and category selection.
-
-- [ ] **Step 2: Run the focused tests to verify failure**
-
-Run: `pnpm vitest run app/case-study/lib/__tests__/model.test.ts`
-
-Expected: FAIL because `model.ts` does not exist.
-
-- [ ] **Step 3: Implement types and pure derivation**
-
-Define only the JSON fields consumed by the page. Export `createCaseStudyModel`, `filterTranscript`, `classifyTranscriptLine`, and serializable model types. Locate target files by their `role` rather than array index. Classification rules must use transcript structure (`Welcome`, `Announcement rejected`, ` left #`, ` to #`, ` in #`) rather than participant names or recorded values.
-
-In `content/case-study.ts`, declare the pinned commit, immutable source/document URLs, and wording copied or tightly paraphrased from the authoritative Markdown. Do not repeat versions, counts, environment values, commands, or hashes already present in JSON.
-
-- [ ] **Step 4: Run model tests and typecheck**
-
-Run:
-
-```powershell
-pnpm vitest run app/case-study/lib/__tests__/model.test.ts
-pnpm typecheck
-```
-
-Expected: PASS.
-
-- [ ] **Step 5: Commit the model**
-
-```bash
-git add content/case-study.ts app/case-study/lib
-git commit -m "feat: derive case study evidence model"
-```
-
-### Task 3: Build the static evidence sections
-
-**Files:**
-- Create: `app/case-study/components/ApproachComparison.tsx`
-- Create: `app/case-study/components/EvidenceBoundaries.tsx`
-- Create: `app/case-study/components/Provenance.tsx`
-- Create: `app/case-study/page.tsx`
-- Create: `app/case-study/page.module.css`
-- Create: `app/case-study/__tests__/page.test.tsx`
-
-- [ ] **Step 1: Write the failing route render test**
-
-Use `react-dom/server` to render the synchronous page component. Assert the markup contains all three data-derived target labels, `same observable result`, `authoritative interpretation`, Fidelity, Reliability, Productivity, `not a transport comparison`, the handwritten no-dependency advantage, the real target's reference-behavior advantage, all reproduction commands, the pinned commit, and both supplied hashes.
-
-- [ ] **Step 2: Run the render test to verify failure**
-
-Run: `pnpm vitest run app/case-study/__tests__/page.test.tsx`
-
-Expected: FAIL because the page does not exist.
-
-- [ ] **Step 3: Compose the server-rendered route**
-
-Load the JSON, call `createCaseStudyModel`, and render semantic sections in the approved order. `ApproachComparison` must use definition lists for target facts. `EvidenceBoundaries` must separate direct observation from inference and retain every limitation. `Provenance` must render commands and hashes in wrapping/scrolling code surfaces and link only to the pinned source or authoritative document.
-
-Use the existing `section`, `inner`, `h2`, `lead`, panel, border, mono font, accent, and shadow tokens. New CSS must not redefine the palette. Add single-column breakpoints at 900 px and 680 px, accessible minimum control sizing, long-token overflow protection, and reduced-motion overrides.
-
-- [ ] **Step 4: Run render test, lint, and typecheck**
-
-Run:
-
-```powershell
-pnpm vitest run app/case-study/__tests__/page.test.tsx
-pnpm lint
-pnpm typecheck
-```
-
-Expected: PASS.
-
-### Task 4: Add the interactive observation explorer
-
-**Files:**
-- Create: `app/case-study/components/ObservationExplorer.tsx`
-- Create: `app/case-study/components/ObservationExplorer.module.css`
-- Modify: `app/case-study/page.tsx`
+- Modify: `app/case-study/lib/model.ts`
 - Modify: `app/case-study/lib/__tests__/model.test.ts`
 
-- [ ] **Step 1: Extend failing interaction-state tests**
+- [ ] **Step 1: Add failing comparison-model tests**
 
-Test a pure exported `reduceExplorerState(state, action)` helper for target selection, participant selection, category selection, and reset-to-all. Verify invalid IDs preserve the prior state. This makes the core keyboard/button interaction contract testable without adding a new DOM test dependency.
+Require `createCaseStudyModel()` to derive:
 
-- [ ] **Step 2: Run the focused test to verify failure**
-
-Run: `pnpm vitest run app/case-study/lib/__tests__/model.test.ts`
-
-Expected: FAIL because the state transition helper is absent.
-
-- [ ] **Step 3: Implement the client explorer**
-
-Render target buttons and filter buttons with `type="button"`, `aria-pressed`, visible labels, and 44 px minimum targets. Keep one common transcript and announce its selected target and filtered count in a polite status. Preserve canonical line order and show an accessible empty state with a reset button.
-
-Render structured categories as a named tablist only if the full WAI-ARIA keyboard behavior is implemented; otherwise use the simpler `aria-pressed` button group. Category panels must render values from the structured observation object, including Bob's rejected moderator action and no delivery, Alice's received Bob message while Bob and Carol receive none, union delivery to all three, and Alice's departure notification.
-
-- [ ] **Step 4: Verify focused tests and static rendering**
-
-Run:
-
-```powershell
-pnpm vitest run app/case-study/lib/__tests__/model.test.ts app/case-study/__tests__/page.test.tsx
-pnpm lint
-pnpm typecheck
+```ts
+authoredSurfaces: [
+  { id: 'socket-io', segments: [{ role: 'bootstrap', lines: 61 }], total: 61 },
+  { id: 'published-smocket', segments: [{ role: 'bootstrap', lines: 28 }], total: 28 },
+  { id: 'handwritten', segments: [
+    { role: 'bootstrap', lines: 28 },
+    { role: 'mock implementation', lines: 212 },
+  ], total: 240 },
+]
 ```
 
-Expected: PASS.
+Also require exact comparison rows for dependency/setup, HTTP/port ownership, activation/shutdown, owned files, mock ownership, shared branches/workarounds, explicit source error paths, change locations, and simpler aspects. Require `behaviorRows` for join, welcome, message, authorization, union broadcast, and disconnect, each with three pass cells and assertion/application/handwritten evidence IDs.
 
-- [ ] **Step 5: Commit the page feature**
+- [ ] **Step 2: Run focused tests and observe RED**
 
-```bash
-git add app/case-study
-git commit -m "feat: add interactive application case study"
-```
+Run: `node_modules\.bin\vitest.CMD run app\case-study\lib\__tests__\model.test.ts`
 
-### Task 5: Add route metadata and discoverability
+Expected: FAIL for missing comparison fields.
+
+- [ ] **Step 3: Implement source excerpt derivation**
+
+Import vendored files with `?raw` only if supported by Next/Vitest consistently; otherwise generate typed string modules at build time from the vendored snapshots. Define tested, central line ranges such as Real bootstrap server/listen/client setup, Smocket in-memory setup, handwritten bootstrap, handwritten routing, acknowledgement, and disconnect regions. Return excerpt text by splitting the verified source string; never duplicate source text in presentation modules.
+
+- [ ] **Step 4: Implement comparison and behavior evidence models**
+
+Derive all numeric fields from JSON. Static ownership/error-path descriptions stay in `content/case-study.ts` and are explicitly labeled `Observed source path` or `Inference`. Verify no target selector can alter the shared observation.
+
+- [ ] **Step 5: Verify and commit**
+
+Run focused model tests and `pnpm.cmd typecheck`. Commit: `feat: derive approach comparison evidence`
+
+### Task 3: Rebuild the page as a technical report
 
 **Files:**
-- Create: `app/case-study/layout.tsx`
-- Modify: `content/landing.ts`
-- Modify: `app/sitemap.ts`
+- Create: `app/case-study/components/ReportHeader.tsx`
+- Create: `app/case-study/components/Method.tsx`
+- Create: `app/case-study/components/AuthoredSurface.tsx`
+- Modify: `app/case-study/page.tsx`
+- Rewrite: `app/case-study/page.module.css`
 - Modify: `app/case-study/__tests__/page.test.tsx`
 
-- [ ] **Step 1: Add failing discoverability assertions**
+- [ ] **Step 1: Replace static markup expectations first**
 
-Assert the footer content contains a `/case-study` link and the sitemap result contains `${SITE_URL}/case-study` with a lower priority than the homepage.
+Assert the report has `Abstract`, numbered method/comparison headings, exact `61`, `28`, `28 + 212`, a comparison `<table>`, the three shared source file names and roles, no old marketing title, and no decorative hero orbit class/content.
 
-- [ ] **Step 2: Run the route test to verify failure**
+- [ ] **Step 2: Run page tests and observe RED**
 
-Run: `pnpm vitest run app/case-study/__tests__/page.test.tsx`
+Run the page test; expected failures identify the old hero/card hierarchy.
 
-Expected: FAIL for the missing footer and sitemap entries.
+- [ ] **Step 3: Implement compact report header and method**
 
-- [ ] **Step 3: Implement metadata and links**
+Render title, abstract, record metadata, correct authoritative link, claim boundary, research question, method note, and shared source table. The report begins within the first desktop viewport.
 
-Add route metadata with title `Application case study`, the selected-workflow boundary in the description, canonical `/case-study`, and matching Open Graph fields. Add `{ label: 'Case study', href: '/case-study', todo: null }` to the existing footer content and add the route to the sitemap with monthly change frequency.
+- [ ] **Step 4: Implement contextual stacked bars and comparison table**
 
-- [ ] **Step 4: Verify and commit discoverability**
+Use one 240-line scale. Each bar renders exact text labels and CSS width from `segment.lines / 240`. Use a semantic figure/caption plus a real table on desktop; at 680px CSS converts table rows into labeled blocks without hiding headers from assistive technology.
+
+- [ ] **Step 5: Implement restrained document styling**
+
+Remove the viewport-height hero and orbit. Keep stars as background, add a bounded report surface, restrained heading scale, numbered sections, rules, captions, and overflow containment. Add light/dark/reduced-motion styles and 375px layout.
+
+- [ ] **Step 6: Verify and commit**
+
+Run page tests, lint, typecheck. Commit: `feat: present case study as comparison report`
+
+### Task 4: Add approach implementation evidence
+
+**Files:**
+- Create: `app/case-study/components/ApproachEvidence.tsx`
+- Create: `app/case-study/components/ApproachEvidence.module.css`
+- Modify: `app/case-study/__tests__/page.test.tsx`
+
+- [ ] **Step 1: Add failing server-render and state-transition tests**
+
+Require approach controls, initial Real evidence, each target's owned file names, immutable source URLs, and handwritten supported/omitted behavior lists. Test a pure reducer that changes selected approach and handwritten excerpt while rejecting invalid IDs.
+
+- [ ] **Step 2: Run tests and observe RED**
+
+Expected: missing approach-evidence component/state.
+
+- [ ] **Step 3: Implement evidence-changing controls**
+
+Buttons use `aria-pressed`. Selection changes dependency/setup summary, owned files, explicit source error paths, bootstrap excerpt, source link, and handwritten mock excerpt controls. Use `<pre><code>` with line numbers and an evidence caption.
+
+- [ ] **Step 4: Verify and commit**
+
+Run focused page/model tests, lint, typecheck. Commit: `feat: explore pinned target implementation evidence`
+
+### Task 5: Add workflow behavior matrix and demote transcript
+
+**Files:**
+- Create: `app/case-study/components/BehaviorMatrix.tsx`
+- Create: `app/case-study/components/BehaviorMatrix.module.css`
+- Modify: `app/case-study/components/ObservationExplorer.tsx`
+- Modify: `app/case-study/components/ObservationExplorer.module.css`
+- Modify: `app/case-study/page.tsx`
+
+- [ ] **Step 1: Add failing matrix state and markup tests**
+
+Require six behavior rows, three `Passed · same observation` cells per row, a caption limiting the result, and initial join evidence. Test behavior selection changes structured value plus assertion/application/handwritten excerpts. Require transcript inside a native `<details>` and assert no transcript target selector exists.
+
+- [ ] **Step 2: Run focused tests and observe RED**
+
+Expected: matrix missing and old transcript target selector still present.
+
+- [ ] **Step 3: Implement the matrix interaction**
+
+Use row buttons with `aria-pressed` and `aria-controls`. Evidence panel renders the exact JSON-derived observation plus pinned assertion/application source. Handwritten evidence appears only when mapped; it never implies unexercised compatibility.
+
+- [ ] **Step 4: Refactor transcript to supporting evidence**
+
+Remove approach state. Wrap participant/event filters and canonical transcript in `<details>`. Preserve filtering order and empty/reset state.
+
+- [ ] **Step 5: Verify and commit**
+
+Run focused tests, lint, typecheck. Commit: `feat: connect workflow results to implementation evidence`
+
+### Task 6: Finish interpretation and two-revision provenance
+
+**Files:**
+- Modify: `app/case-study/components/EvidenceBoundaries.tsx`
+- Modify: `app/case-study/components/Provenance.tsx`
+- Modify: `content/case-study.ts`
+- Modify: `app/case-study/__tests__/page.test.tsx`
+
+- [ ] **Step 1: Add failing boundary/provenance assertions**
+
+Require report subsections rather than cards, all caveats, neutral findings, `Inference`, compared-source revision, authoritative-publication revision, and correct immutable links.
+
+- [ ] **Step 2: Implement and verify**
+
+Preserve every prior evidence boundary. Run page tests, lint, typecheck. Commit: `fix: align report links and evidence boundaries`
+
+### Task 7: Add real DOM interaction and keyboard tests
+
+**Files:**
+- Modify: `package.json`
+- Modify: `pnpm-lock.yaml`
+- Create: `vitest.config.ts`
+- Create: `app/case-study/__tests__/interactions.test.tsx`
+
+- [ ] **Step 1: Install test dependencies**
 
 Run:
 
 ```powershell
-pnpm vitest run app/case-study/__tests__/page.test.tsx
-pnpm lint
-pnpm typecheck
+pnpm.cmd add -D @testing-library/react @testing-library/user-event @testing-library/jest-dom jsdom
 ```
 
-Expected: PASS.
+- [ ] **Step 2: Write failing DOM tests before any test-only adaptation**
 
-Commit:
+With jsdom, render the actual approach explorer, behavior matrix, and transcript disclosure. Use `userEvent.click`, `userEvent.tab`, and `userEvent.keyboard('{Enter}')`/`'{Space}'`. Assert visible code/file evidence changes, focus order, `aria-pressed`, `aria-expanded`/`open`, filters, and reset.
 
-```bash
-git add app/case-study/layout.tsx content/landing.ts app/sitemap.ts app/case-study/__tests__/page.test.tsx
-git commit -m "feat: link the application case study"
-```
+- [ ] **Step 3: Run DOM tests and observe RED**
 
-### Task 6: Run repository verification
+Expected: failures expose missing keyboard/focus or queryable semantics, not missing mocks.
+
+- [ ] **Step 4: Make only accessibility adaptations required by tests**
+
+Do not add test-only production APIs. Use native controls, stable accessible names, and real DOM state.
+
+- [ ] **Step 5: Verify and commit**
+
+Run DOM tests plus full test suite. Commit: `test: exercise case study interactions in the DOM`
+
+### Task 8: Complete verification and browser QA
 
 **Files:**
-- Modify only files required to correct failures directly caused by the feature.
+- Modify only case-study files for defects reproduced during QA.
 
-- [ ] **Step 1: Validate evidence independently**
+- [ ] **Step 1: Run all repository checks**
 
-Run: `pnpm case-study:validate`
+Run separately: `pnpm.cmd case-study:validate`, `pnpm.cmd lint`, `pnpm.cmd typecheck`, `pnpm.cmd test`, and `pnpm.cmd build`. Require exit 0 and static `/case-study` generation.
 
-Expected: PASS with observation hash `414b07...4bad` and application hash `e3884c...62d5`.
+- [ ] **Step 2: Inspect the actual page in a browser**
 
-- [ ] **Step 2: Run all repository checks**
+Use the local production server or unprotected preview. Capture and inspect:
 
-Run separately:
+- desktop light;
+- desktop dark;
+- 375×812 light;
+- 375×812 dark; and
+- reduced-motion state.
 
-```powershell
-pnpm lint
-pnpm typecheck
-pnpm test
-pnpm build
-```
+Exercise approach selection, handwritten mock excerpts, every behavior matrix row, transcript disclosure/filtering, and keyboard focus. Verify no page overflow, clipped bars/hashes/code, or information hidden by theme.
 
-Expected: all exit 0; build lists `/case-study` as a generated route and `prebuild` verifies the artifact first.
+- [ ] **Step 3: Fix every reproduced issue with a failing test where practical**
 
-- [ ] **Step 3: Inspect the final diff**
+Re-run focused checks after each correction, then all five commands again.
 
-Run:
+- [ ] **Step 4: Review and update the existing PR**
 
-```powershell
-git diff main...HEAD --check
-git diff main...HEAD --stat
-git status --short
-```
+Push `feat/case-study-pr`. Update PR #3 summary and screenshots/QA evidence; keep `Refs electrohyun/smocket#218`. Report preview accessibility truthfully.
 
-Expected: no whitespace errors, no unrelated files, and a clean or intentionally staged worktree.
+## Plan self-review
 
-### Task 7: Perform real-browser accessibility and visual QA
-
-**Files:**
-- Modify only case-study CSS/component files for issues discovered during QA.
-
-- [ ] **Step 1: Start the production server**
-
-Run `pnpm start` after the successful build and open `http://127.0.0.1:3000/case-study` in the in-app browser.
-
-- [ ] **Step 2: Check desktop light and dark themes**
-
-At approximately 1440×1000, capture full-page screenshots in light and dark. Verify established palette, readable hierarchy, no clipped hashes, correct selected states, and all required limitations.
-
-- [ ] **Step 3: Check mobile layout**
-
-At 375×812, capture a full-page screenshot. Verify single-column ordering, no page-level horizontal overflow, wrapped filters, readable transcript, and 44 px controls.
-
-- [ ] **Step 4: Check interaction and accessibility behavior**
-
-Use keyboard navigation through target, participant, and category controls; confirm visible focus and correct `aria-pressed` state. Exercise filters and reset. Emulate reduced motion and confirm no essential information depends on transitions.
-
-- [ ] **Step 5: Re-run checks after any QA correction**
-
-Run `pnpm lint`, `pnpm typecheck`, `pnpm test`, and `pnpm build` again. Commit a focused correction only if QA caused changes.
-
-### Task 8: Review, publish the branch, and open the PR
-
-**Files:**
-- No source changes unless review finds a concrete defect.
-
-- [ ] **Step 1: Apply verification-before-completion and request code review**
-
-Load the required skills, re-check requirements against the final diff, and resolve only evidence-backed findings. Re-run the relevant focused test after every correction, then all checks.
-
-- [ ] **Step 2: Push the feature branch**
-
-Run: `git push -u origin feat/case-study`
-
-Expected: the remote branch is created.
-
-- [ ] **Step 3: Open the pull request**
-
-Use a body containing summary, verification commands/results, pinned commit and both verified hashes, browser QA, and exactly `Refs electrohyun/smocket#218`. Do not use `Closes`.
-
-- [ ] **Step 4: Collect preview/deployment status**
-
-Inspect PR checks and deployments with GitHub CLI. Report the PR URL and the actual preview/deployment URL if one is published; otherwise report that no provider exposed one yet rather than inventing a URL.
-
-- [ ] **Step 5: Final report**
-
-Report change summary, commit list, full verification evidence, browser QA, PR and preview URLs, pinned source commit, observation SHA-256, application-source SHA-256, and confirmation that the Smocket repository and issue state were not changed.
+- Spec coverage: Tasks 1–6 implement every hierarchy and traceability row; Task 7 covers real DOM interaction; Task 8 covers all required browser/theme/viewport states.
+- Data boundaries: all figures and behavior results derive from verified JSON; code excerpts derive from verified vendored sources; interpretation copy remains bounded by the authoritative report.
+- Type consistency: approach IDs remain `socket-io | published-smocket | handwritten`; behavior IDs remain `join | welcome | message | authorization | announcement | disconnect`; source evidence uses one excerpt model across approach and matrix views.
+- Scope: only `/case-study`, its data contract, its tests, and existing discoverability are changed. No unrelated landing/demo refactor is included.
