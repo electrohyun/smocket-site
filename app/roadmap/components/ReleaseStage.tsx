@@ -11,7 +11,14 @@ export default function ReleaseStage({ stage, index }: { stage: ReleaseStageItem
     <li
       className={stage.conditional ? styles.conditionalStage : undefined}
       data-step={String(index + 1).padStart(2, '0')}
+      data-route-stage={stage.id}
     >
+      <span className={styles.routeNode} aria-hidden="true">
+        {String(index + 1).padStart(2, '0')}
+      </span>
+      {stage.conditional && (
+        <span className={styles.branchLabel}>Conditional branch</span>
+      )}
       {stage.detail ? (
         <details ref={detailsRef} name="release-rule" className={styles.stageDisclosure}>
           <summary
@@ -25,6 +32,9 @@ export default function ReleaseStage({ stage, index }: { stage: ReleaseStageItem
             <span className={styles.stageEyebrow}>{stage.eyebrow}</span>
             <strong>{stage.label}</strong>
             <small>{stage.summary}</small>
+            <span className={styles.nextRoute}>
+              <b>Next:</b> {stage.next}
+            </span>
             <span className={styles.stagePrompt}>Read release rule</span>
           </summary>
           <p>{stage.detail}</p>
@@ -34,7 +44,13 @@ export default function ReleaseStage({ stage, index }: { stage: ReleaseStageItem
           <span className={styles.stageEyebrow}>{stage.eyebrow}</span>
           <strong>{stage.label}</strong>
           <small>{stage.summary}</small>
+          <span className={styles.nextRoute}>
+            <b>Next:</b> {stage.next}
+          </span>
         </div>
+      )}
+      {stage.conditional && (
+        <span className={styles.rejoinLabel}>Rejoins at stabilization</span>
       )}
     </li>
   );

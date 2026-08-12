@@ -33,6 +33,7 @@ export type ReleaseStage = {
   label: string;
   eyebrow: string;
   summary: string;
+  next: string;
   detail?: string;
   conditional?: boolean;
 };
@@ -120,24 +121,28 @@ export const roadmap = {
       label: 'v0.4.2',
       eyebrow: 'Published baseline',
       summary: 'The starting line recorded by the canonical roadmap.',
+      next: 'Begin Fidelity & Extensibility review',
     },
     {
       id: 'review',
       label: 'Fidelity & Extensibility review',
       eyebrow: 'Review',
       summary: 'Review scenarios, observable results, extension points, and divergences.',
+      next: 'Classify each finding',
     },
     {
       id: 'classify',
       label: 'Classify findings',
       eyebrow: 'Decision gate',
       summary: 'Route each finding to required, optional, post-v1, or outside scope.',
+      next: 'Route required patch work to v0.4.3',
     },
     {
       id: 'v0.4.3',
       label: 'v0.4.3',
       eyebrow: 'Pre-v1 patch line',
       summary: 'Ship changes that ADR 0019 classifies as a pre-v1 patch.',
+      next: 'Ask whether a pre-v1 minor is required',
       detail:
         'Measured conformance corrections, newly covered Socket.IO surface, compatible improvements, documentation, refactoring, and maintenance may share this release when reviewed together.',
     },
@@ -146,6 +151,7 @@ export const roadmap = {
       label: 'Conditional v0.5.0',
       eyebrow: 'Only if required',
       summary: 'Use a pre-v1 minor only when required work falls into an ADR 0019 major-class row.',
+      next: 'Rejoin the path at stabilization',
       detail:
         'If no required pre-v1 change needs that classification, the path to v1.0.0 does not need to pass through v0.5.0.',
       conditional: true,
@@ -155,6 +161,7 @@ export const roadmap = {
       label: 'Stabilization',
       eyebrow: 'Last pre-v1 line',
       summary: 'Keep the final pre-v1 line to corrections, documentation, and compatible small improvements.',
+      next: 'Finalize the documented v1 guarantee',
       detail:
         'The roadmap does not lock intermediate version numbers or a release count in advance.',
     },
@@ -163,6 +170,7 @@ export const roadmap = {
       label: 'v1.0.0',
       eyebrow: 'Stable release',
       summary: 'Publish the documented logic-layer guarantee and public types as stable promises.',
+      next: 'Stable destination',
     },
   ] satisfies readonly ReleaseStage[],
   dependencies: [

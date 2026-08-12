@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import sitemap from '../../sitemap';
@@ -6,14 +7,25 @@ import { metadata } from '../layout';
 import RoadmapPage from '../page';
 
 const markup = renderToStaticMarkup(<RoadmapPage />);
+const stylesheet = readFileSync(new URL('../page.module.css', import.meta.url), 'utf8');
 
 describe('/roadmap', () => {
-  it('opens as a compact project-direction report', () => {
+  it('opens as a reading-first project-direction report', () => {
     expect(markup).toContain('Roadmap to v1.0.0');
     expect(markup).toContain('Public project direction');
     expect(markup).toContain('The GitHub roadmap owns policy and current status.');
     expect(markup).toContain('Open the canonical roadmap');
     expect(markup).toContain('<nav');
+  });
+
+  it('connects every subject as one vertical journey', () => {
+    expect(markup).toContain('Journey through v1.0.0');
+    expect(markup.match(/data-journey-stop=/g)).toHaveLength(5);
+    expect(markup.match(/data-route-stage=/g)).toHaveLength(7);
+    expect(markup).toContain('Reading position');
+    expect(markup).toContain('Next:');
+    expect(markup).toContain('Conditional branch');
+    expect(markup).toContain('Rejoins at stabilization');
   });
 
   it('states the intended guarantee and explicit non-goals', () => {
@@ -59,6 +71,11 @@ describe('/roadmap', () => {
 
   it('does not present transient issue counts or completion metrics', () => {
     expect(markup).not.toMatch(/% complete|open issues|closed issues|due date/i);
+  });
+
+  it('removes journey motion when the reader requests reduced motion', () => {
+    expect(stylesheet).toMatch(/@media \(prefers-reduced-motion: reduce\)/);
+    expect(stylesheet).toMatch(/[.]journeyNavTrack span,[\s\S]*transition: none !important/);
   });
 
   it('publishes route metadata', () => {

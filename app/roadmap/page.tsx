@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { roadmap, roadmapLinks } from '../../content/roadmap';
 import Footer from '../components/Footer';
 import ThemeToggle from '../components/ThemeToggle';
+import JourneyNav from './components/JourneyNav';
 import ReleaseStage from './components/ReleaseStage';
 import RoadmapDisclosure from './components/RoadmapDisclosure';
 import styles from './page.module.css';
@@ -53,15 +54,10 @@ export default function RoadmapPage() {
             </div>
           </header>
 
-          <nav className={styles.sectionNav} aria-label="Roadmap sections">
-            <a href="#guarantee">Guarantee</a>
-            <a href="#classification">Classification</a>
-            <a href="#sequence">Release path</a>
-            <a href="#dependencies">Dependencies</a>
-            <a href="#sources">Sources</a>
-          </nav>
-
-          <section id="guarantee" className={styles.section}>
+          <div className={styles.journeyLayout}>
+            <JourneyNav />
+            <div className={styles.journeyRoute}>
+          <section id="guarantee" className={styles.section} data-journey-stop="guarantee">
             <SectionHeading
               number="01"
               title="The v1 guarantee"
@@ -95,7 +91,7 @@ export default function RoadmapPage() {
             </div>
           </section>
 
-          <section id="classification" className={styles.section}>
+          <section id="classification" className={styles.section} data-journey-stop="classification">
             <SectionHeading
               number="02"
               title="Fidelity and Extensibility review"
@@ -113,7 +109,7 @@ export default function RoadmapPage() {
             </p>
           </section>
 
-          <section id="sequence" className={styles.section}>
+          <section id="sequence" className={styles.section} data-journey-stop="sequence">
             <SectionHeading
               number="03"
               title="The pre-v1 release path"
@@ -140,7 +136,7 @@ export default function RoadmapPage() {
             </div>
           </section>
 
-          <section id="dependencies" className={styles.section}>
+          <section id="dependencies" className={styles.section} data-journey-stop="dependencies">
             <SectionHeading
               number="04"
               title="Release-order dependencies"
@@ -153,7 +149,7 @@ export default function RoadmapPage() {
             </div>
           </section>
 
-          <section id="sources" className={styles.section}>
+          <section id="sources" className={styles.section} data-journey-stop="sources">
             <SectionHeading
               number="05"
               title="How this roadmap changes"
@@ -185,6 +181,8 @@ export default function RoadmapPage() {
               </nav>
             </div>
           </section>
+            </div>
+          </div>
         </article>
       </main>
       <Footer />

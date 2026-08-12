@@ -50,6 +50,15 @@ describe('public roadmap content', () => {
       label: 'Conditional v0.5.0',
       conditional: true,
     });
+    expect(roadmap.releaseStages.map((stage) => stage.next)).toEqual([
+      'Begin Fidelity & Extensibility review',
+      'Classify each finding',
+      'Route required patch work to v0.4.3',
+      'Ask whether a pre-v1 minor is required',
+      'Rejoin the path at stabilization',
+      'Finalize the documented v1 guarantee',
+      'Stable destination',
+    ]);
   });
 
   it('links every material dependency back to smocket', () => {
