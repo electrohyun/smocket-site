@@ -47,6 +47,12 @@ describe('/case-study', () => {
     expect(markup).toContain('app.js');
     expect(markup).toContain('scenario.js');
     expect(markup).toContain('assertions.js');
+    expect(markup).toContain(
+      '6a17477beef33fb014ab629b914d80a6f144b31b/docs/application-case-study.md',
+    );
+    expect(markup).not.toContain(
+      'fa90e07e272c7fd0db64ebfd73cbb104664ddb81/docs/application-case-study.md',
+    );
   });
 
   it('renders accessible controls for exploring the shared observation', () => {

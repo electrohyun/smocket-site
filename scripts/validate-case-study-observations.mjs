@@ -117,14 +117,60 @@ export function validateObservationBytes(bytes, expectedHash = EXPECTED_OBSERVAT
   return record;
 }
 
+function comparedSourceEntries(record) {
+  const applicationEntries = record.application.files
+    .filter((file) => file.path.endsWith('.js'))
+    .map((file) => ({
+      path: `${record.application.source}/${file.path}`,
+      sha256: file.sha256,
+    }));
+
+  const targetEntries = record.targets.flatMap((target) =>
+    target.files
+      .filter((file) => file.role === 'bootstrap' || file.role === 'mock implementation')
+      .map((file) => ({
+        path: `${target.fixture}/${file.path}`,
+        sha256: file.sha256,
+      })),
+  );
+
+  return [...applicationEntries, ...targetEntries];
+}
+
+export async function validateSourceFiles(record, readSource) {
+  const verifiedPaths = [];
+
+  for (const entry of comparedSourceEntries(record)) {
+    let bytes;
+    try {
+      bytes = await readSource(entry.path);
+    } catch {
+      fail(`${entry.path} is missing from the vendored source evidence`);
+    }
+
+    const actualHash = createHash('sha256').update(bytes).digest('hex');
+    if (actualHash !== entry.sha256) {
+      fail(`${entry.path} SHA-256 mismatch: expected ${entry.sha256}, received ${actualHash}`);
+    }
+    verifiedPaths.push(entry.path);
+  }
+
+  return verifiedPaths;
+}
+
 const isEntryPoint = process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1];
 
 if (isEntryPoint) {
   const observationUrl = new URL('../content/case-study-observations.json', import.meta.url);
+  const sourceRoot = new URL('../content/case-study-sources/', import.meta.url);
   const bytes = await readFile(observationUrl);
   const record = validateObservationBytes(bytes);
+  const verifiedSources = await validateSourceFiles(record, (path) =>
+    readFile(new URL(path, sourceRoot)),
+  );
   process.stdout.write(
     `Verified case study observation SHA-256: ${EXPECTED_OBSERVATION_SHA256}\n` +
-      `Verified application source SHA-256: ${record.application.combinedSha256}\n`,
+      `Verified application source SHA-256: ${record.application.combinedSha256}\n` +
+      `Verified ${verifiedSources.length} pinned source files.\n`,
   );
 }
