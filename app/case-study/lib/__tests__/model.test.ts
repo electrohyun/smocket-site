@@ -4,6 +4,8 @@ import {
   classifyTranscriptLine,
   createCaseStudyModel,
   filterTranscript,
+  initialExplorerState,
+  reduceExplorerState,
 } from '../model';
 
 const model = createCaseStudyModel(observations);
@@ -68,5 +70,68 @@ describe('transcript classification', () => {
       '[alice] Alice to #general, #support: Maintenance starts at 18:00.',
     ]);
     expect(filterTranscript(model.transcript, 'carol', 'message')).toEqual([]);
+  });
+});
+
+describe('reduceExplorerState', () => {
+  it('selects a target without changing the shared evidence filters', () => {
+    expect(
+      reduceExplorerState(model, initialExplorerState, {
+        type: 'select-target',
+        value: 'handwritten',
+      }),
+    ).toEqual({ ...initialExplorerState, targetId: 'handwritten' });
+  });
+
+  it('combines participant, transcript, and structured category selections', () => {
+    const participantState = reduceExplorerState(model, initialExplorerState, {
+      type: 'select-participant',
+      value: 'bob',
+    });
+    const transcriptState = reduceExplorerState(model, participantState, {
+      type: 'select-transcript-category',
+      value: 'authorization',
+    });
+    const structuredState = reduceExplorerState(model, transcriptState, {
+      type: 'select-structured-category',
+      value: 'announcement',
+    });
+
+    expect(structuredState).toEqual({
+      ...initialExplorerState,
+      participant: 'bob',
+      transcriptCategory: 'authorization',
+      structuredCategory: 'announcement',
+    });
+  });
+
+  it('resets transcript filters without changing the inspected target or structured category', () => {
+    const selected = {
+      targetId: 'published-smocket' as const,
+      participant: 'carol',
+      transcriptCategory: 'announcement' as const,
+      structuredCategory: 'departure' as const,
+    };
+
+    expect(reduceExplorerState(model, selected, { type: 'reset-transcript' })).toEqual({
+      ...selected,
+      participant: 'all',
+      transcriptCategory: 'all',
+    });
+  });
+
+  it('ignores IDs that are absent from the validated model', () => {
+    expect(
+      reduceExplorerState(model, initialExplorerState, {
+        type: 'select-target',
+        value: 'unknown' as 'socket-io',
+      }),
+    ).toBe(initialExplorerState);
+    expect(
+      reduceExplorerState(model, initialExplorerState, {
+        type: 'select-participant',
+        value: 'mallory',
+      }),
+    ).toBe(initialExplorerState);
   });
 });

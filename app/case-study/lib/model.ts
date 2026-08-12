@@ -112,9 +112,31 @@ export interface TranscriptLine {
 }
 
 export interface StructuredCategory {
-  id: 'joins' | 'welcomes' | 'message' | 'authorization' | 'announcement' | 'departure';
+  id: StructuredCategoryId;
   label: string;
 }
+
+export type StructuredCategoryId =
+  | 'joins'
+  | 'welcomes'
+  | 'message'
+  | 'authorization'
+  | 'announcement'
+  | 'departure';
+
+export interface ExplorerState {
+  targetId: TargetId;
+  participant: ParticipantFilter;
+  transcriptCategory: TranscriptCategory;
+  structuredCategory: StructuredCategoryId;
+}
+
+export type ExplorerAction =
+  | { type: 'select-target'; value: TargetId }
+  | { type: 'select-participant'; value: string }
+  | { type: 'select-transcript-category'; value: TranscriptCategory }
+  | { type: 'select-structured-category'; value: StructuredCategoryId }
+  | { type: 'reset-transcript' };
 
 export interface CaseStudyModel {
   record: CaseStudyRecord;
@@ -145,6 +167,13 @@ export const STRUCTURED_CATEGORIES: StructuredCategory[] = [
   { id: 'announcement', label: 'Union announcement' },
   { id: 'departure', label: 'Disconnect' },
 ];
+
+export const initialExplorerState: ExplorerState = {
+  targetId: 'socket-io',
+  participant: 'all',
+  transcriptCategory: 'all',
+  structuredCategory: 'joins',
+};
 
 function sourceLines(files: SourceFile[], role: string): number {
   return files.find((file) => file.role === role)?.lines ?? 0;
@@ -181,6 +210,33 @@ export function filterTranscript(
       (participant === 'all' || line.participant === participant) &&
       (category === 'all' || line.category === category),
   );
+}
+
+export function reduceExplorerState(
+  model: CaseStudyModel,
+  state: ExplorerState,
+  action: ExplorerAction,
+): ExplorerState {
+  switch (action.type) {
+    case 'select-target':
+      return model.targets.some((target) => target.id === action.value)
+        ? { ...state, targetId: action.value }
+        : state;
+    case 'select-participant':
+      return model.participants.includes(action.value)
+        ? { ...state, participant: action.value }
+        : state;
+    case 'select-transcript-category':
+      return model.transcriptCategories.includes(action.value)
+        ? { ...state, transcriptCategory: action.value }
+        : state;
+    case 'select-structured-category':
+      return model.structuredCategories.some((category) => category.id === action.value)
+        ? { ...state, structuredCategory: action.value }
+        : state;
+    case 'reset-transcript':
+      return { ...state, participant: 'all', transcriptCategory: 'all' };
+  }
 }
 
 export function createCaseStudyModel(input: CaseStudyRecord): CaseStudyModel {
