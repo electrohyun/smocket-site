@@ -4,13 +4,15 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "pnpm case-study:validate",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "seed:draw": "node scripts/draw-seed.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "case-study:validate": "node scripts/validate-case-study-observations.mjs"
   },
   "dependencies": {
     "next": "16.2.12",
