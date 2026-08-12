@@ -167,6 +167,10 @@ export default function ObservationExplorer({ model }: { model: CaseStudyModel }
           {caseStudyCopy.result.title}
         </h2>
         <p className="lead">{caseStudyCopy.result.lead}</p>
+        <p className={styles.methodNote}>
+          <strong>Method boundary</strong>
+          {caseStudyCopy.result.method}
+        </p>
 
         <div className={styles.targetPicker}>
           <div className={styles.buttonGroup} role="group" aria-label="Choose an approach to inspect">

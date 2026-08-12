@@ -47,6 +47,20 @@ export default function Provenance({ model }: { model: CaseStudyModel }) {
                 </li>
               ))}
             </ul>
+            <h3 className={styles.applicationSubhead}>Shared application source</h3>
+            <p className={styles.sourceRoot}>
+              <code>{record.application.source}</code>
+            </p>
+            <ul className={styles.sourceFileList}>
+              {record.application.files.map((file) => (
+                <li key={file.path}>
+                  <code>{file.path}</code>
+                  <span>
+                    {file.role} · {file.lines} physical source lines
+                  </span>
+                </li>
+              ))}
+            </ul>
           </div>
 
           <div>

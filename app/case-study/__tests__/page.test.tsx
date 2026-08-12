@@ -25,6 +25,8 @@ describe('/case-study', () => {
     expect(markup).toContain('not a transport comparison');
     expect(markup).toContain('not evidence of continued success over time');
     expect(markup).toContain('not a productivity score');
+    expect(markup).toContain('Listeners register before their actions');
+    expect(markup).toContain('not delays or timeouts');
   });
 
   it('retains neutral and unfavorable findings', () => {
@@ -32,6 +34,7 @@ describe('/case-study', () => {
     expect(markup).toContain('reference behavior without application-owned mock logic');
     expect(markup).toContain('one moderated, two-room workflow');
     expect(markup).toContain('author judgment');
+    expect(markup).toContain('namespaces, middleware, reconnection, transport behavior');
   });
 
   it('renders reproducibility and pinned provenance', () => {
@@ -41,6 +44,9 @@ describe('/case-study', () => {
     expect(markup).toContain('fa90e07e272c7fd0db64ebfd73cbb104664ddb81');
     expect(markup).toContain('414b07fb27b70cc836d8b71d78d63a0f530d2cae28dbd32b60e77462a64f4bad');
     expect(markup).toContain('e3884c42af5987b4db154c7f13538054e405e12b496803b8d321ac9a409b62d5');
+    expect(markup).toContain('app.js');
+    expect(markup).toContain('scenario.js');
+    expect(markup).toContain('assertions.js');
   });
 
   it('renders accessible controls for exploring the shared observation', () => {
