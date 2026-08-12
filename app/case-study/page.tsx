@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import observations from '../../content/case-study-observations.json';
 import { caseStudyCopy, caseStudyLinks } from '../../content/case-study';
+import Footer from '../components/Footer';
 import ThemeToggle from '../components/ThemeToggle';
 import ApproachComparison from './components/ApproachComparison';
 import EvidenceBoundaries from './components/EvidenceBoundaries';
@@ -41,6 +42,7 @@ export default function CaseStudyPage() {
         <EvidenceBoundaries />
         <Provenance model={model} />
       </main>
+      <Footer />
     </>
   );
 }
