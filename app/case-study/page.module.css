@@ -317,6 +317,39 @@
   font-family: var(--font-mono), ui-monospace, monospace;
 }
 
+.applicationSubhead {
+  margin-top: 26px;
+  font-size: 0.9rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+}
+
+.sourceRoot {
+  margin-top: 8px;
+  color: var(--text-dim);
+  font-size: 0.76rem;
+}
+
+.sourceFileList {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  border-top: 1px solid var(--border);
+}
+
+.sourceFileList li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.74rem;
+}
+
+.sourceFileList span {
+  color: var(--text-dim);
+  text-align: right;
+}
+
 .commandList {
   list-style: none;
   margin: 0;

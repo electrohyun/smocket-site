@@ -36,6 +36,8 @@ export const caseStudyCopy = {
     title: 'One shared observable record.',
     lead:
       'Every target produced these transcript lines and structured values. No behavioral disagreement appeared, and the shared application, workflow, and assertions required no target branch.',
+    method:
+      'Listeners register before their actions. Acknowledgements and later per-socket markers, not delays or timeouts, establish completion and non-receipt; the shared assertions run twice in one process.',
   },
   evidence: {
     title: 'Three lenses, three evidence boundaries.',
@@ -71,6 +73,7 @@ export const caseStudyCopy = {
       'The snapshot covers only the recorded package versions, machine, and runtime.',
       'The real target uses a local HTTP server while the other two are in memory. This is not a transport comparison.',
       'The handwritten boundary reflects the implementation author judgment; another application may need a different design.',
+      'The handwritten mock omits namespaces, middleware, reconnection, transport behavior, and every other unexercised Socket.IO API.',
       'Equal results must not be generalized beyond the shared assertions, and one recorded run is not historical reliability.',
     ],
   },
