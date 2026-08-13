@@ -50,12 +50,13 @@ export default function JourneyNav() {
   }, []);
 
   const percent = Math.round(state.progress * 100);
+  const currentIndex = stops.findIndex((stop) => stop.id === state.currentId);
   const style = { '--journey-progress': state.progress } as CSSProperties;
 
   return (
-    <nav className={styles.journeyNav} aria-label="Journey through v1.0.0" style={style}>
+    <nav className={styles.journeyNav} aria-label="Roadmap to v1.0.0" style={style}>
       <div className={styles.journeyNavHeader}>
-        <p>Journey through v1.0.0</p>
+        <p>ROADMAP</p>
         <span aria-label={`Reading position, ${percent}%`}>{percent}%</span>
       </div>
       <div className={styles.journeyNavTrack} aria-hidden="true">
@@ -64,7 +65,11 @@ export default function JourneyNav() {
       <ol>
         {stops.map((stop, index) => (
           <li key={stop.id}>
-            <a href={`#${stop.id}`} aria-current={state.currentId === stop.id ? 'step' : undefined}>
+            <a
+              href={`#${stop.id}`}
+              aria-current={state.currentId === stop.id ? 'step' : undefined}
+              data-reached={currentIndex >= index}
+            >
               <span>{String(index + 1).padStart(2, '0')}</span>
               {stop.label}
             </a>
