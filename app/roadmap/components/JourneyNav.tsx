@@ -84,11 +84,11 @@ export default function JourneyNav() {
       </ol>
       {done && (
         <div className={styles.journeyFinale}>
+          <img className={styles.journeyCat} src="/cat.webp" alt="" width={34} height={34} />
+          <span className={styles.journeyToast}>Roadmap complete!</span>
           <span className={styles.journeySpark} aria-hidden="true">
             ✨
           </span>
-          <span className={styles.journeyToast}>Roadmap complete!</span>
-          <img className={styles.journeyCat} src="/cat.webp" alt="" width={34} height={34} />
         </div>
       )}
     </nav>

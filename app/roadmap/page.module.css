@@ -847,12 +847,12 @@
 
 .journeyFinale {
   position: absolute;
+  top: calc(100% + 8px);
   right: 8px;
-  bottom: calc(100% + 8px);
   display: flex;
   align-items: center;
   gap: 6px;
-  transform-origin: bottom right;
+  transform-origin: top right;
   animation: journeyPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
@@ -1432,9 +1432,7 @@
   }
 
   .journeyFinale {
-    top: calc(100% + 8px);
     right: 14px;
-    bottom: auto;
   }
 
   .journeyNavHeader {
