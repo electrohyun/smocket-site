@@ -50,11 +50,17 @@ export default function JourneyNav() {
   }, []);
 
   const percent = Math.round(state.progress * 100);
+  const done = state.progress > 0.995;
   const currentIndex = stops.findIndex((stop) => stop.id === state.currentId);
   const style = { '--journey-progress': state.progress } as CSSProperties;
 
   return (
-    <nav className={styles.journeyNav} aria-label="Roadmap to v1.0.0" style={style}>
+    <nav
+      className={styles.journeyNav}
+      data-done={done}
+      aria-label="Roadmap to v1.0.0"
+      style={style}
+    >
       <div className={styles.journeyNavHeader}>
         <p>ROADMAP</p>
         <span aria-label={`Reading position, ${percent}%`}>{percent}%</span>
@@ -76,6 +82,15 @@ export default function JourneyNav() {
           </li>
         ))}
       </ol>
+      {done && (
+        <div className={styles.journeyFinale}>
+          <span className={styles.journeySpark} aria-hidden="true">
+            ✨
+          </span>
+          <span className={styles.journeyToast}>Roadmap complete!</span>
+          <img className={styles.journeyCat} src="/cat.webp" alt="" width={34} height={34} />
+        </div>
+      )}
     </nav>
   );
 }
