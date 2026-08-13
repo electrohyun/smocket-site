@@ -1216,9 +1216,9 @@
   .journeyNav {
     position: fixed;
     top: 50%;
-    right: max(18px, calc((100vw - 1180px) / 2 - 158px));
+    right: max(18px, calc((100vw - 1180px) / 2 - 178px));
     display: block;
-    width: 140px;
+    width: 160px;
     margin: 0;
     padding: 14px 12px;
     border-radius: 18px;
