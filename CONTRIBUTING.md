@@ -2,7 +2,7 @@
 
 Thanks for taking the time to contribute.
 
-This repository holds the landing page and interactive demo for [smocket](https://github.com/electrohyun/smocket). Changes to the library API or Socket.IO delivery behavior belong in the library repository; changes to how those ideas are explained, visualized, and demonstrated belong here.
+This repository holds the public guide, interactive showcase, and measured case studies for [smocket](https://github.com/electrohyun/smocket). Changes to the library API or Socket.IO delivery behavior belong in the library repository; changes to how those ideas are explained, visualized, measured, and demonstrated belong here.
 
 ## Getting started
 
@@ -23,6 +23,7 @@ pnpm dev
 | `pnpm typecheck` | Type-check without emitting files |
 | `pnpm test` | Run the test suite once |
 | `pnpm test:watch` | Run tests in watch mode |
+| `pnpm case-study:validate` | Check pinned report data and source files |
 
 ## Before changing behavior
 
@@ -69,6 +70,7 @@ Before asking for review:
 - Check both light and dark themes when shared colors or tokens change
 - Respect `prefers-reduced-motion` when adding motion
 - Verify `/demo` separately when changing shared components or demo code
+- Verify `/case-study` separately when changing report data, shared styles, or source links
 
 Pull requests are rebase merged, so every commit lands on `main` as written.
 
