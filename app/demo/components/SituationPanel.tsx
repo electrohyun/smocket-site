@@ -15,7 +15,8 @@ import {
 import {
   drawingGameCodeModel,
   type CodeSampleId,
-  type DrawingGameCodeCard,
+  type DrawingGameCodeColumn,
+  type DrawingGameCodeSample,
 } from '../lib/drawing-game-code';
 import styles from './SituationPanel.module.css';
 
@@ -37,102 +38,128 @@ import styles from './SituationPanel.module.css';
 
 type Viewpoint = 'drawer' | 'observer';
 
-function snippetDomId(prefix: string, snippetId: string) {
-  return `${prefix}-${snippetId.replace(/[^a-z0-9_-]/gi, '-')}`;
-}
-
 function CodeCard({
-  card,
+  column,
   index,
-  sampleId,
+  sample,
 }: {
-  card: DrawingGameCodeCard;
+  column: DrawingGameCodeColumn;
   index: number;
-  sampleId: CodeSampleId;
+  sample: DrawingGameCodeSample;
 }) {
-  const [selectedId, setSelectedId] = useState(card.snippets[0].id);
-  const selected = card.snippets.find((snippet) => snippet.id === selectedId) ?? card.snippets[0];
-  const prefix = `demo-code-${sampleId}-${card.id}`;
-  const selectedTabId = snippetDomId(`${prefix}-tab`, selected.id);
-  const selectedPanelId = snippetDomId(`${prefix}-panel`, selected.id);
-
-  const selectAndFocus = (snippetIndex: number) => {
-    const next = card.snippets[snippetIndex];
-    setSelectedId(next.id);
-    requestAnimationFrame(() =>
-      document.getElementById(snippetDomId(`${prefix}-tab`, next.id))?.focus(),
-    );
-  };
+  const prefix = `demo-code-${sample.id}-${column.id}`;
+  const snippet = column.snippet;
 
   return (
-    <article className={styles.codeCard} aria-labelledby={`${prefix}-title`}>
+    <article
+      className={styles.codeCard}
+      aria-labelledby={`${prefix}-title`}
+      data-code-column={column.id}
+    >
       <header className={styles.codeCardHeader}>
         <span className={styles.codeCardIndex}>{String(index + 1).padStart(2, '0')}</span>
         <div>
-          <h3 id={`${prefix}-title`}>{card.title}</h3>
-          <p>{card.description}</p>
+          <h3 id={`${prefix}-title`}>{column.title}</h3>
+          <p>{column.summary}</p>
         </div>
-        <span className={styles.codeCardMeta}>{card.meta}</span>
+        <span className={styles.codeCardMeta}>{column.status}</span>
       </header>
 
-      <div className={styles.snippetTabs} role="tablist" aria-label={`${card.title} snippets`}>
-        {card.snippets.map((snippet, snippetIndex) => {
-          const tabId = snippetDomId(`${prefix}-tab`, snippet.id);
-          const panelId = snippetDomId(`${prefix}-panel`, snippet.id);
-          const active = snippet.id === selected.id;
-          return (
-            <button
-              key={snippet.id}
-              id={tabId}
-              type="button"
-              role="tab"
-              aria-selected={active}
-              aria-controls={panelId}
-              tabIndex={active ? 0 : -1}
-              className={styles.snippetTab}
-              onClick={() => setSelectedId(snippet.id)}
-              onKeyDown={(event) => {
-                const lastIndex = card.snippets.length - 1;
-                let nextIndex: number | null = null;
-                if (event.key === 'ArrowRight')
-                  nextIndex = (snippetIndex + 1) % card.snippets.length;
-                if (event.key === 'ArrowLeft')
-                  nextIndex = (snippetIndex - 1 + card.snippets.length) % card.snippets.length;
-                if (event.key === 'Home') nextIndex = 0;
-                if (event.key === 'End') nextIndex = lastIndex;
-                if (nextIndex === null) return;
-                event.preventDefault();
-                selectAndFocus(nextIndex);
-              }}
-            >
-              {snippet.label}
-            </button>
-          );
-        })}
+      <div className={styles.comparisonFacts} aria-label={`${column.title} comparison facts`}>
+        {column.id === 'real' && (
+          <>
+            <strong>Behavior oracle</strong>
+            <span>Recorded workflow reference</span>
+            <span>Source hash shown below</span>
+          </>
+        )}
+        {column.id === 'smocket' && (
+          <>
+            <strong>Same handler</strong>
+            <span>Code + source hash matched</span>
+            <span>Application code changed: {sample.applicationComparison.changedLoc} LOC</span>
+          </>
+        )}
+        {column.id === 'handwritten' && (
+          <>
+            <strong>{sample.handwritten.totalLoc} LOC capability stage</strong>
+            <span>{sample.handwritten.stageId}</span>
+            <span>Application-owned transport</span>
+          </>
+        )}
       </div>
 
       <div className={styles.snippetDetails}>
-        <span className={styles.snippetRole}>{selected.role}</span>
-        <code className={styles.snippetId}>{selected.id}</code>
+        <span className={styles.snippetRole}>{snippet.purpose}</span>
+        <code className={styles.snippetId}>{snippet.id}</code>
         <a
           className={styles.snippetSource}
-          href={selected.sourceUrl}
+          href={snippet.sourceUrl}
           target="_blank"
           rel="noreferrer"
-          title={selected.sourceLabel}
+          title={snippet.sourceLabel}
         >
           Source at {drawingGameCodeModel.publicationCommit.slice(0, 7)}
         </a>
+        <span className={styles.snippetHash} title={snippet.sourceSha256}>
+          SHA-256 {snippet.sourceSha256.slice(0, 10)}…
+        </span>
       </div>
 
-      <pre
-        id={selectedPanelId}
-        className={styles.codeBlock}
-        role="tabpanel"
-        aria-labelledby={selectedTabId}
-      >
-        <code data-testid={`snippet-code-${selected.id}`}>{selected.code}</code>
+      <pre className={styles.codeBlock} aria-label={`${column.title} code`}>
+        <code data-testid={`snippet-code-${snippet.id}`}>
+          {column.lines.map((line, lineIndex) => (
+            <span
+              key={line.lineNumber}
+              className={`${styles.codeLine}${line.highlighted ? ` ${styles.codeLineHighlighted}` : ''}`}
+              data-line={line.lineNumber}
+              data-highlighted={line.highlighted ? 'true' : undefined}
+            >
+              {line.text}
+              {lineIndex < column.lines.length - 1 ? (
+                <span className={styles.codeNewline}>{'\n'}</span>
+              ) : null}
+            </span>
+          ))}
+        </code>
       </pre>
+
+      <footer className={styles.codeCardFooter}>
+        {column.id === 'real' && <p>Reference result for this recorded workflow step.</p>}
+        {column.id === 'smocket' && (
+          <dl className={styles.integrationMetrics}>
+            <div>
+              <dt>Full target integration</dt>
+              <dd>{sample.smocketIntegration.totalLoc} LOC</dd>
+            </div>
+            <div>
+              <dt>Bootstrap</dt>
+              <dd>{sample.smocketIntegration.bootstrapLoc} LOC</dd>
+            </div>
+            <div>
+              <dt>Substitution + registration</dt>
+              <dd>{sample.smocketIntegration.substitutionAndRegistrationLoc} LOC</dd>
+            </div>
+          </dl>
+        )}
+        {column.id === 'handwritten' && (
+          <>
+            <p>{sample.handwritten.supportDescription}</p>
+            <div className={styles.diffMetrics} aria-label="Measured stage changes">
+              {sample.handwritten.diffs.map((diff) => (
+                <span key={diff.snippetId} title={diff.snippetId}>
+                  {diff.stageId}: +{diff.additions} / -{diff.deletions}
+                </span>
+              ))}
+            </div>
+            <p className={styles.limitNote}>
+              {sample.handwritten.totalLoc} LOC is the {sample.handwritten.stageId} capability
+              stage, not the full golden workflow. Full handwritten workflow source closure:{' '}
+              {sample.handwritten.fullWorkflowLoc} LOC.
+            </p>
+          </>
+        )}
+      </footer>
     </article>
   );
 }
@@ -311,12 +338,12 @@ export default function SituationPanel({
             </header>
 
             <div className={styles.codeGrid}>
-              {sample.cards.map((card, index) => (
+              {sample.columns.map((column, index) => (
                 <CodeCard
-                  key={`${sample.id}-${card.id}`}
-                  card={card}
+                  key={`${sample.id}-${column.id}`}
+                  column={column}
                   index={index}
-                  sampleId={sample.id}
+                  sample={sample}
                 />
               ))}
             </div>

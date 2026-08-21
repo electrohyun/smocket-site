@@ -37,41 +37,156 @@ afterEach(() => {
   document.body.style.overflow = '';
 });
 
-async function assertSampleCode(sampleId: CodeSampleId, triggerName: string) {
+async function openSample(sampleId: CodeSampleId) {
   const user = userEvent.setup();
   renderPanel();
-  await user.click(screen.getByRole('button', { name: triggerName }));
+  await user.click(
+    screen.getByRole('button', {
+      name: sampleId === 'drawing' ? 'View drawing code' : 'View chat code',
+    }),
+  );
 
-  const dialog = screen.getByRole('dialog', { name: drawingGameCodeModel.samples[sampleId].title });
-  expect(dialog).toHaveAttribute('aria-modal', 'true');
+  const sample = drawingGameCodeModel.samples[sampleId];
+  const dialog = screen.getByRole('dialog', { name: sample.title });
+  return { user, sample, dialog };
+}
+
+function columnView(dialog: HTMLElement, title: string) {
+  const heading = within(dialog).getByRole('heading', { name: title });
+  const article = heading.closest('article');
+  expect(article).not.toBeNull();
+  return within(article!);
+}
+
+function expectFixedColumns(dialog: HTMLElement, sampleId: CodeSampleId) {
+  const sample = drawingGameCodeModel.samples[sampleId];
   expect(within(dialog).getAllByRole('article')).toHaveLength(3);
+  expect(within(dialog).queryByRole('tab')).not.toBeInTheDocument();
+  expect(within(dialog).queryByRole('tablist')).not.toBeInTheDocument();
+  expect(within(dialog).getAllByRole('button')).toHaveLength(1);
 
-  for (const card of drawingGameCodeModel.samples[sampleId].cards) {
-    const heading = within(dialog).getByRole('heading', { name: card.title });
-    const article = heading.closest('article');
-    expect(article).not.toBeNull();
-    const cardView = within(article!);
-
-    for (const snippet of card.snippets) {
-      await user.click(cardView.getByRole('tab', { name: snippet.label }));
-      const code = cardView.getByTestId(`snippet-code-${snippet.id}`);
-      expect(code.textContent).toBe(snippet.code);
-      const source = cardView.getByRole('link', {
+  for (const column of sample.columns) {
+    const card = columnView(dialog, column.title);
+    expect(card.getByTestId(`snippet-code-${column.snippet.id}`).textContent).toBe(
+      column.snippet.code,
+    );
+    expect(
+      card.getByRole('link', {
         name: `Source at ${drawingGameCodeModel.publicationCommit.slice(0, 7)}`,
-      });
-      expect(source).toHaveAttribute('href', snippet.sourceUrl);
-    }
+      }),
+    ).toHaveAttribute('href', column.snippet.sourceUrl);
   }
 }
 
 describe('SituationPanel code dialog', () => {
-  it('shows every Drawing selection as byte-identical canonical code', async () => {
-    await assertSampleCode('drawing', 'View drawing code');
+  it('shows the fixed Drawing comparison with canonical code and measured scope', async () => {
+    const { dialog, sample } = await openSample('drawing');
+    expectFixedColumns(dialog, 'drawing');
+
+    expect(sample.columns.map(({ snippet }) => snippet.id)).toEqual([
+      'real.3-sender-excluded-stroke',
+      'smocket.3-sender-excluded-stroke',
+      'handwritten.sender-exclusion.source.transport',
+    ]);
+    expect(columnView(dialog, 'Real Socket.IO').getByText('ORACLE')).toBeInTheDocument();
+    expect(columnView(dialog, 'Smocket').getByText('MATCH')).toBeInTheDocument();
+    expect(columnView(dialog, 'Smocket').getByText('Same handler')).toBeInTheDocument();
+    expect(
+      columnView(dialog, 'Smocket').getByText('Application code changed: 0 LOC'),
+    ).toBeInTheDocument();
+    expect(
+      columnView(dialog, 'Handwritten mock').getByText('55 LOC capability stage'),
+    ).toBeInTheDocument();
+    expect(
+      columnView(dialog, 'Handwritten mock').getByText('sender-exclusion: +5 / -3'),
+    ).toBeInTheDocument();
+    expect(
+      columnView(dialog, 'Handwritten mock').getByText(
+        /Full handwritten workflow source closure: 140 LOC/,
+      ),
+    ).toBeInTheDocument();
   });
 
-  it('shows every Chat selection as byte-identical canonical code', async () => {
-    await assertSampleCode('chat', 'View chat code');
+  it('shows the fixed Chat comparison with canonical code and measured scope', async () => {
+    const { dialog, sample } = await openSample('chat');
+    expectFixedColumns(dialog, 'chat');
+
+    expect(sample.columns.map(({ snippet }) => snippet.id)).toEqual([
+      'real.5-correct-guess',
+      'smocket.5-correct-guess',
+      'handwritten.targeted-delivery.source.transport',
+    ]);
+    expect(columnView(dialog, 'Real Socket.IO').getByText('ORACLE')).toBeInTheDocument();
+    expect(columnView(dialog, 'Smocket').getByText('MATCH')).toBeInTheDocument();
+    expect(
+      columnView(dialog, 'Handwritten mock').getByText('56 LOC capability stage'),
+    ).toBeInTheDocument();
+    expect(
+      columnView(dialog, 'Handwritten mock').getByText('acknowledgement: +3 / -3'),
+    ).toBeInTheDocument();
+    expect(
+      columnView(dialog, 'Handwritten mock').getByText('targeted-delivery: +6 / -5'),
+    ).toBeInTheDocument();
+    expect(
+      columnView(dialog, 'Handwritten mock').getByText(
+        /Full handwritten workflow source closure: 140 LOC/,
+      ),
+    ).toBeInTheDocument();
   });
+
+  it.each<CodeSampleId>(['drawing', 'chat'])(
+    'keeps %s Real and Smocket handler code, hashes, and line positions equal',
+    async (sampleId) => {
+      const { dialog, sample } = await openSample(sampleId);
+      const real = sample.columns[0];
+      const smocket = sample.columns[1];
+      const realCard = columnView(dialog, real.title);
+      const smocketCard = columnView(dialog, smocket.title);
+
+      expect(real.snippet.code).toBe(smocket.snippet.code);
+      expect(real.snippet.sourceSha256).toBe(smocket.snippet.sourceSha256);
+      expect(realCard.getByTestId(`snippet-code-${real.snippet.id}`).textContent).toBe(
+        smocketCard.getByTestId(`snippet-code-${smocket.snippet.id}`).textContent,
+      );
+      expect(real.lines.map(({ lineNumber }) => lineNumber)).toEqual(
+        smocket.lines.map(({ lineNumber }) => lineNumber),
+      );
+      expect(realCard.getByTitle(real.snippet.sourceSha256)).toHaveTextContent(
+        real.snippet.sourceSha256.slice(0, 10),
+      );
+      expect(smocketCard.getByTitle(smocket.snippet.sourceSha256)).toHaveTextContent(
+        smocket.snippet.sourceSha256.slice(0, 10),
+      );
+    },
+  );
+
+  it('reads Smocket integration measurements without exposing loader source', async () => {
+    const { dialog } = await openSample('drawing');
+    const card = columnView(dialog, 'Smocket');
+
+    expect(card.getByText('18 LOC')).toBeInTheDocument();
+    expect(card.getByText('6 LOC')).toBeInTheDocument();
+    expect(card.getByText('12 LOC')).toBeInTheDocument();
+    expect(dialog).not.toHaveTextContent('smocket-client-substitution');
+    expect(dialog).not.toHaveTextContent('register-loader');
+  });
+
+  it.each<CodeSampleId>(['drawing', 'chat'])(
+    'highlights only artifact-derived %s Handwritten lines',
+    async (sampleId) => {
+      const { dialog, sample } = await openSample(sampleId);
+      const handwritten = sample.columns[2];
+      const card = columnView(dialog, handwritten.title);
+      const highlighted = card
+        .getByTestId(`snippet-code-${handwritten.snippet.id}`)
+        .querySelectorAll('[data-highlighted="true"]');
+
+      expect(highlighted.length).toBeGreaterThan(0);
+      expect([...highlighted].map((line) => Number(line.getAttribute('data-line')))).toEqual(
+        handwritten.lines.filter((line) => line.highlighted).map((line) => line.lineNumber),
+      );
+    },
+  );
 
   it('locks scrolling, traps focus, closes on Escape, and restores trigger focus', async () => {
     const user = userEvent.setup();
@@ -112,21 +227,5 @@ describe('SituationPanel code dialog', () => {
     await user.click(screen.getByRole('button', { name: 'Close code comparison' }));
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     expect(drawingTrigger).toHaveFocus();
-  });
-
-  it('supports arrow-key navigation between labelled snippet tabs', async () => {
-    const user = userEvent.setup();
-    renderPanel();
-    await user.click(screen.getByRole('button', { name: 'View drawing code' }));
-
-    const tablist = screen.getByRole('tablist', { name: 'Shared application handler snippets' });
-    const tabs = within(tablist).getAllByRole('tab');
-    tabs[0].focus();
-    await user.keyboard('{ArrowRight}');
-    expect(tabs[1]).toHaveFocus();
-    expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
-    expect(document.getElementById(tabs[1].getAttribute('aria-controls')!)?.textContent).toBe(
-      drawingGameCodeModel.samples.drawing.cards[0].snippets[1].code,
-    );
   });
 });

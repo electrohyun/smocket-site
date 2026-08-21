@@ -179,38 +179,51 @@ function collectReferences(value, path, visit) {
 
 export function validateCodePanelConfig(config, snippetIndex) {
   const value = object(config, 'code-panel');
-  if (value.schemaVersion !== 1) fail('code-panel.schemaVersion must be 1');
+  if (value.schemaVersion !== 2) fail('code-panel.schemaVersion must be 2');
   const samples = object(value.samples, 'code-panel.samples');
 
   for (const sampleId of ['drawing', 'chat']) {
     const sample = object(samples[sampleId], `code-panel.samples.${sampleId}`);
     string(sample.title, `code-panel.samples.${sampleId}.title`);
     string(sample.description, `code-panel.samples.${sampleId}.description`);
-    const cards = array(sample.cards, `code-panel.samples.${sampleId}.cards`);
-    const cardIds = cards.map((card, index) =>
-      string(
-        object(card, `code-panel.samples.${sampleId}.cards[${index}]`).id,
-        `code-panel.samples.${sampleId}.cards[${index}].id`,
-      ),
-    );
-    if (!isDeepStrictEqual(cardIds, ['shared', 'smocket', 'handwritten'])) {
-      fail(`code-panel.samples.${sampleId}.cards must be shared, smocket, handwritten`);
+    for (const field of ['realSnippetId', 'smocketSnippetId']) {
+      const id = string(sample[field], `code-panel.samples.${sampleId}.${field}`);
+      if (!snippetIndex.has(id)) {
+        fail(`code-panel.samples.${sampleId}.${field} does not exist: ${id}`);
+      }
     }
 
-    for (const [cardIndex, card] of cards.entries()) {
-      const cardPath = `code-panel.samples.${sampleId}.cards[${cardIndex}]`;
-      string(card.title, `${cardPath}.title`);
-      string(card.meta, `${cardPath}.meta`);
-      string(card.description, `${cardPath}.description`);
-      const selections = array(card.snippets, `${cardPath}.snippets`);
-      if (selections.length === 0) fail(`${cardPath}.snippets must not be empty`);
-      for (const [selectionIndex, selection] of selections.entries()) {
-        const selectionPath = `${cardPath}.snippets[${selectionIndex}]`;
-        const selected = object(selection, selectionPath);
-        const id = string(selected.id, `${selectionPath}.id`);
-        string(selected.label, `${selectionPath}.label`);
-        string(selected.role, `${selectionPath}.role`);
-        if (!snippetIndex.has(id)) fail(`${selectionPath}.id does not exist: ${id}`);
+    const handwritten = object(sample.handwritten, `code-panel.samples.${sampleId}.handwritten`);
+    string(handwritten.stageId, `code-panel.samples.${sampleId}.handwritten.stageId`);
+    string(
+      handwritten.supportDescription,
+      `code-panel.samples.${sampleId}.handwritten.supportDescription`,
+    );
+    const sourceSnippetId = string(
+      handwritten.sourceSnippetId,
+      `code-panel.samples.${sampleId}.handwritten.sourceSnippetId`,
+    );
+    if (!snippetIndex.has(sourceSnippetId)) {
+      fail(
+        `code-panel.samples.${sampleId}.handwritten.sourceSnippetId does not exist: ${sourceSnippetId}`,
+      );
+    }
+    const diffSnippetIds = array(
+      handwritten.diffSnippetIds,
+      `code-panel.samples.${sampleId}.handwritten.diffSnippetIds`,
+    );
+    if (diffSnippetIds.length === 0) {
+      fail(`code-panel.samples.${sampleId}.handwritten.diffSnippetIds must not be empty`);
+    }
+    for (const [index, rawId] of diffSnippetIds.entries()) {
+      const id = string(
+        rawId,
+        `code-panel.samples.${sampleId}.handwritten.diffSnippetIds[${index}]`,
+      );
+      if (!snippetIndex.has(id)) {
+        fail(
+          `code-panel.samples.${sampleId}.handwritten.diffSnippetIds[${index}] does not exist: ${id}`,
+        );
       }
     }
   }

@@ -1,155 +1,32 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "samples": {
     "drawing": {
-      "title": "Drawing workflow code",
-      "description": "Canonical snippets from the recorded drawing-game workflow. Real Socket.IO and Smocket run the same application handler; only target wiring changes.",
-      "cards": [
-        {
-          "id": "shared",
-          "title": "Shared application handler",
-          "meta": "Real + Smocket",
-          "description": "The unchanged Socket.IO-shaped server and client code used by both targets.",
-          "snippets": [
-            {
-              "id": "drawing-server-handler",
-              "label": "Server handler",
-              "role": "Sender-excluded room broadcast"
-            },
-            {
-              "id": "drawing-client",
-              "label": "Client",
-              "role": "Stroke send and receive"
-            }
-          ]
-        },
-        {
-          "id": "smocket",
-          "title": "Smocket wiring",
-          "meta": "Target setup",
-          "description": "In-memory server bootstrap and test-target package substitution around the shared application code.",
-          "snippets": [
-            {
-              "id": "smocket.integration.smocket-bootstrap",
-              "label": "Bootstrap",
-              "role": "In-memory Smocket server"
-            },
-            {
-              "id": "smocket.integration.smocket-client-substitution",
-              "label": "Substitution",
-              "role": "socket.io-client → smocket-client"
-            }
-          ]
-        },
-        {
-          "id": "handwritten",
-          "title": "Handwritten mock support",
-          "meta": "Application-owned",
-          "description": "Executable source and measured diffs the application owns for room routing and sender exclusion.",
-          "snippets": [
-            {
-              "id": "handwritten.room-broadcast.source.transport",
-              "label": "Room source",
-              "role": "Room membership and broadcast"
-            },
-            {
-              "id": "handwritten.room-broadcast.diff.transport",
-              "label": "Room diff",
-              "role": "Change from multiple clients"
-            },
-            {
-              "id": "handwritten.sender-exclusion.source.transport",
-              "label": "Exclusion source",
-              "role": "Sender-excluded room broadcast"
-            },
-            {
-              "id": "handwritten.sender-exclusion.diff.transport",
-              "label": "Exclusion diff",
-              "role": "Change from room broadcast"
-            }
-          ]
-        }
-      ]
+      "title": "Drawing: sender-excluded room broadcast",
+      "description": "The same recorded Drawing behavior, shown as a fixed Real, Smocket, and Handwritten comparison.",
+      "realSnippetId": "real.3-sender-excluded-stroke",
+      "smocketSnippetId": "smocket.3-sender-excluded-stroke",
+      "handwritten": {
+        "stageId": "sender-exclusion",
+        "sourceSnippetId": "handwritten.sender-exclusion.source.transport",
+        "diffSnippetIds": ["handwritten.sender-exclusion.diff.transport"],
+        "supportDescription": "The application handler stays unchanged, while the application owns transport support for room membership, room broadcast, and sender exclusion."
+      }
     },
     "chat": {
-      "title": "Chat workflow code",
-      "description": "Canonical snippets for acknowledgements and targeted delivery in the same recorded workflow. One deep-equal scenario is not a claim of complete Socket.IO compatibility.",
-      "cards": [
-        {
-          "id": "shared",
-          "title": "Shared application handler",
-          "meta": "Real + Smocket",
-          "description": "The unchanged Socket.IO-shaped guess handler and client listeners used by both targets.",
-          "snippets": [
-            {
-              "id": "chat-guess-server-handler",
-              "label": "Server handler",
-              "role": "Guess judgement and delivery"
-            },
-            {
-              "id": "chat-guess-client",
-              "label": "Client",
-              "role": "Guess send and event receive"
-            },
-            {
-              "id": "acknowledgement",
-              "label": "Ack",
-              "role": "Boolean acknowledgement"
-            },
-            {
-              "id": "targeted-correct",
-              "label": "Targeted",
-              "role": "Winner-only correct event"
-            }
-          ]
-        },
-        {
-          "id": "smocket",
-          "title": "Smocket wiring",
-          "meta": "Target setup",
-          "description": "The package substitution and loader registration used to run that shared client code in memory.",
-          "snippets": [
-            {
-              "id": "smocket.integration.smocket-client-substitution",
-              "label": "Substitution",
-              "role": "socket.io-client → smocket-client"
-            },
-            {
-              "id": "smocket.integration.smocket-loader-registration",
-              "label": "Loader",
-              "role": "Smocket target registration"
-            }
-          ]
-        },
-        {
-          "id": "handwritten",
-          "title": "Handwritten mock support",
-          "meta": "Application-owned",
-          "description": "Executable source and measured diffs the application owns for acknowledgements and socket-id targeting; LOC is not a time, productivity, or quality measure.",
-          "snippets": [
-            {
-              "id": "handwritten.acknowledgement.source.transport",
-              "label": "Ack source",
-              "role": "Server callback delivery"
-            },
-            {
-              "id": "handwritten.acknowledgement.diff.transport",
-              "label": "Ack diff",
-              "role": "Change from sender exclusion"
-            },
-            {
-              "id": "handwritten.targeted-delivery.source.transport",
-              "label": "Target source",
-              "role": "Socket-id delivery"
-            },
-            {
-              "id": "handwritten.targeted-delivery.diff.transport",
-              "label": "Target diff",
-              "role": "Change from acknowledgement"
-            }
-          ]
-        }
-      ]
+      "title": "Chat: acknowledgement and targeted delivery",
+      "description": "The same recorded Chat behavior, shown as a fixed Real, Smocket, and Handwritten comparison.",
+      "realSnippetId": "real.5-correct-guess",
+      "smocketSnippetId": "smocket.5-correct-guess",
+      "handwritten": {
+        "stageId": "targeted-delivery",
+        "sourceSnippetId": "handwritten.targeted-delivery.source.transport",
+        "diffSnippetIds": [
+          "handwritten.acknowledgement.diff.transport",
+          "handwritten.targeted-delivery.diff.transport"
+        ],
+        "supportDescription": "The application owns transport support for acknowledgements and socket-id targeting."
+      }
     }
   }
 }

@@ -85,7 +85,7 @@ describe('drawing-game publication snapshot', () => {
   it('rejects a code panel selection that is absent from the publication catalogs', async () => {
     const records = await loadRecords();
     const codePanel = structuredClone(records.codePanel);
-    codePanel.samples.drawing.cards[0].snippets[0].id = 'missing-snippet';
+    codePanel.samples.drawing.realSnippetId = 'missing-snippet';
 
     expect(() =>
       validatePublicationRecords(records.publication, records.artifactRecords, codePanel),
