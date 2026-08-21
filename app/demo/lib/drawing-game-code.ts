@@ -62,6 +62,10 @@ export interface HandwrittenStageMetrics {
   stageId: string;
   totalLoc: number;
   fullWorkflowLoc: number;
+  prerequisite: {
+    stageId: string;
+    totalLoc: number;
+  };
   supportDescription: string;
   diffs: HandwrittenDiffMetric[];
 }
@@ -380,6 +384,11 @@ export function createDrawingGameCodeModel(input: ModelInput): DrawingGameCodeMo
     if (source.loc !== totalLoc) {
       fail(`${samplePath} handwritten source LOC does not match stage total`);
     }
+    const prerequisiteId = string(stage.prerequisite, `maintenance.stages.${stageId}.prerequisite`);
+    const prerequisite = stages.find((candidate) => candidate.id === prerequisiteId);
+    if (!prerequisite) {
+      fail(`${samplePath}.handwritten prerequisite does not exist: ${prerequisiteId}`);
+    }
 
     const diffs = array(
       handwrittenConfig.diffSnippetIds,
@@ -438,6 +447,10 @@ export function createDrawingGameCodeModel(input: ModelInput): DrawingGameCodeMo
         stageId,
         totalLoc,
         fullWorkflowLoc,
+        prerequisite: {
+          stageId: prerequisiteId,
+          totalLoc: number(prerequisite.totalLoc, `maintenance.stages.${prerequisiteId}.totalLoc`),
+        },
         supportDescription: string(
           handwrittenConfig.supportDescription,
           `${samplePath}.handwritten.supportDescription`,

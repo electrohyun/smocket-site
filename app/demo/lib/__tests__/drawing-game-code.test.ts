@@ -104,6 +104,17 @@ describe('drawing-game fixed code comparison model', () => {
     });
   });
 
+  it('derives the adjacent Handwritten stage LOC shown beside Smocket', () => {
+    expect(drawingGameCodeModel.samples.drawing.handwritten.prerequisite).toEqual({
+      stageId: 'room-broadcast',
+      totalLoc: 53,
+    });
+    expect(drawingGameCodeModel.samples.chat.handwritten.prerequisite).toEqual({
+      stageId: 'acknowledgement',
+      totalLoc: 55,
+    });
+  });
+
   it('keeps every displayed code body byte-identical to its canonical snippet', () => {
     for (const sample of Object.values(drawingGameCodeModel.samples)) {
       for (const column of sample.columns) {

@@ -144,6 +144,20 @@ function CodeCard({
         )}
         {column.id === 'handwritten' && (
           <>
+            <dl className={styles.integrationMetrics} aria-label="Handwritten LOC by stage">
+              <div>
+                <dt>{sample.handwritten.prerequisite.stageId.replaceAll('-', ' ')}</dt>
+                <dd>{sample.handwritten.prerequisite.totalLoc} LOC</dd>
+              </div>
+              <div>
+                <dt>{sample.handwritten.stageId.replaceAll('-', ' ')}</dt>
+                <dd>{sample.handwritten.totalLoc} LOC</dd>
+              </div>
+              <div>
+                <dt>full workflow</dt>
+                <dd>{sample.handwritten.fullWorkflowLoc} LOC</dd>
+              </div>
+            </dl>
             <p>{sample.handwritten.supportDescription}</p>
             <div className={styles.diffMetrics} aria-label="Measured stage changes">
               {sample.handwritten.diffs.map((diff) => (

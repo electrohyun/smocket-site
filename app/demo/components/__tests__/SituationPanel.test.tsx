@@ -171,6 +171,20 @@ describe('SituationPanel code dialog', () => {
     expect(dialog).not.toHaveTextContent('register-loader');
   });
 
+  it.each([
+    ['drawing', ['room broadcast53 LOC', 'sender exclusion55 LOC', 'full workflow140 LOC']],
+    ['chat', ['acknowledgement55 LOC', 'targeted delivery56 LOC', 'full workflow140 LOC']],
+  ] as const)('lists the compact Handwritten LOC comparison for %s', async (sampleId, expected) => {
+    const { dialog } = await openSample(sampleId);
+    const card = columnView(dialog, 'Handwritten mock');
+    const metrics = card.getByLabelText('Handwritten LOC by stage');
+
+    expect(within(metrics).getAllByRole('term')).toHaveLength(3);
+    expect([...metrics.querySelectorAll(':scope > div')].map((row) => row.textContent)).toEqual(
+      expected,
+    );
+  });
+
   it.each<CodeSampleId>(['drawing', 'chat'])(
     'highlights only artifact-derived %s Handwritten lines',
     async (sampleId) => {

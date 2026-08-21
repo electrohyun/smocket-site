@@ -90,7 +90,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: clamp(24px, 3vw, 48px);
+  padding: clamp(12px, 1.4vw, 20px);
   overflow: auto;
   background: color-mix(in srgb, #000 58%, transparent);
   backdrop-filter: blur(3px);
@@ -113,7 +113,7 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 32px;
-  padding: 0 0 22px;
+  padding: 0 0 12px;
 }
 
 .codeEyebrow {
@@ -135,11 +135,11 @@
 }
 
 .codeDescription {
-  max-width: 62ch;
-  margin: 8px 0 0;
+  max-width: 90ch;
+  margin: 5px 0 0;
   color: var(--text-dim);
   font-size: 0.86rem;
-  line-height: 1.5;
+  line-height: 1.35;
 }
 
 .codeClose {
@@ -188,7 +188,7 @@
 
 .codeCard {
   display: flex;
-  height: min(620px, calc(100dvh - 190px));
+  height: clamp(720px, calc(100dvh - 110px), 740px);
   min-height: 360px;
   flex-direction: column;
   overflow: hidden;
@@ -213,7 +213,7 @@
 
 .codeCardHeader {
   display: grid;
-  height: 124px;
+  height: 104px;
   grid-template-columns: auto 1fr auto;
   gap: 12px;
   align-items: start;
@@ -257,7 +257,7 @@
 
 .comparisonFacts {
   display: grid;
-  height: 76px;
+  height: 70px;
   flex: none;
   grid-template-columns: minmax(0, 1fr);
   gap: 3px;
@@ -282,7 +282,7 @@
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 4px 12px;
   align-items: center;
-  min-height: 82px;
+  height: 76px;
   padding: 10px 18px;
   color: color-mix(in srgb, var(--code-text) 66%, transparent);
   background: var(--code-bg);
@@ -339,7 +339,7 @@
   flex: 1;
   min-height: 0;
   margin: 0;
-  padding: 20px 18px 24px 58px;
+  padding: 18px 18px 18px 58px;
   overflow: auto;
   overscroll-behavior: contain;
   color: var(--code-text);
@@ -351,6 +351,11 @@
   background: var(--code-bg);
   scrollbar-color: var(--border) transparent;
   scrollbar-width: thin;
+}
+
+.codeCard[data-code-column='real'] .codeBlock,
+.codeCard[data-code-column='smocket'] .codeBlock {
+  overflow-y: hidden;
 }
 
 .codeBlock > code {
@@ -387,7 +392,7 @@
 }
 
 .codeCardFooter {
-  min-height: 132px;
+  min-height: 110px;
   flex: none;
   padding: 12px 18px 14px;
   overflow: auto;
@@ -568,7 +573,7 @@
 
   .codePanelHeader {
     gap: 14px;
-    padding: 4px 2px 16px;
+    padding: 2px 2px 10px;
   }
 
   .codeTitle {
@@ -592,16 +597,20 @@
   }
 
   .codeCard {
-    height: min(620px, calc(100dvh - 150px));
+    height: 720px;
     min-height: 300px;
   }
 
   .codeCardHeader {
-    min-height: 96px;
     padding: 14px 16px;
   }
 
+  .comparisonFacts {
+    height: 66px;
+  }
+
   .snippetDetails {
+    height: 72px;
     padding: 9px 16px;
   }
 
