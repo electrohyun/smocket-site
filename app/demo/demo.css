@@ -47,7 +47,8 @@
      what they did when the panel was text pills and what left the labels lying
      over the delivery record once it was not. */
   --stage-top: 88px;
-  /* Under 900px the panel drops to the bottom instead, so the reserve does too. */
+  /* At narrower desktop widths the panel drops to the bottom instead, so the
+     reserve does too. */
   --stage-bottom: 20px;
 
   --page-sky: var(--night-sky);
@@ -68,7 +69,14 @@ a:hover {
    reserve swaps ends with it. */
 @media (max-width: 900px) {
   :root:root:root {
-    --stage-top: 60px;
+    --stage-top: 88px;
     --stage-bottom: 88px;
+  }
+}
+
+@media (max-width: 600px) {
+  :root:root:root {
+    /* The centred code prompt moves below the brand at phone widths. */
+    --stage-top: 116px;
   }
 }

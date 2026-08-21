@@ -55,6 +55,23 @@ export const PencilIcon = (
   </>
 );
 
+/** The implementation behind the drawing round. */
+export const CodeIcon = (
+  <>
+    <polyline points="8.5,7.5 4,12 8.5,16.5" />
+    <polyline points="15.5,7.5 20,12 15.5,16.5" />
+    <path d="m13.5 5-3 14" />
+  </>
+);
+
+/** The implementation behind the chat exchange. */
+export const ChatIcon = (
+  <>
+    <path d="M4 4.5h16v11H9l-5 4v-15Z" />
+    <path d="M8 10h.01M12 10h.01M16 10h.01" strokeWidth="2.8" />
+  </>
+);
+
 /** Delay, which is the one control measured in time. */
 export const ClockIcon = (
   <>

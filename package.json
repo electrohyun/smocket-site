@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "pnpm case-study:validate",
+    "prebuild": "pnpm case-study:validate && pnpm drawing-game:snapshot:validate",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
@@ -13,7 +13,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
-    "case-study:validate": "node scripts/validate-case-study-observations.mjs"
+    "case-study:validate": "node scripts/validate-case-study-observations.mjs",
+    "drawing-game:snapshot:sync": "node scripts/sync-drawing-game-publication.mjs --write",
+    "drawing-game:snapshot:validate": "node scripts/validate-drawing-game-publication.mjs",
+    "drawing-game:snapshot:stale": "node scripts/sync-drawing-game-publication.mjs --check"
   },
   "dependencies": {
     "next": "16.2.12",
