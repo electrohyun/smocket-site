@@ -34,9 +34,30 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000) for the landing page or [http://localhost:3000/demo](http://localhost:3000/demo) for the interactive demo.
 
+The default development build runs the demo in memory by resolving
+`socket.io-client` to `smocket-client`. To run the same UI against Real Socket.IO,
+start the backend in one terminal:
+
+```bash
+pnpm demo:server
+```
+
+Then start Next.js in another terminal with these environment variables (PowerShell):
+
+```powershell
+$env:DEMO_SOCKET_TARGET = 'real'
+$env:NEXT_PUBLIC_DEMO_SOCKET_TARGET = 'real'
+$env:NEXT_PUBLIC_DEMO_SOCKET_URL = 'http://127.0.0.1:4000'
+pnpm dev
+```
+
+The backend uses Node's HTTP server and port 4000 for manual development. The
+integration tests use an ephemeral port instead.
+
 | Command | What it does |
 | --- | --- |
 | `pnpm dev` | Start the development server |
+| `pnpm demo:server` | Start the Real Socket.IO demo backend |
 | `pnpm build` | Create a production build |
 | `pnpm start` | Serve the production build |
 | `pnpm lint` | Run ESLint |

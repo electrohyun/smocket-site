@@ -98,6 +98,7 @@ function Row({
       <div className={styles.row}>
         <div className={styles.call}>
           <EventCall code={formatInbound(line, { maskWord })} />
+          {count > 1 && <span className={styles.count}> ×{count}</span>}
         </div>
         <div className={styles.reach}>→ server</div>
       </div>

@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "demo:server": "tsx scripts/demo-socket-server.ts",
     "seed:draw": "node scripts/draw-seed.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -18,7 +19,10 @@
     "next": "16.2.12",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "smocket": "^0.4.1"
+    "smocket": "0.5.0",
+    "smocket-client": "0.5.0",
+    "socket.io": "4.8.3",
+    "socket.io-client": "4.8.3"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^7.0.1",
@@ -30,6 +34,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.12",
     "jsdom": "^30.0.1",
+    "tsx": "4.23.12",
     "typescript": "^5",
     "vitest": "^4.1.10"
   }

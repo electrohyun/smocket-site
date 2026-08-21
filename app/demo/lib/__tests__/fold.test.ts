@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest';
 import { fold } from '../fold';
-import type { DeliveryLine, TraceLine } from '../trace';
+import type { DeliveryLine, InboundLine, TraceLine } from '../trace';
 
 /* Folding is the one place the panel is allowed to show fewer lines than the
    record holds, so what it may and may not swallow is worth pinning down. */
@@ -21,6 +21,69 @@ const delivery = (
 });
 
 const counts = (lines: TraceLine[]) => fold(lines).map((f) => [f.line.kind, f.count]);
+
+const inbound = (event: string, from = 'A', args: unknown[] = []): InboundLine => ({
+  kind: 'inbound',
+  from,
+  event,
+  args,
+});
+
+it('alternating inbound and delivery strokes become two counted lines', () => {
+  const lines = Array.from({ length: 47 }, (_, index) => [
+    inbound('stroke', 'A', [{ id: index }]),
+    { ...delivery('stroke', ['B', 'C'], ['A'], 'A'), args: [{ id: index }] },
+  ]).flat();
+
+  const folded = fold(lines);
+
+  expect(counts(lines)).toEqual([
+    ['inbound', 47],
+    ['delivery', 47],
+  ]);
+  expect((folded[0].line as InboundLine).args).toEqual([{ id: 46 }]);
+  expect((folded[1].line as DeliveryLine).args).toEqual([{ id: 46 }]);
+});
+
+it('a game event splits an alternating stroke run', () => {
+  const pair = (): TraceLine[] => [
+    inbound('stroke'),
+    delivery('stroke', ['B', 'C'], ['A'], 'A'),
+  ];
+
+  expect(
+    counts([
+      ...pair(),
+      ...pair(),
+      inbound('chat', 'B', ['hello']),
+      delivery('chat', ['A', 'B', 'C']),
+      ...pair(),
+    ]),
+  ).toEqual([
+    ['inbound', 2],
+    ['delivery', 2],
+    ['inbound', 1],
+    ['delivery', 1],
+    ['inbound', 1],
+    ['delivery', 1],
+  ]);
+});
+
+it('a recipient change starts a new inbound and delivery pair', () => {
+  expect(
+    counts([
+      inbound('stroke'),
+      delivery('stroke', ['B', 'C'], ['A'], 'A'),
+      inbound('stroke'),
+      delivery('stroke', ['B'], ['A'], 'A'),
+    ]),
+  ).toEqual([
+    ['inbound', 1],
+    ['delivery', 1],
+    ['inbound', 1],
+    ['delivery', 1],
+  ]);
+});
 
 it('a run of strokes to the same sockets becomes one line', () => {
   const strokes = Array.from({ length: 47 }, () => delivery('stroke', ['B', 'C'], ['A'], 'A'));
@@ -61,7 +124,7 @@ it('a run breaks when something else is delivered in the middle', () => {
   ]);
 });
 
-it('lines that are not deliveries never fold into one another', () => {
+it('non-stroke lines never fold into one another', () => {
   expect(
     counts([
       { kind: 'membership', op: 'add', socket: 'A', room: 'room-1' },
