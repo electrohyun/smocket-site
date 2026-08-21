@@ -1,4 +1,5 @@
 import Hero from './components/Hero';
+import Trace from './components/Trace';
 import Pain from './components/Pain';
 import Features from './components/Features';
 import Demo from './components/Demo';
@@ -7,11 +8,6 @@ import Scope from './components/Scope';
 import Footer from './components/Footer';
 import ReadingProgress from './components/ReadingProgress';
 import ThemeToggle from './components/ThemeToggle';
-import ReportNav from './components/ReportNav';
-import EvidenceSummary from './components/EvidenceSummary';
-import Adoption from './components/Adoption';
-import EvidenceReports from './components/EvidenceReports';
-import Resources from './components/Resources';
 
 export default function Home() {
   return (
@@ -20,18 +16,14 @@ export default function Home() {
           whatever the switch says, so offering the switch there would be a
           control that does nothing. */}
       <ThemeToggle />
-      <ReportNav />
       <main>
         <Hero />
-        <Pain />
-        <EvidenceSummary />
-        <Quickstart />
-        <Adoption />
         <Demo />
-        <EvidenceReports />
+        <Pain />
         <Features />
+        <Quickstart />
+        <Trace />
         <Scope />
-        <Resources />
       </main>
       <Footer />
       {/* Belongs to the landing, not to every route: /demo is a single screen

@@ -9,14 +9,14 @@ export const hero = {
     src: '/cat.webp',
     alt: 'smocket mascot: a cool cat wearing sunglasses',
   },
-  h1: 'Test Socket.IO behavior without running a server.',
-  h1Accent: 'without running a server.',
-  sub: 'Smocket is an in-memory Socket.IO mock for Vitest and Jest. Connect multiple clients, join rooms, broadcast, and acknowledge events without opening a port.',
-  tagline: 'Keep the app. Switch the test connection.',
-  chips: ['in memory', 'no ports', 'MIT'],
+  h1: 'Test socket.io without a server.',
+  h1Accent: 'without a server.',
+  sub: "smocket reimplements socket.io's rooms, broadcasts, and acknowledgements in memory — and every release is verified against the real library.",
+  tagline: 'Sweet setup, rocket speed.',
+  chips: ['v0.4.1', 'dual-run CI', 'browser-tested'],
   ctas: [
-    { label: 'Try Guess What', href: '/demo', primary: true },
-    { label: 'Quick Start', href: '#quickstart', primary: false },
+    { label: 'Read the docs', href: `${REPO_URL}#readme`, primary: true },
+    { label: 'View on GitHub', href: REPO_URL, primary: false },
   ],
   visual: {
     rocket: { src: '/rocket.webp', alt: 'a s’more rocket blasting off' },
@@ -54,8 +54,8 @@ export const trace = {
 } as const;
 
 export const pain = {
-  id: 'why',
-  title: 'A one-client stub stops at the first room.',
+  id: 'pain',
+  title: 'Before, a second player was out of reach.',
   before: {
     label: 'Hand-written mock',
     status: 'Enough for one client.',
@@ -105,12 +105,12 @@ const a = connect('http://localhost:3000');
 const b = connect('http://localhost:3000');
 const c = connect('http://localhost:3000');`,
   },
-  caption: 'Illustrative stub: without shared room membership, a second client has nowhere to receive the broadcast.',
+  caption: 'One handler map, and still nowhere for the second player to go.',
 } as const;
 
 export const features = {
-  id: 'capabilities',
-  title: 'The useful parts stay visible.',
+  id: 'features',
+  title: 'Built to behave like socket.io.',
   cards: [
     {
       title: 'Delivery fidelity',
@@ -132,14 +132,14 @@ export const features = {
 } as const;
 
 export const demo = {
-  id: 'showcase',
-  title: 'Showcase 01 · Guess What',
+  id: 'demo',
+  title: 'Three players, one page, no server.',
   /* The delivery record is the section above this one's argument; saying it twice
      would make the demo a second Trace. What this section has that Trace does not
      is the other two people — so the copy is about them. */
-  desc: 'One cat draws. Two cats watch the strokes arrive and guess. Switch viewpoints, delay one client, inspect acknowledgements, and read the delivery trace as the round runs.',
+  desc: 'One person draws. The other two watch the lines arrive and say what they think it is. Every stroke and every guess is a socket.io event, routed here in the page.',
   href: '/demo',
-  cta: 'Open the first showcase',
+  cta: 'Take the pen',
   preview: {
     /* The drawing is a recording and the frame says so. The routing is not — it
        runs again on every visit — so the sentence is about the round, not about
@@ -158,7 +158,7 @@ export const demo = {
 
 export const quickstart = {
   id: 'quickstart',
-  title: 'Start with one existing test.',
+  title: 'Switch in three steps.',
   steps: [
     {
       n: 1,
@@ -215,53 +215,6 @@ it('delivers a room message to the other member', async () => {
   ],
 } as const;
 
-export const adoption = {
-  id: 'adoption',
-  eyebrow: 'Existing application code',
-  title: 'Leave the client import where it is.',
-  desc: 'Your application can keep importing socket.io-client. In the test environment, alias that connection to Smocket and create the in-memory server beside the test.',
-  application: {
-    label: 'src/chat.ts · unchanged',
-    code: `import { io } from 'socket.io-client';
-
-export function joinChat(url: string) {
-  return io(url);
-}`,
-  },
-  test: {
-    label: 'vitest.config.ts · test-only switch',
-    code: `resolve: {
-  alias: {
-    'socket.io-client': 'smocket',
-  },
-}`,
-  },
-  boundary:
-    'The connection target changes in tests. Server bootstrap is Smocket-specific, so this is not presented as a complete drop-in replacement.',
-} as const;
-
-export const resources = {
-  id: 'resources',
-  title: 'Take the next useful path.',
-  desc: 'The site is the guided tour. The library repository remains the source for API details, support boundaries, and contribution work.',
-  links: [
-    { label: 'Smocket README', href: `${REPO_URL}#readme`, note: 'Install, API, and examples' },
-    { label: 'Conformance', href: `${REPO_URL}/blob/main/docs/conformance.md`, note: 'Real Socket.IO comparison coverage' },
-    { label: 'Public surface', href: `${REPO_URL}/blob/main/docs/public-surface.md`, note: 'Supported API surface' },
-    { label: 'Known differences', href: `${REPO_URL}/blob/main/docs/differences.md`, note: 'Intentional and tracked gaps' },
-    { label: 'Contribute', href: `${REPO_URL}/blob/main/CONTRIBUTING.md`, note: 'Development and pull requests' },
-    { label: 'License', href: `${REPO_URL}/blob/main/LICENSE`, note: 'MIT' },
-  ],
-} as const;
-
-export const reportNavigation = [
-  { label: 'Why', href: '#why' },
-  { label: 'Start', href: '#quickstart' },
-  { label: 'Showcase', href: '#showcase' },
-  { label: 'Measured report', href: '#evidence' },
-  { label: 'Scope', href: '#scope' },
-] as const;
-
 export const scope = {
   id: 'scope',
   doTitle: 'What smocket does',
@@ -290,7 +243,6 @@ export const footer = {
   tagline: 'Sweet setup, rocket speed.',
   links: [
     { label: 'Docs', href: `${REPO_URL}#readme`, todo: null },
-    { label: 'Showcase', href: '/demo', todo: null },
     { label: 'Case study', href: '/case-study', todo: null },
     { label: 'GitHub', href: REPO_URL, todo: null },
     { label: 'npm', href: 'https://www.npmjs.com/package/smocket', todo: null },

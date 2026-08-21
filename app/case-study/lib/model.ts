@@ -3,12 +3,6 @@ import {
   handwrittenBehaviorBoundary,
   pinnedSourceUrl,
 } from '../../../content/case-study';
-import {
-  parseEvidenceRecord,
-  type EvidenceRecord,
-  type EvidenceSourceFile,
-  type StructuredObservation,
-} from '../../evidence/schema';
 import type { CaseStudySources, SourcePath } from './source-evidence';
 
 export type TargetId = 'socket-io' | 'published-smocket' | 'handwritten';
@@ -21,7 +15,90 @@ export type TranscriptCategory =
   | 'announcement'
   | 'departure';
 
-export type CaseStudyRecord = EvidenceRecord;
+interface SourceFile {
+  path: string;
+  role: string;
+  lines: number;
+  sha256: string;
+}
+
+export interface JoinObservation {
+  participantId: string;
+  channel: string;
+  acknowledgement: { accepted: boolean; channel: string };
+}
+
+export interface WelcomeObservation {
+  channel: string;
+  text: string;
+}
+
+export interface MessageObservation {
+  channel: string;
+  from: string;
+  text: string;
+}
+
+export interface AnnouncementObservation {
+  channels: string[];
+  from: string;
+  text: string;
+}
+
+export interface DepartureObservation {
+  channel: string;
+  participant: string;
+}
+
+export interface StructuredObservation {
+  joins: JoinObservation[];
+  welcomes: Record<string, WelcomeObservation[]>;
+  messages: Record<string, MessageObservation[]>;
+  rejectedAnnouncement: { accepted: boolean; reason: string };
+  announcementAcknowledgement: { accepted: boolean; channels: string[] };
+  announcements: Record<string, AnnouncementObservation[]>;
+  departures: Record<string, DepartureObservation[]>;
+  transcript: string[];
+}
+
+interface TargetRecord {
+  id: string;
+  label: string;
+  fixture: string;
+  dependencies: Record<string, string | undefined>;
+  files: SourceFile[];
+  result: {
+    assertions: string;
+    repeatedRunMatches: boolean;
+    observation: StructuredObservation;
+  };
+}
+
+export interface CaseStudyRecord {
+  schemaVersion: number;
+  caseStudy: string;
+  recordedAt: string;
+  environment: {
+    platform: string;
+    architecture: string;
+    node: string;
+    npm: string;
+  };
+  reproduction: {
+    run: string;
+    record: string;
+    check: string;
+    targets: Record<string, string>;
+  };
+  measurements: { lineCount: string };
+  application: {
+    source: string;
+    files: SourceFile[];
+    combinedSha256: string;
+  };
+  targets: TargetRecord[];
+  claimBoundary: string;
+}
 
 export interface TargetSummary {
   id: TargetId;
@@ -32,7 +109,7 @@ export interface TargetSummary {
   mockLines: number;
   assertions: string;
   repeatedRunMatches: boolean;
-  authoredFiles: EvidenceSourceFile[];
+  authoredFiles: SourceFile[];
 }
 
 export interface AuthoredSurface {
@@ -64,7 +141,7 @@ export interface ApproachEvidence {
   label: string;
   dependencyLabel: string;
   setup: string;
-  authoredFiles: EvidenceSourceFile[];
+  authoredFiles: SourceFile[];
   debugging: string;
   excerpts: SourceExcerpt[];
   supportedBehaviors: readonly string[];
@@ -167,7 +244,7 @@ export const initialExplorerState: ExplorerState = {
   structuredCategory: 'joins',
 };
 
-function sourceLines(files: EvidenceSourceFile[], role: string): number {
+function sourceLines(files: SourceFile[], role: string): number {
   return files.find((file) => file.role === role)?.lines ?? 0;
 }
 
@@ -313,9 +390,8 @@ export function reduceExplorerState(
   }
 }
 
-export function createCaseStudyModel(input: unknown, sources?: CaseStudySources): CaseStudyModel {
-  const record = parseEvidenceRecord(input);
-  const targets = record.targets.map((target) => ({
+export function createCaseStudyModel(input: CaseStudyRecord, sources?: CaseStudySources): CaseStudyModel {
+  const targets = input.targets.map((target) => ({
     id: target.id as TargetId,
     label: target.label,
     fixture: target.fixture,
@@ -329,7 +405,7 @@ export function createCaseStudyModel(input: unknown, sources?: CaseStudySources)
     ),
   }));
 
-  const observation = record.targets[0].result.observation;
+  const observation = input.targets[0].result.observation;
   const transcript = observation.transcript.map((text, id) => ({
     id,
     participant: participantFromLine(text),
@@ -430,7 +506,7 @@ export function createCaseStudyModel(input: unknown, sources?: CaseStudySources)
     : [];
 
   return {
-    record,
+    record: input,
     targets: orderedTargets,
     observation,
     transcript,

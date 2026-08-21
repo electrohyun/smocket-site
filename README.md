@@ -5,9 +5,9 @@
 
 # smocket-site
 
-The interactive public guide for [Smocket](https://github.com/electrohyun/smocket), an in-memory Socket.IO mock for testing rooms, broadcasts, acknowledgements, and multiple clients without opening a server.
+The landing page and interactive demo for [smocket](https://github.com/electrohyun/smocket), an in-memory Socket.IO mock for testing rooms, broadcasts, acknowledgements, and multiple clients without opening a server.
 
-[Visit the site](https://smocket-site.vercel.app) · [Play Guess What](https://smocket-site.vercel.app/demo) · [Open the measured case study](https://smocket-site.vercel.app/case-study) · [Read the Smocket docs](https://github.com/electrohyun/smocket#readme)
+[Visit the site](https://smocket-site.vercel.app) · [Try the demo](https://smocket-site.vercel.app/demo) · [Read the smocket docs](https://github.com/electrohyun/smocket#readme)
 
 <!-- Add the locally captured landing image here after uploading it to a CDN.
 ![smocket landing page](https://your-cdn.example/smocket-landing.png)
@@ -15,29 +15,13 @@ The interactive public guide for [Smocket](https://github.com/electrohyun/smocke
 
 ## What lives here
 
-- `/` explains the problem, shows the supported adoption path, links the first showcase, and summarizes only the measurements present in checked JSON.
-- `/demo` is the first showcase: a three-client Guess What round with drawer and observer viewpoints, room delivery, acknowledgements, deterministic delay, replay, and a delivery trace.
-- `/case-study` is the first measured report: one pinned chat-room workflow compared across Real Socket.IO 4.8.3, published Smocket 0.4.2, and a handwritten mock.
-- Light, dark, and system themes share the cat, space, and rocket visual language.
-- Metadata, social images, a web manifest, robots.txt, canonical routes, and a sitemap cover the public routes.
+- A responsive product landing page with light, dark, and system themes
+- A self-playing preview backed by a real in-memory smocket round
+- An interactive `/demo` with drawer and observer viewpoints
+- A delivery trace that exposes rooms, recipients, exclusions, and acknowledgements
+- Metadata, social images, a web manifest, robots.txt, and a sitemap
 
 The library implementation and public API documentation live in the [smocket repository](https://github.com/electrohyun/smocket).
-
-## How measured data reaches the page
-
-The site does not copy report numbers into JSX.
-
-```text
-content/*-observations.json
-        ↓
-app/evidence/schema.ts       shared runtime boundary
-        ↓
-app/evidence/model.ts        landing summaries and report registry
-        ↓
-/ and /case-study            rendered counts, versions, limits, and links
-```
-
-The pinned chat-room record has an additional hash validator for its JSON and vendored source files. A future scenario is added to the registry as another generated record; the renderer does not need a new set of handwritten cards. Comparisons without an executable record stay marked as `Not measured yet`.
 
 ## Development
 
@@ -48,7 +32,7 @@ pnpm install
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) for the guide, [http://localhost:3000/demo](http://localhost:3000/demo) for Guess What, or [http://localhost:3000/case-study](http://localhost:3000/case-study) for the measured report.
+Open [http://localhost:3000](http://localhost:3000) for the landing page or [http://localhost:3000/demo](http://localhost:3000/demo) for the interactive demo.
 
 | Command | What it does |
 | --- | --- |
@@ -60,29 +44,22 @@ Open [http://localhost:3000](http://localhost:3000) for the guide, [http://local
 | `pnpm test` | Run the test suite once |
 | `pnpm test:watch` | Run tests in watch mode |
 | `pnpm seed:draw` | Regenerate the recorded drawing seed |
-| `pnpm case-study:validate` | Check the pinned observation and source hashes |
 
 ## Project structure
 
 ```text
 app/
-├── components/       Landing report sections and shared UI
-├── demo/             Guess What, playback, trace, and tests
-├── case-study/       Interactive measured report and source explorer
-├── evidence/         Shared observation schema, registry, and summaries
+├── components/       Landing page sections and shared UI
+├── demo/             Interactive demo, playback, trace, and tests
 ├── layout.tsx        Site metadata, fonts, and theme bootstrap
 └── page.tsx          Landing page composition
 content/
-├── landing.ts        Landing copy and code samples
-├── case-study.ts     Case-study interpretation and immutable links
-└── *.json            Generated or pinned observation records
+└── landing.ts        Landing copy and code samples
 public/               Static images and icons
-scripts/              Drawing seed and case-study validation tooling
+scripts/              Drawing seed tooling
 ```
 
-Most landing copy belongs in `content/landing.ts`. Reusable presentation belongs in `app/components`, behavior specific to Guess What belongs in `app/demo`, and raw observation shapes must pass `app/evidence/schema.ts` before rendering.
-
-The current case-study line counts are physical lines including comments and blanks. Do not relabel them as the newer comment-and-blank-excluding measurement definition. The page also avoids unrecorded competitor results, compatibility percentages, and speed or productivity claims.
+Most landing copy belongs in `content/landing.ts`. Reusable presentation belongs in `app/components`, while behavior specific to the playground belongs in `app/demo`.
 
 ## Contributing
 

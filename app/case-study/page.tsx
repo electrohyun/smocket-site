@@ -9,11 +9,11 @@ import Method from './components/Method';
 import ObservationExplorer from './components/ObservationExplorer';
 import Provenance from './components/Provenance';
 import ReportHeader from './components/ReportHeader';
-import { createCaseStudyModel } from './lib/model';
+import { createCaseStudyModel, type CaseStudyRecord } from './lib/model';
 import { loadCaseStudySources } from './lib/source-evidence';
 import styles from './page.module.css';
 
-const model = createCaseStudyModel(observations, loadCaseStudySources());
+const model = createCaseStudyModel(observations as CaseStudyRecord, loadCaseStudySources());
 
 export default function CaseStudyPage() {
   return (
