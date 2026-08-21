@@ -48,7 +48,8 @@ export interface DrawingGameCodeColumn {
 export interface SmocketIntegrationMetrics {
   totalLoc: number;
   bootstrapLoc: number;
-  substitutionAndRegistrationLoc: number;
+  clientSubstitutionLoc: number;
+  loaderRegistrationLoc: number;
 }
 
 export interface HandwrittenDiffMetric {
@@ -266,13 +267,20 @@ function readSmocketIntegration(maintenanceRecord: Record<string, unknown>) {
   );
   const bootstrapLoc = blocks.find(({ role }) => role === 'smocket-bootstrap')?.loc;
   if (bootstrapLoc === undefined) fail('maintenance Smocket bootstrap LOC is missing');
-  const substitutionAndRegistrationLoc = blocks
-    .filter(({ role }) => role !== 'smocket-bootstrap')
-    .reduce((sum, block) => sum + block.loc, 0);
-  if (bootstrapLoc + substitutionAndRegistrationLoc !== totalLoc) {
+  const clientSubstitutionLoc = blocks.find(
+    ({ role }) => role === 'smocket-client-substitution',
+  )?.loc;
+  if (clientSubstitutionLoc === undefined) {
+    fail('maintenance Smocket client substitution LOC is missing');
+  }
+  const loaderRegistrationLoc = blocks.find(({ role }) => role === 'loader-registration')?.loc;
+  if (loaderRegistrationLoc === undefined) {
+    fail('maintenance Smocket loader registration LOC is missing');
+  }
+  if (bootstrapLoc + clientSubstitutionLoc + loaderRegistrationLoc !== totalLoc) {
     fail('maintenance Smocket integration LOC does not equal its source-block total');
   }
-  return { totalLoc, bootstrapLoc, substitutionAndRegistrationLoc };
+  return { totalLoc, bootstrapLoc, clientSubstitutionLoc, loaderRegistrationLoc };
 }
 
 export function createDrawingGameCodeModel(input: ModelInput): DrawingGameCodeModel {

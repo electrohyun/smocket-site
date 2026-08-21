@@ -97,14 +97,6 @@ describe('SituationPanel code dialog', () => {
     expect(
       columnView(dialog, 'Handwritten mock').getByText('55 LOC capability stage'),
     ).toBeInTheDocument();
-    expect(
-      columnView(dialog, 'Handwritten mock').getByText('sender-exclusion: +5 / -3'),
-    ).toBeInTheDocument();
-    expect(
-      columnView(dialog, 'Handwritten mock').getByText(
-        /Full handwritten workflow source closure: 140 LOC/,
-      ),
-    ).toBeInTheDocument();
   });
 
   it('shows the fixed Chat comparison with canonical code and measured scope', async () => {
@@ -120,17 +112,6 @@ describe('SituationPanel code dialog', () => {
     expect(columnView(dialog, 'Smocket').getByText('MATCH')).toBeInTheDocument();
     expect(
       columnView(dialog, 'Handwritten mock').getByText('56 LOC capability stage'),
-    ).toBeInTheDocument();
-    expect(
-      columnView(dialog, 'Handwritten mock').getByText('acknowledgement: +3 / -3'),
-    ).toBeInTheDocument();
-    expect(
-      columnView(dialog, 'Handwritten mock').getByText('targeted-delivery: +6 / -5'),
-    ).toBeInTheDocument();
-    expect(
-      columnView(dialog, 'Handwritten mock').getByText(
-        /Full handwritten workflow source closure: 140 LOC/,
-      ),
     ).toBeInTheDocument();
   });
 
@@ -166,23 +147,56 @@ describe('SituationPanel code dialog', () => {
 
     expect(card.getByText('18 LOC')).toBeInTheDocument();
     expect(card.getByText('6 LOC')).toBeInTheDocument();
-    expect(card.getByText('12 LOC')).toBeInTheDocument();
+    expect(card.getByText('10 LOC')).toBeInTheDocument();
+    expect(card.getByText('2 LOC')).toBeInTheDocument();
+    expect(card.getByText('Package-owned')).toBeInTheDocument();
+    const metrics = card.getByText('Measured source total').closest('dl');
+    expect(metrics).not.toBeNull();
+    expect([...metrics!.querySelectorAll(':scope > div')].map((row) => row.textContent)).toEqual([
+      'Measured source total18 LOC',
+      'Transport implementationPackage-owned',
+      'Application bootstrap6 LOC',
+      'Client substitution10 LOC',
+      'Loader registration2 LOC',
+    ]);
     expect(dialog).not.toHaveTextContent('smocket-client-substitution');
     expect(dialog).not.toHaveTextContent('register-loader');
   });
 
   it.each([
-    ['drawing', ['room broadcast53 LOC', 'sender exclusion55 LOC', 'full workflow140 LOC']],
-    ['chat', ['acknowledgement55 LOC', 'targeted delivery56 LOC', 'full workflow140 LOC']],
+    [
+      'drawing',
+      [
+        'Measured source total55 LOC',
+        'Transport implementationApplication-owned',
+        'room broadcast53 LOC',
+        'sender exclusion55 LOC',
+        'full workflow140 LOC',
+      ],
+    ],
+    [
+      'chat',
+      [
+        'Measured source total56 LOC',
+        'Transport implementationApplication-owned',
+        'acknowledgement55 LOC',
+        'targeted delivery56 LOC',
+        'full workflow140 LOC',
+      ],
+    ],
   ] as const)('lists the compact Handwritten LOC comparison for %s', async (sampleId, expected) => {
-    const { dialog } = await openSample(sampleId);
+    const { dialog, sample } = await openSample(sampleId);
     const card = columnView(dialog, 'Handwritten mock');
     const metrics = card.getByLabelText('Handwritten LOC by stage');
+    const article = metrics.closest('article');
 
-    expect(within(metrics).getAllByRole('term')).toHaveLength(3);
+    expect(within(metrics).getAllByRole('term')).toHaveLength(5);
     expect([...metrics.querySelectorAll(':scope > div')].map((row) => row.textContent)).toEqual(
       expected,
     );
+    expect(article).not.toHaveTextContent(sample.handwritten.supportDescription);
+    expect(card.queryByLabelText('Measured stage changes')).not.toBeInTheDocument();
+    expect(article).not.toHaveTextContent('not the full golden workflow');
   });
 
   it.each<CodeSampleId>(['drawing', 'chat'])(

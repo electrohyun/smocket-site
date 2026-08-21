@@ -430,26 +430,6 @@
   white-space: nowrap;
 }
 
-.diffMetrics {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  margin: 8px 0;
-}
-
-.diffMetrics span {
-  padding: 3px 6px;
-  color: var(--accent);
-  font-family: var(--font-mono);
-  background: color-mix(in srgb, var(--accent) 10%, transparent);
-  border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
-  border-radius: 999px;
-}
-
-.limitNote {
-  color: color-mix(in srgb, var(--code-text) 58%, transparent);
-}
-
 @keyframes code-overlay-in {
   from {
     opacity: 0;

@@ -100,7 +100,8 @@ describe('drawing-game fixed code comparison model', () => {
     expect(drawingGameCodeModel.samples.drawing.smocketIntegration).toEqual({
       totalLoc: 18,
       bootstrapLoc: 6,
-      substitutionAndRegistrationLoc: 12,
+      clientSubstitutionLoc: 10,
+      loaderRegistrationLoc: 2,
     });
   });
 

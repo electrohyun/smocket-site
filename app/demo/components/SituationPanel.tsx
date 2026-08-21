@@ -129,22 +129,38 @@ function CodeCard({
         {column.id === 'smocket' && (
           <dl className={styles.integrationMetrics}>
             <div>
-              <dt>Full target integration</dt>
+              <dt>Measured source total</dt>
               <dd>{sample.smocketIntegration.totalLoc} LOC</dd>
             </div>
             <div>
-              <dt>Bootstrap</dt>
+              <dt>Transport implementation</dt>
+              <dd>Package-owned</dd>
+            </div>
+            <div>
+              <dt>Application bootstrap</dt>
               <dd>{sample.smocketIntegration.bootstrapLoc} LOC</dd>
             </div>
             <div>
-              <dt>Substitution + registration</dt>
-              <dd>{sample.smocketIntegration.substitutionAndRegistrationLoc} LOC</dd>
+              <dt>Client substitution</dt>
+              <dd>{sample.smocketIntegration.clientSubstitutionLoc} LOC</dd>
+            </div>
+            <div>
+              <dt>Loader registration</dt>
+              <dd>{sample.smocketIntegration.loaderRegistrationLoc} LOC</dd>
             </div>
           </dl>
         )}
         {column.id === 'handwritten' && (
           <>
             <dl className={styles.integrationMetrics} aria-label="Handwritten LOC by stage">
+              <div>
+                <dt>Measured source total</dt>
+                <dd>{sample.handwritten.totalLoc} LOC</dd>
+              </div>
+              <div>
+                <dt>Transport implementation</dt>
+                <dd>Application-owned</dd>
+              </div>
               <div>
                 <dt>{sample.handwritten.prerequisite.stageId.replaceAll('-', ' ')}</dt>
                 <dd>{sample.handwritten.prerequisite.totalLoc} LOC</dd>
@@ -158,19 +174,6 @@ function CodeCard({
                 <dd>{sample.handwritten.fullWorkflowLoc} LOC</dd>
               </div>
             </dl>
-            <p>{sample.handwritten.supportDescription}</p>
-            <div className={styles.diffMetrics} aria-label="Measured stage changes">
-              {sample.handwritten.diffs.map((diff) => (
-                <span key={diff.snippetId} title={diff.snippetId}>
-                  {diff.stageId}: +{diff.additions} / -{diff.deletions}
-                </span>
-              ))}
-            </div>
-            <p className={styles.limitNote}>
-              {sample.handwritten.totalLoc} LOC is the {sample.handwritten.stageId} capability
-              stage, not the full golden workflow. Full handwritten workflow source closure:{' '}
-              {sample.handwritten.fullWorkflowLoc} LOC.
-            </p>
           </>
         )}
       </footer>
