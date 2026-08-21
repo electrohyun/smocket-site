@@ -392,7 +392,7 @@
 }
 
 .codeCardFooter {
-  min-height: 110px;
+  height: 128px;
   flex: none;
   padding: 12px 18px 14px;
   overflow: auto;
