@@ -91,4 +91,14 @@ describe('drawing-game publication snapshot', () => {
       validatePublicationRecords(records.publication, records.artifactRecords, codePanel),
     ).toThrow(/does not exist: missing-snippet/i);
   });
+
+  it('rejects a Handwritten focus line that is absent from its canonical source', async () => {
+    const records = await loadRecords();
+    const codePanel = structuredClone(records.codePanel);
+    codePanel.samples.chat.handwritten.focusText = 'missing focus line';
+
+    expect(() =>
+      validatePublicationRecords(records.publication, records.artifactRecords, codePanel),
+    ).toThrow(/focusText does not exist/i);
+  });
 });

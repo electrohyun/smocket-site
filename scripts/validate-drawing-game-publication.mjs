@@ -199,6 +199,10 @@ export function validateCodePanelConfig(config, snippetIndex) {
       handwritten.supportDescription,
       `code-panel.samples.${sampleId}.handwritten.supportDescription`,
     );
+    const focusText = string(
+      handwritten.focusText,
+      `code-panel.samples.${sampleId}.handwritten.focusText`,
+    );
     const sourceSnippetId = string(
       handwritten.sourceSnippetId,
       `code-panel.samples.${sampleId}.handwritten.sourceSnippetId`,
@@ -206,6 +210,11 @@ export function validateCodePanelConfig(config, snippetIndex) {
     if (!snippetIndex.has(sourceSnippetId)) {
       fail(
         `code-panel.samples.${sampleId}.handwritten.sourceSnippetId does not exist: ${sourceSnippetId}`,
+      );
+    }
+    if (!snippetIndex.get(sourceSnippetId).code.includes(focusText)) {
+      fail(
+        `code-panel.samples.${sampleId}.handwritten.focusText does not exist in ${sourceSnippetId}`,
       );
     }
     const diffSnippetIds = array(

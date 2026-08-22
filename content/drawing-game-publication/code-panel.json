@@ -10,7 +10,8 @@
         "stageId": "sender-exclusion",
         "sourceSnippetId": "handwritten.sender-exclusion.source.transport",
         "diffSnippetIds": ["handwritten.sender-exclusion.diff.transport"],
-        "supportDescription": "The application handler stays unchanged, while the application owns transport support for room membership, room broadcast, and sender exclusion."
+        "supportDescription": "Room broadcast and sender exclusion",
+        "focusText": "  function createBroadcast(room, senderId) {"
       }
     },
     "chat": {
@@ -25,7 +26,8 @@
           "handwritten.acknowledgement.diff.transport",
           "handwritten.targeted-delivery.diff.transport"
         ],
-        "supportDescription": "The application owns transport support for acknowledgements and socket-id targeting."
+        "supportDescription": "Acknowledgement and socket-id targeting",
+        "focusText": "        const ids = pairs.has(target) ? [target] : (rooms.get(target) ?? []);"
       }
     }
   }

@@ -49,6 +49,24 @@ function CodeCard({
 }) {
   const prefix = `demo-code-${sample.id}-${column.id}`;
   const snippet = column.snippet;
+  const codeBlockRef = useRef<HTMLPreElement>(null);
+
+  useEffect(() => {
+    if (column.id !== 'handwritten') return;
+    const block = codeBlockRef.current;
+    const focusLine = block?.querySelector<HTMLElement>(
+      `[data-line="${sample.handwritten.focusLineNumber}"]`,
+    );
+    if (!block || !focusLine) return;
+
+    const frame = requestAnimationFrame(() => {
+      const blockRect = block.getBoundingClientRect();
+      const lineRect = focusLine.getBoundingClientRect();
+      const relativeTop = lineRect.top - blockRect.top + block.scrollTop;
+      block.scrollTop = Math.max(0, relativeTop - 18);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [column.id, sample.handwritten.focusLineNumber, snippet.id]);
 
   return (
     <article
@@ -82,9 +100,8 @@ function CodeCard({
         )}
         {column.id === 'handwritten' && (
           <>
-            <strong>{sample.handwritten.totalLoc} LOC capability stage</strong>
-            <span>{sample.handwritten.stageId}</span>
-            <span>Application-owned transport</span>
+            <strong>Application-owned transport</strong>
+            <span>{sample.handwritten.supportDescription}</span>
           </>
         )}
       </div>
@@ -106,7 +123,7 @@ function CodeCard({
         </span>
       </div>
 
-      <pre className={styles.codeBlock} aria-label={`${column.title} code`}>
+      <pre ref={codeBlockRef} className={styles.codeBlock} aria-label={`${column.title} code`}>
         <code data-testid={`snippet-code-${snippet.id}`}>
           {column.lines.map((line, lineIndex) => (
             <span
@@ -114,6 +131,12 @@ function CodeCard({
               className={`${styles.codeLine}${line.highlighted ? ` ${styles.codeLineHighlighted}` : ''}`}
               data-line={line.lineNumber}
               data-highlighted={line.highlighted ? 'true' : undefined}
+              data-focus-line={
+                column.id === 'handwritten' &&
+                line.lineNumber === sample.handwritten.focusLineNumber
+                  ? 'true'
+                  : undefined
+              }
             >
               {line.text}
               {lineIndex < column.lines.length - 1 ? (
@@ -123,61 +146,58 @@ function CodeCard({
           ))}
         </code>
       </pre>
-
-      <footer className={styles.codeCardFooter}>
-        {column.id === 'real' && <p>Reference result for this recorded workflow step.</p>}
-        {column.id === 'smocket' && (
-          <dl className={styles.integrationMetrics}>
-            <div>
-              <dt>Measured source total</dt>
-              <dd>{sample.smocketIntegration.totalLoc} LOC</dd>
-            </div>
-            <div>
-              <dt>Transport implementation</dt>
-              <dd>Package-owned</dd>
-            </div>
-            <div>
-              <dt>Application bootstrap</dt>
-              <dd>{sample.smocketIntegration.bootstrapLoc} LOC</dd>
-            </div>
-            <div>
-              <dt>Client substitution</dt>
-              <dd>{sample.smocketIntegration.clientSubstitutionLoc} LOC</dd>
-            </div>
-            <div>
-              <dt>Loader registration</dt>
-              <dd>{sample.smocketIntegration.loaderRegistrationLoc} LOC</dd>
-            </div>
-          </dl>
-        )}
-        {column.id === 'handwritten' && (
-          <>
-            <dl className={styles.integrationMetrics} aria-label="Handwritten LOC by stage">
-              <div>
-                <dt>Measured source total</dt>
-                <dd>{sample.handwritten.totalLoc} LOC</dd>
-              </div>
-              <div>
-                <dt>Transport implementation</dt>
-                <dd>Application-owned</dd>
-              </div>
-              <div>
-                <dt>{sample.handwritten.prerequisite.stageId.replaceAll('-', ' ')}</dt>
-                <dd>{sample.handwritten.prerequisite.totalLoc} LOC</dd>
-              </div>
-              <div>
-                <dt>{sample.handwritten.stageId.replaceAll('-', ' ')}</dt>
-                <dd>{sample.handwritten.totalLoc} LOC</dd>
-              </div>
-              <div>
-                <dt>full workflow</dt>
-                <dd>{sample.handwritten.fullWorkflowLoc} LOC</dd>
-              </div>
-            </dl>
-          </>
-        )}
-      </footer>
     </article>
+  );
+}
+
+function SourceComparison({ sample }: { sample: DrawingGameCodeSample }) {
+  const maxLoc = sample.handwritten.fullWorkflowLoc;
+  const rows = [
+    {
+      id: 'smocket',
+      label: 'Smocket integration',
+      loc: sample.smocketIntegration.totalLoc,
+      className: styles.sourceBarSmocket,
+    },
+    {
+      id: 'handwritten',
+      label: 'Handwritten mock support',
+      loc: sample.handwritten.fullWorkflowLoc,
+      className: styles.sourceBarHandwritten,
+    },
+  ];
+
+  return (
+    <figure className={styles.sourceComparison} aria-labelledby={`source-comparison-${sample.id}`}>
+      <h3 id={`source-comparison-${sample.id}`}>
+        Additional source outside the shared handler <span>· full workflow</span>
+      </h3>
+      <div className={styles.sourceRows}>
+        {rows.map((row) => (
+          <div className={styles.sourceRow} key={row.id}>
+            <span className={styles.sourceRowLabel}>{row.label}</span>
+            <div
+              className={styles.sourceTrack}
+              role="progressbar"
+              aria-label={`${row.label}: ${row.loc} LOC`}
+              aria-valuemin={0}
+              aria-valuemax={maxLoc}
+              aria-valuenow={row.loc}
+            >
+              <span
+                className={`${styles.sourceBar} ${row.className}`}
+                style={{ width: `${(row.loc / maxLoc) * 100}%` }}
+              />
+            </div>
+            <strong>{row.loc} LOC</strong>
+          </div>
+        ))}
+      </div>
+      <figcaption>
+        Shared application code and test harness excluded. Real Socket.IO is the behavior oracle and
+        is not included in this LOC comparison.
+      </figcaption>
+    </figure>
   );
 }
 
@@ -364,6 +384,7 @@ export default function SituationPanel({
                 />
               ))}
             </div>
+            <SourceComparison sample={sample} />
           </section>
         </div>
       )}

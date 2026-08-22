@@ -94,9 +94,9 @@ describe('SituationPanel code dialog', () => {
     expect(
       columnView(dialog, 'Smocket').getByText('Application code changed: 0 LOC'),
     ).toBeInTheDocument();
-    expect(
-      columnView(dialog, 'Handwritten mock').getByText('55 LOC capability stage'),
-    ).toBeInTheDocument();
+    const handwritten = columnView(dialog, 'Handwritten mock');
+    expect(handwritten.getByText('Application-owned transport')).toBeInTheDocument();
+    expect(handwritten.getByText('Room broadcast and sender exclusion')).toBeInTheDocument();
   });
 
   it('shows the fixed Chat comparison with canonical code and measured scope', async () => {
@@ -110,9 +110,9 @@ describe('SituationPanel code dialog', () => {
     ]);
     expect(columnView(dialog, 'Real Socket.IO').getByText('ORACLE')).toBeInTheDocument();
     expect(columnView(dialog, 'Smocket').getByText('MATCH')).toBeInTheDocument();
-    expect(
-      columnView(dialog, 'Handwritten mock').getByText('56 LOC capability stage'),
-    ).toBeInTheDocument();
+    const handwritten = columnView(dialog, 'Handwritten mock');
+    expect(handwritten.getByText('Application-owned transport')).toBeInTheDocument();
+    expect(handwritten.getByText('Acknowledgement and socket-id targeting')).toBeInTheDocument();
   });
 
   it.each<CodeSampleId>(['drawing', 'chat'])(
@@ -141,63 +141,39 @@ describe('SituationPanel code dialog', () => {
     },
   );
 
-  it('reads Smocket integration measurements without exposing loader source', async () => {
-    const { dialog } = await openSample('drawing');
-    const card = columnView(dialog, 'Smocket');
+  it.each<CodeSampleId>(['drawing', 'chat'])(
+    'renders one full-workflow source comparison below the %s cards',
+    async (sampleId) => {
+      const { dialog } = await openSample(sampleId);
+      const comparison = within(dialog).getByRole('figure');
+      const bars = within(comparison).getAllByRole('progressbar');
 
-    expect(card.getByText('18 LOC')).toBeInTheDocument();
-    expect(card.getByText('6 LOC')).toBeInTheDocument();
-    expect(card.getByText('10 LOC')).toBeInTheDocument();
-    expect(card.getByText('2 LOC')).toBeInTheDocument();
-    expect(card.getByText('Package-owned')).toBeInTheDocument();
-    const metrics = card.getByText('Measured source total').closest('dl');
-    expect(metrics).not.toBeNull();
-    expect([...metrics!.querySelectorAll(':scope > div')].map((row) => row.textContent)).toEqual([
-      'Measured source total18 LOC',
-      'Transport implementationPackage-owned',
-      'Application bootstrap6 LOC',
-      'Client substitution10 LOC',
-      'Loader registration2 LOC',
-    ]);
-    expect(dialog).not.toHaveTextContent('smocket-client-substitution');
-    expect(dialog).not.toHaveTextContent('register-loader');
-  });
+      expect(dialog.querySelector('footer')).not.toBeInTheDocument();
+      expect(dialog).not.toHaveTextContent('Measured source total');
+      expect(dialog).not.toHaveTextContent('Transport implementation');
+      expect(dialog).not.toHaveTextContent('Application bootstrap');
+      expect(dialog).not.toHaveTextContent('Client substitution');
+      expect(dialog).not.toHaveTextContent('Loader registration');
+      expect(dialog).not.toHaveTextContent('smocket-client-substitution');
+      expect(dialog).not.toHaveTextContent('register-loader');
 
-  it.each([
-    [
-      'drawing',
-      [
-        'Measured source total55 LOC',
-        'Transport implementationApplication-owned',
-        'room broadcast53 LOC',
-        'sender exclusion55 LOC',
-        'full workflow140 LOC',
-      ],
-    ],
-    [
-      'chat',
-      [
-        'Measured source total56 LOC',
-        'Transport implementationApplication-owned',
-        'acknowledgement55 LOC',
-        'targeted delivery56 LOC',
-        'full workflow140 LOC',
-      ],
-    ],
-  ] as const)('lists the compact Handwritten LOC comparison for %s', async (sampleId, expected) => {
-    const { dialog, sample } = await openSample(sampleId);
-    const card = columnView(dialog, 'Handwritten mock');
-    const metrics = card.getByLabelText('Handwritten LOC by stage');
-    const article = metrics.closest('article');
-
-    expect(within(metrics).getAllByRole('term')).toHaveLength(5);
-    expect([...metrics.querySelectorAll(':scope > div')].map((row) => row.textContent)).toEqual(
-      expected,
-    );
-    expect(article).not.toHaveTextContent(sample.handwritten.supportDescription);
-    expect(card.queryByLabelText('Measured stage changes')).not.toBeInTheDocument();
-    expect(article).not.toHaveTextContent('not the full golden workflow');
-  });
+      expect(
+        within(comparison).getByRole('heading', {
+          name: 'Additional source outside the shared handler · full workflow',
+        }),
+      ).toBeInTheDocument();
+      expect(bars).toHaveLength(2);
+      expect(bars[0]).toHaveAttribute('aria-label', 'Smocket integration: 18 LOC');
+      expect(bars[0]).toHaveAttribute('aria-valuenow', '18');
+      expect(bars[0]).toHaveAttribute('aria-valuemax', '140');
+      expect(bars[1]).toHaveAttribute('aria-label', 'Handwritten mock support: 140 LOC');
+      expect(bars[1]).toHaveAttribute('aria-valuenow', '140');
+      expect(
+        within(comparison).queryByRole('progressbar', { name: /Real Socket\.IO/ }),
+      ).not.toBeInTheDocument();
+      expect(comparison).toHaveTextContent('Shared application code and test harness excluded.');
+    },
+  );
 
   it.each<CodeSampleId>(['drawing', 'chat'])(
     'highlights only artifact-derived %s Handwritten lines',
@@ -213,6 +189,11 @@ describe('SituationPanel code dialog', () => {
       expect([...highlighted].map((line) => Number(line.getAttribute('data-line')))).toEqual(
         handwritten.lines.filter((line) => line.highlighted).map((line) => line.lineNumber),
       );
+      const focusLine = card
+        .getByTestId(`snippet-code-${handwritten.snippet.id}`)
+        .querySelector('[data-focus-line="true"]');
+      expect(focusLine).toHaveAttribute('data-line', String(sample.handwritten.focusLineNumber));
+      expect(focusLine).toHaveAttribute('data-highlighted', 'true');
     },
   );
 

@@ -8,7 +8,7 @@ import snapshotManifest from '../../../content/drawing-game-publication/snapshot
 
 export type CodeSampleId = 'drawing' | 'chat';
 export type CodeColumnId = 'real' | 'smocket' | 'handwritten';
-export type CodeColumnStatus = 'ORACLE' | 'MATCH' | 'CAPABILITY STAGE';
+export type CodeColumnStatus = 'ORACLE' | 'MATCH' | 'OWNED SUPPORT';
 
 export interface DrawingGameCodeLine {
   lineNumber: number;
@@ -68,6 +68,7 @@ export interface HandwrittenStageMetrics {
     totalLoc: number;
   };
   supportDescription: string;
+  focusLineNumber: number;
   diffs: HandwrittenDiffMetric[];
 }
 
@@ -414,6 +415,15 @@ export function createDrawingGameCodeModel(input: ModelInput): DrawingGameCodeMo
       deletions: number(diff.deletions, `${diff.id}.deletions`),
     }));
     const highlightedLines = highlightedLinesFromDiffs(source, diffs);
+    const focusText = string(handwrittenConfig.focusText, `${samplePath}.handwritten.focusText`);
+    const focusLineIndex = source.code.split('\n').indexOf(focusText);
+    if (focusLineIndex === -1) {
+      fail(`${samplePath}.handwritten.focusText does not exist in ${source.id}`);
+    }
+    const focusLineNumber = source.sourceStartLine + focusLineIndex;
+    if (!highlightedLines.has(focusLineNumber)) {
+      fail(`${samplePath}.handwritten.focusText must identify a diff-added source line`);
+    }
 
     samples[sampleId] = {
       id: sampleId,
@@ -439,8 +449,8 @@ export function createDrawingGameCodeModel(input: ModelInput): DrawingGameCodeMo
         {
           id: 'handwritten',
           title: 'Handwritten mock',
-          status: 'CAPABILITY STAGE',
-          summary: 'Application-owned transport for this capability stage.',
+          status: 'OWNED SUPPORT',
+          summary: 'Application-owned transport.',
           snippet: source,
           lines: snippetLines(source, highlightedLines),
         },
@@ -463,6 +473,7 @@ export function createDrawingGameCodeModel(input: ModelInput): DrawingGameCodeMo
           handwrittenConfig.supportDescription,
           `${samplePath}.handwritten.supportDescription`,
         ),
+        focusLineNumber,
         diffs: diffMetrics,
       },
     };

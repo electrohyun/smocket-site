@@ -52,10 +52,12 @@ describe('drawing-game fixed code comparison model', () => {
       changedLoc: 0,
     });
     expect(handwritten.snippet.id).toBe('handwritten.sender-exclusion.source.transport');
+    expect(handwritten.status).toBe('OWNED SUPPORT');
     expect(sample.handwritten).toMatchObject({
       stageId: 'sender-exclusion',
       totalLoc: 55,
       fullWorkflowLoc: 140,
+      supportDescription: 'Room broadcast and sender exclusion',
       diffs: [
         {
           snippetId: 'handwritten.sender-exclusion.diff.transport',
@@ -63,6 +65,12 @@ describe('drawing-game fixed code comparison model', () => {
           deletions: 3,
         },
       ],
+    });
+    expect(
+      handwritten.lines.find((line) => line.lineNumber === sample.handwritten.focusLineNumber),
+    ).toMatchObject({
+      text: '  function createBroadcast(room, senderId) {',
+      highlighted: true,
     });
   });
 
@@ -77,10 +85,12 @@ describe('drawing-game fixed code comparison model', () => {
     expect(real.snippet.code).toBe(smocket.snippet.code);
     expect(real.snippet.sourceSha256).toBe(smocket.snippet.sourceSha256);
     expect(handwritten.snippet.id).toBe('handwritten.targeted-delivery.source.transport');
+    expect(handwritten.status).toBe('OWNED SUPPORT');
     expect(sample.handwritten).toMatchObject({
       stageId: 'targeted-delivery',
       totalLoc: 56,
       fullWorkflowLoc: 140,
+      supportDescription: 'Acknowledgement and socket-id targeting',
       diffs: [
         {
           snippetId: 'handwritten.acknowledgement.diff.transport',
@@ -93,6 +103,12 @@ describe('drawing-game fixed code comparison model', () => {
           deletions: 5,
         },
       ],
+    });
+    expect(
+      handwritten.lines.find((line) => line.lineNumber === sample.handwritten.focusLineNumber),
+    ).toMatchObject({
+      text: '        const ids = pairs.has(target) ? [target] : (rooms.get(target) ?? []);',
+      highlighted: true,
     });
   });
 
@@ -150,6 +166,15 @@ describe('drawing-game fixed code comparison model', () => {
 
     expect(() => createDrawingGameCodeModel({ ...modelInput, config: changedConfig })).toThrow(
       /does not exist: missing-snippet/,
+    );
+  });
+
+  it('fails when a configured focus line is absent from the canonical source', () => {
+    const changedConfig = structuredClone(config);
+    changedConfig.samples.drawing.handwritten.focusText = 'missing focus line';
+
+    expect(() => createDrawingGameCodeModel({ ...modelInput, config: changedConfig })).toThrow(
+      /focusText does not exist/,
     );
   });
 });

@@ -188,7 +188,7 @@
 
 .codeCard {
   display: flex;
-  height: clamp(720px, calc(100dvh - 110px), 740px);
+  height: clamp(600px, calc(100dvh - 270px), 620px);
   min-height: 360px;
   flex-direction: column;
   overflow: hidden;
@@ -386,48 +386,91 @@
   border-left-color: var(--accent);
 }
 
+.codeLine[data-focus-line='true'] {
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
 .codeNewline {
   font-size: 0;
   line-height: 0;
 }
 
-.codeCardFooter {
-  height: 128px;
+.sourceComparison {
   flex: none;
-  padding: 12px 18px 14px;
-  overflow: auto;
-  color: color-mix(in srgb, var(--code-text) 68%, transparent);
-  font-size: 0.64rem;
-  line-height: 1.4;
-  background: color-mix(in srgb, var(--code-bg) 96%, var(--panel) 4%);
-  border-top: 1px solid var(--code-border);
+  padding: 11px 16px 12px;
+  margin: 12px 0 0;
+  color: var(--code-text);
+  background: color-mix(in srgb, var(--code-bg) 95%, var(--panel) 5%);
+  border: 1px solid var(--code-border);
+  border-radius: 12px;
 }
 
-.codeCardFooter p {
-  margin: 0;
+.sourceComparison h3 {
+  margin: 0 0 8px;
+  font-size: 0.7rem;
+  font-weight: 750;
+  line-height: 1.2;
 }
 
-.integrationMetrics {
+.sourceComparison h3 span {
+  color: var(--text-dim);
+  font-weight: 500;
+}
+
+.sourceRows {
   display: grid;
-  gap: 7px;
-  margin: 0;
+  gap: 6px;
 }
 
-.integrationMetrics div {
-  display: flex;
-  justify-content: space-between;
+.sourceRow {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr) 58px;
   gap: 12px;
+  align-items: center;
 }
 
-.integrationMetrics dt,
-.integrationMetrics dd {
-  margin: 0;
+.sourceRowLabel {
+  color: color-mix(in srgb, var(--code-text) 78%, transparent);
+  font-size: 0.66rem;
+  font-weight: 700;
 }
 
-.integrationMetrics dd {
+.sourceTrack {
+  height: 18px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--code-bg) 88%, var(--panel) 12%);
+  border: 1px solid var(--code-border);
+  border-radius: 5px;
+}
+
+.sourceBar {
+  display: block;
+  min-width: 18px;
+  height: 100%;
+  border-radius: 4px;
+}
+
+.sourceBarSmocket {
+  background: var(--accent);
+}
+
+.sourceBarHandwritten {
+  background: color-mix(in srgb, #cfb3ff 84%, var(--accent) 16%);
+}
+
+.sourceRow > strong {
   color: var(--accent);
   font-family: var(--font-mono);
+  font-size: 0.65rem;
+  text-align: right;
   white-space: nowrap;
+}
+
+.sourceComparison figcaption {
+  margin-top: 7px;
+  color: color-mix(in srgb, var(--code-text) 54%, transparent);
+  font-size: 0.6rem;
+  line-height: 1.25;
 }
 
 @keyframes code-overlay-in {
@@ -577,7 +620,7 @@
   }
 
   .codeCard {
-    height: 720px;
+    height: 600px;
     min-height: 300px;
   }
 
@@ -599,8 +642,18 @@
     font-size: 0.72rem;
   }
 
-  .codeCardFooter {
-    padding: 10px 16px 12px;
+  .sourceComparison {
+    padding: 10px 12px 11px;
+  }
+
+  .sourceRow {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 4px 10px;
+  }
+
+  .sourceTrack {
+    grid-row: 2;
+    grid-column: 1 / -1;
   }
 }
 
