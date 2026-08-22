@@ -38,6 +38,72 @@ import styles from './SituationPanel.module.css';
 
 type Viewpoint = 'drawer' | 'observer';
 
+const COMPARISON_DESCRIPTION =
+  'Same recorded behavior. Real and Smocket share the application handler; the handwritten mock implements the transport support in the application.';
+
+function cardDescription(sample: DrawingGameCodeSample, column: DrawingGameCodeColumn) {
+  if (column.id === 'real') {
+    return ['Application event handler', 'Behavior reference'] as const;
+  }
+  if (column.id === 'smocket') {
+    return ['Same application event handler', '0 LOC changed'] as const;
+  }
+  return [
+    'Application-owned mock transport',
+    sample.id === 'drawing'
+      ? 'Room broadcast and sender exclusion'
+      : 'Acknowledgement and socket-id targeting',
+  ] as const;
+}
+
+type SemanticHighlight = 'related' | 'key';
+
+function semanticHighlights(
+  sample: DrawingGameCodeSample,
+  column: DrawingGameCodeColumn,
+): Map<number, SemanticHighlight> {
+  const highlights = new Map<number, SemanticHighlight>();
+  const find = (text: string, from = 0) =>
+    column.lines.findIndex((line, index) => index >= from && line.text.includes(text));
+  const markRange = (start: number, end: number) => {
+    if (start < 0 || end < start) return;
+    for (let index = start; index <= end; index += 1) {
+      highlights.set(column.lines[index].lineNumber, 'related');
+    }
+  };
+  const markKey = (index: number) => {
+    if (index >= 0) highlights.set(column.lines[index].lineNumber, 'key');
+  };
+
+  if (column.id !== 'handwritten') {
+    if (sample.id === 'drawing') {
+      markKey(find("socket.to(ROOM).emit('stroke', segment)"));
+    } else {
+      markKey(find('acknowledge(correct)'));
+      markKey(find("io.to(socket.id).emit('correct'"));
+    }
+    return highlights;
+  }
+
+  if (sample.id === 'drawing') {
+    const start = find('function createBroadcast(room, senderId)');
+    const end = find('if (id !== senderId)', start);
+    markRange(start, end);
+    markKey(end);
+    return highlights;
+  }
+
+  const targetingStart = find('const ids = pairs.has(target)');
+  const targetingEnd = find('if (id !== senderId)', targetingStart);
+  markRange(targetingStart, targetingEnd);
+  markKey(targetingStart);
+
+  const acknowledgementEnd = find('dispatch(serverListeners, event, args)');
+  markRange(acknowledgementEnd - 1, acknowledgementEnd);
+  markKey(acknowledgementEnd);
+  return highlights;
+}
+
 function CodeCard({
   column,
   index,
@@ -50,12 +116,8 @@ function CodeCard({
   const prefix = `demo-code-${sample.id}-${column.id}`;
   const snippet = column.snippet;
   const codeBlockRef = useRef<HTMLPreElement>(null);
-  const additionalLoc =
-    column.id === 'smocket'
-      ? sample.smocketIntegration.totalLoc
-      : column.id === 'handwritten'
-        ? sample.handwritten.fullWorkflowLoc
-        : null;
+  const description = cardDescription(sample, column);
+  const highlights = semanticHighlights(sample, column);
 
   useEffect(() => {
     if (column.id !== 'handwritten') return;
@@ -84,56 +146,50 @@ function CodeCard({
         <span className={styles.codeCardIndex}>{String(index + 1).padStart(2, '0')}</span>
         <div>
           <h3 id={`${prefix}-title`}>{column.title}</h3>
-          <p>{column.summary}</p>
+          <p>
+            <strong>{description[0]}</strong>
+            <span>{description[1]}</span>
+          </p>
         </div>
-        {additionalLoc !== null && (
-          <strong
-            className={styles.codeCardMeasure}
-            aria-label={`${additionalLoc} LOC additional source`}
-          >
-            +{additionalLoc}
-          </strong>
-        )}
       </header>
 
       <div className={styles.snippetDetails}>
-        <span className={styles.snippetRole}>{snippet.purpose}</span>
-        <code className={styles.snippetId}>{snippet.id}</code>
         <a
-          className={styles.snippetSource}
+          className={styles.snippetVerification}
           href={snippet.sourceUrl}
           target="_blank"
           rel="noreferrer"
-          title={snippet.sourceLabel}
+          title={snippet.sourceSha256}
         >
-          Source at {drawingGameCodeModel.publicationCommit.slice(0, 7)}
+          Verified source · {drawingGameCodeModel.publicationCommit.slice(0, 7)} · SHA-256{' '}
+          {snippet.sourceSha256.slice(0, 10)}…
         </a>
-        <span className={styles.snippetHash} title={snippet.sourceSha256}>
-          SHA-256 {snippet.sourceSha256.slice(0, 10)}…
-        </span>
       </div>
 
       <pre ref={codeBlockRef} className={styles.codeBlock} aria-label={`${column.title} code`}>
         <code data-testid={`snippet-code-${snippet.id}`}>
-          {column.lines.map((line, lineIndex) => (
-            <span
-              key={line.lineNumber}
-              className={`${styles.codeLine}${line.highlighted ? ` ${styles.codeLineHighlighted}` : ''}`}
-              data-line={line.lineNumber}
-              data-highlighted={line.highlighted ? 'true' : undefined}
-              data-focus-line={
-                column.id === 'handwritten' &&
-                line.lineNumber === sample.handwritten.focusLineNumber
-                  ? 'true'
-                  : undefined
-              }
-            >
-              {line.text}
-              {lineIndex < column.lines.length - 1 ? (
-                <span className={styles.codeNewline}>{'\n'}</span>
-              ) : null}
-            </span>
-          ))}
+          {column.lines.map((line, lineIndex) => {
+            const highlight = highlights.get(line.lineNumber);
+            return (
+              <span
+                key={line.lineNumber}
+                className={`${styles.codeLine}${highlight === 'related' ? ` ${styles.codeLineRelated}` : ''}${highlight === 'key' ? ` ${styles.codeLineKey}` : ''}`}
+                data-line={line.lineNumber}
+                data-semantic-highlight={highlight}
+                data-focus-line={
+                  column.id === 'handwritten' &&
+                  line.lineNumber === sample.handwritten.focusLineNumber
+                    ? 'true'
+                    : undefined
+                }
+              >
+                {line.text}
+                {lineIndex < column.lines.length - 1 ? (
+                  <span className={styles.codeNewline}>{'\n'}</span>
+                ) : null}
+              </span>
+            );
+          })}
         </code>
       </pre>
     </article>
@@ -299,7 +355,7 @@ export default function SituationPanel({
                   {sample.title}
                 </h2>
                 <p id="demo-code-description" className={styles.codeDescription}>
-                  {sample.description}
+                  {COMPARISON_DESCRIPTION}
                 </p>
               </div>
               <button

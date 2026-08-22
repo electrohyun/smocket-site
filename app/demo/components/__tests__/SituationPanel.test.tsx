@@ -72,14 +72,14 @@ function expectFixedColumns(dialog: HTMLElement, sampleId: CodeSampleId) {
     );
     expect(
       card.getByRole('link', {
-        name: `Source at ${drawingGameCodeModel.publicationCommit.slice(0, 7)}`,
+        name: `Verified source · ${drawingGameCodeModel.publicationCommit.slice(0, 7)} · SHA-256 ${column.snippet.sourceSha256.slice(0, 10)}…`,
       }),
     ).toHaveAttribute('href', column.snippet.sourceUrl);
   }
 }
 
 describe('SituationPanel code dialog', () => {
-  it('shows the fixed Drawing comparison with canonical code and measured scope', async () => {
+  it('shows the fixed Drawing comparison with canonical code and consistent card copy', async () => {
     const { dialog, sample } = await openSample('drawing');
     expectFixedColumns(dialog, 'drawing');
 
@@ -88,20 +88,18 @@ describe('SituationPanel code dialog', () => {
       'smocket.3-sender-excluded-stroke',
       'handwritten.sender-exclusion.source.transport',
     ]);
-    expect(
-      columnView(dialog, 'Real Socket.IO').getByText('Behavior reference'),
-    ).toBeInTheDocument();
+    const real = columnView(dialog, 'Real Socket.IO');
+    expect(real.getByText('Application event handler')).toBeInTheDocument();
+    expect(real.getByText('Behavior reference')).toBeInTheDocument();
     const smocket = columnView(dialog, 'Smocket');
-    expect(smocket.getByText('Same handler · 0 LOC changed')).toBeInTheDocument();
-    expect(smocket.getByLabelText('18 LOC additional source')).toHaveTextContent('+18');
+    expect(smocket.getByText('Same application event handler')).toBeInTheDocument();
+    expect(smocket.getByText('0 LOC changed')).toBeInTheDocument();
     const handwritten = columnView(dialog, 'Handwritten mock');
-    expect(
-      handwritten.getByText('Transport support implemented by the application'),
-    ).toBeInTheDocument();
-    expect(handwritten.getByLabelText('140 LOC additional source')).toHaveTextContent('+140');
+    expect(handwritten.getByText('Application-owned mock transport')).toBeInTheDocument();
+    expect(handwritten.getByText('Room broadcast and sender exclusion')).toBeInTheDocument();
   });
 
-  it('shows the fixed Chat comparison with canonical code and measured scope', async () => {
+  it('shows the fixed Chat comparison with canonical code and consistent card copy', async () => {
     const { dialog, sample } = await openSample('chat');
     expectFixedColumns(dialog, 'chat');
 
@@ -110,16 +108,15 @@ describe('SituationPanel code dialog', () => {
       'smocket.5-correct-guess',
       'handwritten.targeted-delivery.source.transport',
     ]);
-    expect(
-      columnView(dialog, 'Real Socket.IO').getByText('Behavior reference'),
-    ).toBeInTheDocument();
-    expect(
-      columnView(dialog, 'Smocket').getByText('Same handler · 0 LOC changed'),
-    ).toBeInTheDocument();
+    const real = columnView(dialog, 'Real Socket.IO');
+    expect(real.getByText('Application event handler')).toBeInTheDocument();
+    expect(real.getByText('Behavior reference')).toBeInTheDocument();
+    const smocket = columnView(dialog, 'Smocket');
+    expect(smocket.getByText('Same application event handler')).toBeInTheDocument();
+    expect(smocket.getByText('0 LOC changed')).toBeInTheDocument();
     const handwritten = columnView(dialog, 'Handwritten mock');
-    expect(
-      handwritten.getByText('Transport support implemented by the application'),
-    ).toBeInTheDocument();
+    expect(handwritten.getByText('Application-owned mock transport')).toBeInTheDocument();
+    expect(handwritten.getByText('Acknowledgement and socket-id targeting')).toBeInTheDocument();
   });
 
   it.each<CodeSampleId>(['drawing', 'chat'])(
@@ -149,16 +146,18 @@ describe('SituationPanel code dialog', () => {
   );
 
   it.each<CodeSampleId>(['drawing', 'chat'])(
-    'keeps the %s measurements in card headers without a lower comparison region',
+    'shows compact verified-source provenance without measurements or artifact ids for %s',
     async (sampleId) => {
-      const { dialog } = await openSample(sampleId);
-      const real = columnView(dialog, 'Real Socket.IO');
-      const smocket = columnView(dialog, 'Smocket');
-      const handwritten = columnView(dialog, 'Handwritten mock');
+      const { dialog, sample } = await openSample(sampleId);
 
+      expect(dialog).toHaveTextContent(
+        'Same recorded behavior. Real and Smocket share the application handler; the handwritten mock implements the transport support in the application.',
+      );
       expect(dialog.querySelector('footer')).not.toBeInTheDocument();
       expect(within(dialog).queryByRole('figure')).not.toBeInTheDocument();
       expect(within(dialog).queryByRole('progressbar')).not.toBeInTheDocument();
+      expect(dialog).not.toHaveTextContent('+18');
+      expect(dialog).not.toHaveTextContent('+140');
       expect(dialog).not.toHaveTextContent('Measured source total');
       expect(dialog).not.toHaveTextContent('Transport implementation');
       expect(dialog).not.toHaveTextContent('Application bootstrap');
@@ -166,33 +165,72 @@ describe('SituationPanel code dialog', () => {
       expect(dialog).not.toHaveTextContent('Loader registration');
       expect(dialog).not.toHaveTextContent('smocket-client-substitution');
       expect(dialog).not.toHaveTextContent('register-loader');
-      expect(real.queryByLabelText(/LOC additional source/)).not.toBeInTheDocument();
-      expect(smocket.getByLabelText('18 LOC additional source')).toHaveTextContent('+18');
-      expect(handwritten.getByLabelText('140 LOC additional source')).toHaveTextContent('+140');
+
+      for (const column of sample.columns) {
+        const card = columnView(dialog, column.title);
+        expect(card.queryByText(column.snippet.id)).not.toBeInTheDocument();
+        expect(
+          card.getByRole('link', {
+            name: `Verified source · ${drawingGameCodeModel.publicationCommit.slice(0, 7)} · SHA-256 ${column.snippet.sourceSha256.slice(0, 10)}…`,
+          }),
+        ).toHaveAttribute('title', column.snippet.sourceSha256);
+      }
     },
   );
 
-  it.each<CodeSampleId>(['drawing', 'chat'])(
-    'highlights only artifact-derived %s Handwritten lines',
-    async (sampleId) => {
-      const { dialog, sample } = await openSample(sampleId);
-      const handwritten = sample.columns[2];
-      const card = columnView(dialog, handwritten.title);
-      const highlighted = card
-        .getByTestId(`snippet-code-${handwritten.snippet.id}`)
-        .querySelectorAll('[data-highlighted="true"]');
-
-      expect(highlighted.length).toBeGreaterThan(0);
-      expect([...highlighted].map((line) => Number(line.getAttribute('data-line')))).toEqual(
-        handwritten.lines.filter((line) => line.highlighted).map((line) => line.lineNumber),
+  it('highlights the sender-exclusion correspondence without unrelated Drawing lines', async () => {
+    const { dialog, sample } = await openSample('drawing');
+    for (const column of sample.columns.slice(0, 2)) {
+      const code = columnView(dialog, column.title).getByTestId(
+        `snippet-code-${column.snippet.id}`,
       );
-      const focusLine = card
-        .getByTestId(`snippet-code-${handwritten.snippet.id}`)
-        .querySelector('[data-focus-line="true"]');
-      expect(focusLine).toHaveAttribute('data-line', String(sample.handwritten.focusLineNumber));
-      expect(focusLine).toHaveAttribute('data-highlighted', 'true');
-    },
-  );
+      expect(code.querySelectorAll('[data-semantic-highlight="key"]')).toHaveLength(1);
+      expect(code.querySelector('[data-semantic-highlight="key"]')).toHaveTextContent(
+        "socket.to(ROOM).emit('stroke', segment);",
+      );
+    }
+
+    const handwritten = sample.columns[2];
+    const code = columnView(dialog, handwritten.title).getByTestId(
+      `snippet-code-${handwritten.snippet.id}`,
+    );
+    const related = [...code.querySelectorAll('[data-semantic-highlight="related"]')];
+    expect(related[0]).toHaveTextContent('function createBroadcast(room, senderId)');
+    expect(code.querySelector('[data-semantic-highlight="key"]')).toHaveTextContent(
+      'if (id !== senderId)',
+    );
+    expect(code.querySelectorAll('[data-semantic-highlight]')).toHaveLength(5);
+    expect(code.querySelector('[data-focus-line="true"]')).toHaveAttribute(
+      'data-line',
+      String(sample.handwritten.focusLineNumber),
+    );
+  });
+
+  it('highlights acknowledgement and socket-id targeting correspondence for Chat', async () => {
+    const { dialog, sample } = await openSample('chat');
+    for (const column of sample.columns.slice(0, 2)) {
+      const code = columnView(dialog, column.title).getByTestId(
+        `snippet-code-${column.snippet.id}`,
+      );
+      const keys = [...code.querySelectorAll('[data-semantic-highlight="key"]')];
+      expect(keys).toHaveLength(2);
+      expect(keys[0]).toHaveTextContent('acknowledge(correct);');
+      expect(keys[1]).toHaveTextContent("io.to(socket.id).emit('correct'");
+    }
+
+    const handwritten = sample.columns[2];
+    const code = columnView(dialog, handwritten.title).getByTestId(
+      `snippet-code-${handwritten.snippet.id}`,
+    );
+    const keys = [...code.querySelectorAll('[data-semantic-highlight="key"]')];
+    expect(keys).toHaveLength(2);
+    expect(keys[0]).toHaveTextContent('const ids = pairs.has(target)');
+    expect(keys[1]).toHaveTextContent('dispatch(serverListeners, event, args);');
+    expect(code.querySelector('[data-focus-line="true"]')).toHaveAttribute(
+      'data-semantic-highlight',
+      'key',
+    );
+  });
 
   it('locks scrolling, traps focus, closes on Escape, and restores trigger focus', async () => {
     const user = userEvent.setup();
