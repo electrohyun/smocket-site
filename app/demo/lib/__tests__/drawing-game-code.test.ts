@@ -42,8 +42,10 @@ describe('drawing-game fixed code comparison model', () => {
     ]);
     expect(real.snippet.id).toBe('real.3-sender-excluded-stroke');
     expect(real.status).toBe('ORACLE');
+    expect(real.summary).toBe('Behavior reference');
     expect(smocket.snippet.id).toBe('smocket.3-sender-excluded-stroke');
     expect(smocket.status).toBe('MATCH');
+    expect(smocket.summary).toBe('Same handler · 0 LOC changed');
     expect(real.snippet.code).toBe(smocket.snippet.code);
     expect(real.snippet.sourceSha256).toBe(smocket.snippet.sourceSha256);
     expect(sample.applicationComparison).toEqual({
@@ -53,6 +55,7 @@ describe('drawing-game fixed code comparison model', () => {
     });
     expect(handwritten.snippet.id).toBe('handwritten.sender-exclusion.source.transport');
     expect(handwritten.status).toBe('OWNED SUPPORT');
+    expect(handwritten.summary).toBe('Transport support implemented by the application');
     expect(sample.handwritten).toMatchObject({
       stageId: 'sender-exclusion',
       totalLoc: 55,

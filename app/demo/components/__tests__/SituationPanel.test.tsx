@@ -88,15 +88,17 @@ describe('SituationPanel code dialog', () => {
       'smocket.3-sender-excluded-stroke',
       'handwritten.sender-exclusion.source.transport',
     ]);
-    expect(columnView(dialog, 'Real Socket.IO').getByText('ORACLE')).toBeInTheDocument();
-    expect(columnView(dialog, 'Smocket').getByText('MATCH')).toBeInTheDocument();
-    expect(columnView(dialog, 'Smocket').getByText('Same handler')).toBeInTheDocument();
     expect(
-      columnView(dialog, 'Smocket').getByText('Application code changed: 0 LOC'),
+      columnView(dialog, 'Real Socket.IO').getByText('Behavior reference'),
     ).toBeInTheDocument();
+    const smocket = columnView(dialog, 'Smocket');
+    expect(smocket.getByText('Same handler · 0 LOC changed')).toBeInTheDocument();
+    expect(smocket.getByLabelText('18 LOC additional source')).toHaveTextContent('+18');
     const handwritten = columnView(dialog, 'Handwritten mock');
-    expect(handwritten.getByText('Application-owned transport')).toBeInTheDocument();
-    expect(handwritten.getByText('Room broadcast and sender exclusion')).toBeInTheDocument();
+    expect(
+      handwritten.getByText('Transport support implemented by the application'),
+    ).toBeInTheDocument();
+    expect(handwritten.getByLabelText('140 LOC additional source')).toHaveTextContent('+140');
   });
 
   it('shows the fixed Chat comparison with canonical code and measured scope', async () => {
@@ -108,11 +110,16 @@ describe('SituationPanel code dialog', () => {
       'smocket.5-correct-guess',
       'handwritten.targeted-delivery.source.transport',
     ]);
-    expect(columnView(dialog, 'Real Socket.IO').getByText('ORACLE')).toBeInTheDocument();
-    expect(columnView(dialog, 'Smocket').getByText('MATCH')).toBeInTheDocument();
+    expect(
+      columnView(dialog, 'Real Socket.IO').getByText('Behavior reference'),
+    ).toBeInTheDocument();
+    expect(
+      columnView(dialog, 'Smocket').getByText('Same handler · 0 LOC changed'),
+    ).toBeInTheDocument();
     const handwritten = columnView(dialog, 'Handwritten mock');
-    expect(handwritten.getByText('Application-owned transport')).toBeInTheDocument();
-    expect(handwritten.getByText('Acknowledgement and socket-id targeting')).toBeInTheDocument();
+    expect(
+      handwritten.getByText('Transport support implemented by the application'),
+    ).toBeInTheDocument();
   });
 
   it.each<CodeSampleId>(['drawing', 'chat'])(
@@ -142,13 +149,16 @@ describe('SituationPanel code dialog', () => {
   );
 
   it.each<CodeSampleId>(['drawing', 'chat'])(
-    'renders one full-workflow source comparison below the %s cards',
+    'keeps the %s measurements in card headers without a lower comparison region',
     async (sampleId) => {
       const { dialog } = await openSample(sampleId);
-      const comparison = within(dialog).getByRole('figure');
-      const bars = within(comparison).getAllByRole('progressbar');
+      const real = columnView(dialog, 'Real Socket.IO');
+      const smocket = columnView(dialog, 'Smocket');
+      const handwritten = columnView(dialog, 'Handwritten mock');
 
       expect(dialog.querySelector('footer')).not.toBeInTheDocument();
+      expect(within(dialog).queryByRole('figure')).not.toBeInTheDocument();
+      expect(within(dialog).queryByRole('progressbar')).not.toBeInTheDocument();
       expect(dialog).not.toHaveTextContent('Measured source total');
       expect(dialog).not.toHaveTextContent('Transport implementation');
       expect(dialog).not.toHaveTextContent('Application bootstrap');
@@ -156,22 +166,9 @@ describe('SituationPanel code dialog', () => {
       expect(dialog).not.toHaveTextContent('Loader registration');
       expect(dialog).not.toHaveTextContent('smocket-client-substitution');
       expect(dialog).not.toHaveTextContent('register-loader');
-
-      expect(
-        within(comparison).getByRole('heading', {
-          name: 'Additional source outside the shared handler · full workflow',
-        }),
-      ).toBeInTheDocument();
-      expect(bars).toHaveLength(2);
-      expect(bars[0]).toHaveAttribute('aria-label', 'Smocket integration: 18 LOC');
-      expect(bars[0]).toHaveAttribute('aria-valuenow', '18');
-      expect(bars[0]).toHaveAttribute('aria-valuemax', '140');
-      expect(bars[1]).toHaveAttribute('aria-label', 'Handwritten mock support: 140 LOC');
-      expect(bars[1]).toHaveAttribute('aria-valuenow', '140');
-      expect(
-        within(comparison).queryByRole('progressbar', { name: /Real Socket\.IO/ }),
-      ).not.toBeInTheDocument();
-      expect(comparison).toHaveTextContent('Shared application code and test harness excluded.');
+      expect(real.queryByLabelText(/LOC additional source/)).not.toBeInTheDocument();
+      expect(smocket.getByLabelText('18 LOC additional source')).toHaveTextContent('+18');
+      expect(handwritten.getByLabelText('140 LOC additional source')).toHaveTextContent('+140');
     },
   );
 

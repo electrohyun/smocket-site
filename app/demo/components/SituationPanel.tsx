@@ -50,6 +50,12 @@ function CodeCard({
   const prefix = `demo-code-${sample.id}-${column.id}`;
   const snippet = column.snippet;
   const codeBlockRef = useRef<HTMLPreElement>(null);
+  const additionalLoc =
+    column.id === 'smocket'
+      ? sample.smocketIntegration.totalLoc
+      : column.id === 'handwritten'
+        ? sample.handwritten.fullWorkflowLoc
+        : null;
 
   useEffect(() => {
     if (column.id !== 'handwritten') return;
@@ -80,31 +86,15 @@ function CodeCard({
           <h3 id={`${prefix}-title`}>{column.title}</h3>
           <p>{column.summary}</p>
         </div>
-        <span className={styles.codeCardMeta}>{column.status}</span>
+        {additionalLoc !== null && (
+          <strong
+            className={styles.codeCardMeasure}
+            aria-label={`${additionalLoc} LOC additional source`}
+          >
+            +{additionalLoc}
+          </strong>
+        )}
       </header>
-
-      <div className={styles.comparisonFacts} aria-label={`${column.title} comparison facts`}>
-        {column.id === 'real' && (
-          <>
-            <strong>Behavior oracle</strong>
-            <span>Recorded workflow reference</span>
-            <span>Source hash shown below</span>
-          </>
-        )}
-        {column.id === 'smocket' && (
-          <>
-            <strong>Same handler</strong>
-            <span>Code + source hash matched</span>
-            <span>Application code changed: {sample.applicationComparison.changedLoc} LOC</span>
-          </>
-        )}
-        {column.id === 'handwritten' && (
-          <>
-            <strong>Application-owned transport</strong>
-            <span>{sample.handwritten.supportDescription}</span>
-          </>
-        )}
-      </div>
 
       <div className={styles.snippetDetails}>
         <span className={styles.snippetRole}>{snippet.purpose}</span>
@@ -147,57 +137,6 @@ function CodeCard({
         </code>
       </pre>
     </article>
-  );
-}
-
-function SourceComparison({ sample }: { sample: DrawingGameCodeSample }) {
-  const maxLoc = sample.handwritten.fullWorkflowLoc;
-  const rows = [
-    {
-      id: 'smocket',
-      label: 'Smocket integration',
-      loc: sample.smocketIntegration.totalLoc,
-      className: styles.sourceBarSmocket,
-    },
-    {
-      id: 'handwritten',
-      label: 'Handwritten mock support',
-      loc: sample.handwritten.fullWorkflowLoc,
-      className: styles.sourceBarHandwritten,
-    },
-  ];
-
-  return (
-    <figure className={styles.sourceComparison} aria-labelledby={`source-comparison-${sample.id}`}>
-      <h3 id={`source-comparison-${sample.id}`}>
-        Additional source outside the shared handler <span>· full workflow</span>
-      </h3>
-      <div className={styles.sourceRows}>
-        {rows.map((row) => (
-          <div className={styles.sourceRow} key={row.id}>
-            <span className={styles.sourceRowLabel}>{row.label}</span>
-            <div
-              className={styles.sourceTrack}
-              role="progressbar"
-              aria-label={`${row.label}: ${row.loc} LOC`}
-              aria-valuemin={0}
-              aria-valuemax={maxLoc}
-              aria-valuenow={row.loc}
-            >
-              <span
-                className={`${styles.sourceBar} ${row.className}`}
-                style={{ width: `${(row.loc / maxLoc) * 100}%` }}
-              />
-            </div>
-            <strong>{row.loc} LOC</strong>
-          </div>
-        ))}
-      </div>
-      <figcaption>
-        Shared application code and test harness excluded. Real Socket.IO is the behavior oracle and
-        is not included in this LOC comparison.
-      </figcaption>
-    </figure>
   );
 }
 
@@ -384,7 +323,6 @@ export default function SituationPanel({
                 />
               ))}
             </div>
-            <SourceComparison sample={sample} />
           </section>
         </div>
       )}
