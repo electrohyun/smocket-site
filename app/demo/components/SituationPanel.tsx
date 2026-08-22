@@ -118,6 +118,12 @@ function CodeCard({
   const codeBlockRef = useRef<HTMLPreElement>(null);
   const description = cardDescription(sample, column);
   const highlights = semanticHighlights(sample, column);
+  const changedLoc =
+    column.id === 'smocket'
+      ? sample.applicationComparison.changedLoc
+      : column.id === 'handwritten'
+        ? sample.handwritten.totalLoc
+        : null;
 
   useEffect(() => {
     if (column.id !== 'handwritten') return;
@@ -151,6 +157,11 @@ function CodeCard({
             <span>{description[1]}</span>
           </p>
         </div>
+        {changedLoc !== null && (
+          <strong className={styles.codeCardMeasure} aria-label={`${changedLoc} LOC changed`}>
+            +{changedLoc}
+          </strong>
+        )}
       </header>
 
       <div className={styles.snippetDetails}>

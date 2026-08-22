@@ -94,9 +94,11 @@ describe('SituationPanel code dialog', () => {
     const smocket = columnView(dialog, 'Smocket');
     expect(smocket.getByText('Same application event handler')).toBeInTheDocument();
     expect(smocket.getByText('0 LOC changed')).toBeInTheDocument();
+    expect(smocket.getByLabelText('0 LOC changed')).toHaveTextContent('+0');
     const handwritten = columnView(dialog, 'Handwritten mock');
     expect(handwritten.getByText('Application-owned mock transport')).toBeInTheDocument();
     expect(handwritten.getByText('Room broadcast and sender exclusion')).toBeInTheDocument();
+    expect(handwritten.getByLabelText('55 LOC changed')).toHaveTextContent('+55');
   });
 
   it('shows the fixed Chat comparison with canonical code and consistent card copy', async () => {
@@ -114,9 +116,11 @@ describe('SituationPanel code dialog', () => {
     const smocket = columnView(dialog, 'Smocket');
     expect(smocket.getByText('Same application event handler')).toBeInTheDocument();
     expect(smocket.getByText('0 LOC changed')).toBeInTheDocument();
+    expect(smocket.getByLabelText('0 LOC changed')).toHaveTextContent('+0');
     const handwritten = columnView(dialog, 'Handwritten mock');
     expect(handwritten.getByText('Application-owned mock transport')).toBeInTheDocument();
     expect(handwritten.getByText('Acknowledgement and socket-id targeting')).toBeInTheDocument();
+    expect(handwritten.getByLabelText('56 LOC changed')).toHaveTextContent('+56');
   });
 
   it.each<CodeSampleId>(['drawing', 'chat'])(

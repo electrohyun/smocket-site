@@ -214,7 +214,7 @@
 .codeCardHeader {
   display: grid;
   height: 104px;
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr) auto;
   gap: 12px;
   align-items: start;
   flex: none;
@@ -262,6 +262,15 @@
 
 .codeCardIndex {
   color: var(--accent);
+}
+
+.codeCardMeasure {
+  color: #63e59d;
+  font-family: var(--font-mono);
+  font-size: clamp(1.45rem, 1.8vw, 2rem);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.06em;
 }
 
 .snippetDetails {
