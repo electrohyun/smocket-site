@@ -39,6 +39,7 @@ export function registerDrawingGameHandlers(
     if (!player || player.seat === 1)
       return acknowledge({ accepted: false, correct: false, reason: player ? 'not-a-guesser' : 'round-not-active' });
     const guess = text.trim();
+    if (!guess) return acknowledge({ accepted: false, correct: false, reason: 'empty-guess' });
     const correct = guess.toLowerCase() === MULTI_WORD;
     acknowledge({ accepted: true, correct } satisfies MultiGuessResult);
     if (!correct) return io.to(player.room).emit('chat', { from: player.seat, text: guess });

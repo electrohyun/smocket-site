@@ -36,7 +36,7 @@ export interface MultiJoinResult {
 export interface MultiGuessResult {
   accepted: boolean;
   correct: boolean;
-  reason?: 'not-a-guesser' | 'round-not-active';
+  reason?: 'empty-guess' | 'not-a-guesser' | 'round-not-active';
 }
 
 export interface MultiChatMessage {

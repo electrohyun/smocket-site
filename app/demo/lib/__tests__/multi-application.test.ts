@@ -71,12 +71,14 @@ describe('multi-tab drawing application', () => {
     const words: string[] = [];
     const strokesTwo: MultiStrokePayload[] = [];
     const strokesThree: MultiStrokePayload[] = [];
+    const chats: string[] = [];
     const endings = { one: 0, two: 0, three: 0 };
 
     drawer.on('session-state', (state) => states.push(state));
     drawer.on('word', (word) => words.push(word));
     guesserTwo.on('stroke', (segment) => strokesTwo.push(segment));
     guesserThree.on('stroke', (segment) => strokesThree.push(segment));
+    drawer.on('chat', (message) => chats.push(message.text));
     drawer.on('round-ended', () => (endings.one += 1));
     guesserTwo.on('round-ended', () => (endings.two += 1));
     guesserThree.on('round-ended', () => (endings.three += 1));
@@ -94,6 +96,15 @@ describe('multi-tab drawing application', () => {
     drawer.emit('stroke', segment);
     await expect.poll(() => strokesTwo).toEqual([segment]);
     await expect.poll(() => strokesThree).toEqual([segment]);
+
+    expect(await guess(guesserTwo, '   ')).toEqual({
+      accepted: false,
+      correct: false,
+      reason: 'empty-guess',
+    });
+    expect(chats).toEqual([]);
+    expect(await guess(guesserTwo, 'zebra')).toEqual({ accepted: true, correct: false });
+    await expect.poll(() => chats).toEqual(['zebra']);
 
     const acknowledgement = await guess(guesserThree, 'giraffe');
     expect(acknowledgement).toEqual({ accepted: true, correct: true });

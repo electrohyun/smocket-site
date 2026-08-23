@@ -131,6 +131,8 @@ export default function MultiTabView({
         for (const segment of result.strokes ?? []) canvasRef.current?.draw(segment);
       } catch (error) {
         if (live) setConnectionError(error instanceof Error ? error.message : String(error));
+      } finally {
+        joining = false;
       }
     };
 
@@ -173,8 +175,8 @@ export default function MultiTabView({
   const admitted = joinResult?.accepted === true;
   const phase = state?.phase ?? 'waiting';
   const isDrawer = seat === 1;
-  const canDraw = admitted && isDrawer && phase === 'active';
-  const canGuess = admitted && !isDrawer && phase === 'active';
+  const canDraw = connected && admitted && isDrawer && phase === 'active';
+  const canGuess = connected && admitted && !isDrawer && phase === 'active';
   const error = admissionMessage(joinResult)
     ?? connectionError
     ?? (!sharedWorkerSupported
@@ -308,7 +310,7 @@ export default function MultiTabView({
 
             {messages.length > 0 && (
               <div className={styles.feed} aria-label="Guesses">
-                {messages.map((message, index) => <p key={`${message.from}-${index}`}><strong>Player {message.from}</strong>{message.text}</p>)}
+                {messages.map((message, index) => <p key={`${message.from}-${index}`}><strong>Player {message.from}</strong>{' '}{message.text}</p>)}
               </div>
             )}
           </section>
