@@ -25,10 +25,10 @@ afterEach(async () => {
   server = null;
 });
 
-function connect(session: string, seat: MultiSeat, presenceId = `presence-${seat}`): Client {
+function connect(session: string, seat: MultiSeat, presenceId: string | null = `presence-${seat}`): Client {
   const url = `http://multi-application-${origin}.test`;
   const client = createClient(url, {
-    auth: { session, seat, presenceId },
+    auth: presenceId === null ? { session, seat } : { session, seat, presenceId },
     forceNew: true,
   }) as Client;
   clients.push(client);
@@ -138,6 +138,18 @@ describe('multi-tab drawing application', () => {
     await expect.poll(() => first.connected).toBe(false);
     expect(replaced.state?.players).toHaveLength(1);
     expect(replaced.state?.players[0].socketId).toBe(replacement.id);
+  });
+
+  it('does not treat two missing presence ids as the same reload', async () => {
+    await startApplication(1000);
+    const first = connect('missing-presence', 1, null);
+    await waitForConnection(first);
+    expect(await join(first)).toMatchObject({ accepted: true });
+
+    const second = connect('missing-presence', 1, null);
+    await waitForConnection(second);
+    expect(await join(second)).toEqual({ accepted: false, reason: 'seat-occupied' });
+    expect(first.connected).toBe(true);
   });
 
   it('keeps otherwise identical seats isolated by session room', async () => {

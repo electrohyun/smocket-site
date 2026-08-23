@@ -21,14 +21,16 @@ export default async function MultiTabDemoPage({
   const params = await searchParams;
   const sessionParam = first(params.session);
   const requestedSession = sessionParam && SESSION_PATTERN.test(sessionParam) ? sessionParam : null;
-  const seat = readSeat(first(params.seat));
+  const seatParam = first(params.seat);
+  const seat = readSeat(seatParam);
   const recording = first(params.recording) === '1';
   const session = requestedSession ?? `${recording ? 'recording' : 'demo'}-${randomUUID().replaceAll('-', '').slice(0, 12)}`;
+  const updateSessionUrl = !requestedSession || seatParam !== String(seat);
 
   return (
     <>
       <DemoBrand />
-      <MultiTabView session={session} updateSessionUrl={!requestedSession} seat={seat} recording={recording} />
+      <MultiTabView session={session} updateSessionUrl={updateSessionUrl} seat={seat} recording={recording} />
     </>
   );
 }

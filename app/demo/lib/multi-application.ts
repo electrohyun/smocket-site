@@ -44,8 +44,9 @@ function readSeat(value: unknown): MultiSeat | null {
   return value === 1 || value === 2 || value === 3 ? value : null;
 }
 
-function readPresenceId(value: unknown): string {
-  return typeof value === 'string' && value.trim() ? value.slice(0, 128) : 'anonymous';
+function readPresenceId(value: unknown, fallback: string): string {
+  const provided = typeof value === 'string' ? value.trim().slice(0, 128) : '';
+  return provided || fallback;
 }
 
 function roomName(session: string): string {
@@ -131,7 +132,7 @@ export function registerMultiTabGameHandlers(
   io.on('connection', (socket) => {
     const claimedSession = readSession(socket.handshake.auth.session);
     const claimedSeat = readSeat(socket.handshake.auth.seat);
-    const presenceId = readPresenceId(socket.handshake.auth.presenceId);
+    const presenceId = readPresenceId(socket.handshake.auth.presenceId, socket.id);
 
     socket.on('join-session', async (acknowledge) => {
       if (!claimedSession) {
