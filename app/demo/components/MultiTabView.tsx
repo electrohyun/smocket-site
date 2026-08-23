@@ -55,6 +55,16 @@ function admissionMessage(result: MultiJoinResult | null): string | null {
   return 'This player seat is invalid. Open the player from the setup controls.';
 }
 
+function PlayerBadge({ label, role }: { label: Label; role: 'drawer' | 'guesser' }) {
+  return (
+    <aside className={styles.playerBadge} aria-label="Current player">
+      <strong data-socket={label}>{label}</strong>
+      <span aria-hidden="true">·</span>
+      <span>{role}</span>
+    </aside>
+  );
+}
+
 function PlayerSlot({
   playerSeat,
   currentSeat,
@@ -337,6 +347,7 @@ export default function MultiTabView({
   return (
     <>
       <ModeSelector active="multi" compact={recording} />
+      <PlayerBadge label={socketLabel} role={isDrawer ? 'drawer' : 'guesser'} />
 
       <main
         className={styles.stage}

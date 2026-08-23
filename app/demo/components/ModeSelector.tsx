@@ -64,7 +64,6 @@ export default function ModeSelector({ active, compact = false }: { active: Demo
           );
         })}
       </div>
-      <p className={styles.description} aria-live="polite">{selected.description}</p>
     </nav>
   );
 }

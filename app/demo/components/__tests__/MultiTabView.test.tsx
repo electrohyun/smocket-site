@@ -62,6 +62,7 @@ describe('MultiTabView connection lifecycle', () => {
     );
 
     await waitFor(() => expect(emitWithAck).toHaveBeenCalledTimes(1));
+    expect(screen.getByLabelText('Current player')).toHaveTextContent('A·drawer');
     expect(screen.getByRole('button', { name: 'Open Player 2' })).toBeVisible();
     expect(screen.getByRole('button', { name: 'Open Player 3' })).toBeVisible();
     expect(screen.getByLabelText('Real player tabs')).toHaveTextContent('B · waiting');

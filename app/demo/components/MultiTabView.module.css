@@ -13,6 +13,45 @@
   gap: 10px;
 }
 
+.playerBadge {
+  position: fixed;
+  top: 12px;
+  right: 20px;
+  z-index: 20;
+  display: flex;
+  min-width: 150px;
+  height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 18px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--code-bg);
+  color: var(--text-dim);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.playerBadge strong {
+  color: var(--socket);
+  font-size: 0.86rem;
+}
+
+.playerBadge strong[data-socket='A'] {
+  --socket: var(--sock-a);
+}
+
+.playerBadge strong[data-socket='B'] {
+  --socket: var(--sock-b);
+}
+
+.playerBadge strong[data-socket='C'] {
+  --socket: var(--sock-c);
+}
+
 .resultName,
 .resultWord {
   --socket: var(--text-dim);
@@ -293,6 +332,11 @@
     grid-template-rows: minmax(0, 1fr) 40dvh;
   }
 
+  .playerBadge {
+    top: auto;
+    right: 12px;
+    bottom: 12px;
+  }
 }
 
 @media (max-width: 560px) {

@@ -16,12 +16,12 @@ afterEach(() => {
 });
 
 describe('demo mode selector', () => {
-  it('names both modes, shows the selected description, and exposes pressed state', () => {
+  it('names both modes without a visible description and exposes pressed state', () => {
     render(<ModeSelector active="single" />);
 
     expect(screen.getByRole('button', { name: /Single tab/ })).toHaveAttribute('aria-pressed', 'true');
     expect(screen.getByRole('button', { name: /Multi tab/ })).toHaveAttribute('aria-pressed', 'false');
-    expect(screen.getByText('Play with scripted players in one page.')).toBeInTheDocument();
+    expect(screen.queryByText('Play with scripted players in one page.')).not.toBeInTheDocument();
   });
 
   it('navigates to the other route from a keyboard-operable button', async () => {
