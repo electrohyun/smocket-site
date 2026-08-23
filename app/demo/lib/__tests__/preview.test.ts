@@ -1,4 +1,6 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+
+vi.mock('socket.io-client', () => import('smocket-client'));
 import { Bots } from '../bots';
 import { play } from '../playback';
 import { createRound, WORD, type Label, type Round } from '../room';
@@ -8,6 +10,7 @@ import {
   formatCall,
   formatReach,
   type DeliveryLine,
+  type InboundLine,
   type TraceLine,
 } from '../trace';
 import type { StrokePayload } from '../stroke';
@@ -122,8 +125,23 @@ describe('the landing preview plays a real round out', () => {
   });
 
   it('lets the bots speak for both guessers, since neither seat is taken', async () => {
-    const { said } = await playPreview();
+    const { said, lines } = await playPreview();
     expect(new Set(said.map((line) => line.from))).toEqual(new Set(['B', 'C']));
+
+    const botTraffic = lines
+      .filter(
+        (line): line is InboundLine =>
+          line.kind === 'inbound' && (line.event === 'chat' || line.event === 'guess'),
+      )
+      .map((line) => ({ from: line.from, event: line.event, text: line.args[0] }));
+    expect(botTraffic).toEqual([
+      { from: 'C', event: 'chat', text: 'a horse?' },
+      { from: 'C', event: 'chat', text: 'a deer!' },
+      { from: 'B', event: 'chat', text: 'long neck for a deer' },
+      { from: 'C', event: 'chat', text: "those aren't antlers" },
+      { from: 'B', event: 'guess', text: WORD },
+      { from: 'C', event: 'chat', text: 'the spots gave it away' },
+    ]);
   });
 
   it('reaches the win, and marks the line the server addressed to B alone', async () => {

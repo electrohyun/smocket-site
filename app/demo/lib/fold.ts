@@ -15,7 +15,7 @@
  * panel exists to show.
  */
 
-import type { DeliveryLine, TraceLine } from './trace';
+import type { DeliveryLine, InboundLine, ReceivedLine, TraceLine } from './trace';
 
 /** Only the flood folds. Everything else is the game, and the game stays open. */
 const FOLDABLE = new Set(['stroke']);
@@ -29,24 +29,86 @@ export interface FoldedLine {
 export function fold(lines: readonly TraceLine[]): FoldedLine[] {
   const out: FoldedLine[] = [];
 
-  for (const line of lines) {
+  for (let index = 0; index < lines.length; ) {
+    const line = lines[index];
+    const delivery = lines[index + 1];
+
+    // A real stroke is observed twice: once as client -> server inbound traffic,
+    // then as the server broadcast to the other room members. Fold consecutive
+    // matching pairs together so the panel keeps both halves of the route without
+    // letting them alternate rapidly enough to bury the rest of the game.
+    if (isInboundStroke(line) && isDeliveryStroke(delivery)) {
+      let latestInbound = line;
+      let latestDelivery = delivery;
+      let count = 1;
+      index += 2;
+
+      while (index + 1 < lines.length) {
+        const nextInbound = lines[index];
+        const nextDelivery = lines[index + 1];
+        if (
+          !isInboundStroke(nextInbound) ||
+          !isDeliveryStroke(nextDelivery) ||
+          !sameInbound(latestInbound, nextInbound) ||
+          !sameSockets(latestDelivery, nextDelivery)
+        ) {
+          break;
+        }
+
+        latestInbound = nextInbound;
+        latestDelivery = nextDelivery;
+        count += 1;
+        index += 2;
+      }
+
+      out.push(
+        { line: latestInbound, count },
+        { line: latestDelivery, count },
+      );
+      continue;
+    }
+
     const previous = out.at(-1);
     if (previous && foldsInto(previous.line, line)) {
       previous.count += 1;
       // Keep the newest, so a folded run reads with the payload most recently sent.
       previous.line = line;
-      continue;
+    } else {
+      out.push({ line, count: 1 });
     }
-    out.push({ line, count: 1 });
+    index += 1;
   }
 
   return out;
 }
 
 function foldsInto(previous: TraceLine, next: TraceLine): boolean {
-  if (previous.kind !== 'delivery' || next.kind !== 'delivery') return false;
-  if (previous.event !== next.event || !FOLDABLE.has(next.event)) return false;
-  return sameSockets(previous, next);
+  if (isInboundStroke(previous) && isInboundStroke(next)) {
+    return sameInbound(previous, next);
+  }
+  if (isDeliveryStroke(previous) && isDeliveryStroke(next)) {
+    return sameSockets(previous, next);
+  }
+  if (isReceivedStroke(previous) && isReceivedStroke(next)) {
+    return previous.to === next.to;
+  }
+  return false;
+}
+
+function isInboundStroke(line: TraceLine | undefined): line is InboundLine {
+  return line?.kind === 'inbound' && FOLDABLE.has(line.event);
+}
+
+function isDeliveryStroke(line: TraceLine | undefined): line is DeliveryLine {
+  return line?.kind === 'delivery' && FOLDABLE.has(line.event);
+}
+
+function isReceivedStroke(line: TraceLine | undefined): line is ReceivedLine {
+  return line?.kind === 'received' && FOLDABLE.has(line.event);
+}
+
+function sameInbound(a: InboundLine, b: InboundLine): boolean {
+  return a.from === b.from && a.event === b.event;
 }
 
 function sameSockets(a: DeliveryLine, b: DeliveryLine): boolean {

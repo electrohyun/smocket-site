@@ -1,12 +1,16 @@
-import { beforeEach, expect, it } from 'vitest';
+import { beforeEach, expect, it, vi } from 'vitest';
+
+vi.mock('socket.io-client', () => import('smocket-client'));
 import {
   formatAck,
   formatCall,
   formatMembership,
+  formatReceived,
   formatReach,
   type AckLine,
   type DeliveryLine,
   type MembershipLine,
+  type ReceivedLine,
   type TraceLine,
 } from '../trace';
 import { createRound, ROOM, WORD, type Round } from '../room';
@@ -35,18 +39,28 @@ const only = <T>(found: T[]): T => {
   return found[0];
 };
 
-it('a stroke reaches the room and is kept from the drawer', () => {
+it('a stroke reaches the room and is kept from the drawer', async () => {
   round.stroke({ id: 1, pts: [[0.1, 0.2]] });
+
+  await expect.poll(() => deliveries('stroke')).toHaveLength(1);
 
   const stroke = only(deliveries('stroke'));
   expect(formatCall(stroke)).toBe("socket_A.to('room-1').emit('stroke', {…})");
   expect(formatReach(stroke)).toBe('→ B, C  (except A)');
   expect(stroke.reached).toEqual(['B', 'C']);
   expect(stroke.excluded).toEqual(['A']);
+
+  const inbound = lines().filter(
+    (line) => line.kind === 'inbound' && line.event === 'stroke',
+  );
+  expect(inbound).toHaveLength(1);
+  expect(inbound[0]).toMatchObject({ from: 'A', args: [{ id: 1, pts: [[0.1, 0.2]] }] });
 });
 
-it('the word reaches the drawer alone', () => {
+it('the word reaches the drawer alone', async () => {
   round.word();
+
+  await expect.poll(() => deliveries('word')).toHaveLength(1);
 
   const word = only(deliveries('word'));
   expect(formatCall(word)).toBe(`io.to(sid_A).emit('word', '${WORD}')`);
@@ -54,8 +68,10 @@ it('the word reaches the drawer alone', () => {
   expect(formatCall(word, { maskWord: true })).toBe("io.to(sid_A).emit('word', '****')");
 });
 
-it('a chat reaches the whole room, sender included', () => {
+it('a chat reaches the whole room, sender included', async () => {
   round.chat('B', 'hello');
+
+  await expect.poll(() => deliveries('chat')).toHaveLength(1);
 
   const chat = only(deliveries('chat'));
   expect(formatCall(chat)).toBe("io.to('room-1').emit('chat', {…})");
@@ -121,14 +137,29 @@ it('a wrong guess is acked false and announces nothing', async () => {
 it('what the user fires is recorded too', async () => {
   await round.guess('B', 'giraffe');
 
-  const inbound = lines().filter((line) => line.kind === 'inbound');
+  const inbound = lines().filter(
+    (line) => line.kind === 'inbound' && line.event === 'guess',
+  );
   expect(inbound).toHaveLength(1);
 });
 
-it('no line claims a call the adapter did not route', () => {
+it('a page-side event keeps the same code-shaped delivery record', () => {
+  round.trace.received('B', 'stroke', [{ id: 7 }]);
+
+  const received = only(
+    lines().filter((line): line is ReceivedLine => line.kind === 'received'),
+  );
+  expect(formatReceived(received)).toBe("socket_B.on('stroke', {…})");
+});
+
+it('no line claims a call the adapter did not route', async () => {
   round.word();
   round.stroke({ id: 1, pts: [[0.1, 0.2]] });
   round.chat('B', 'hello');
+
+  await expect
+    .poll(() => lines().filter((line) => line.kind === 'delivery'))
+    .toHaveLength(3);
 
   const drifted = lines().filter((line) => line.kind === 'delivery' && line.mismatch);
   expect(drifted).toEqual([]);
@@ -150,20 +181,34 @@ it('the snapshot changes identity when a line is added, and only then', () => {
   expect(lines()).toBe(after);
 });
 
+it('a visible trace run can reset without replacing its subscribed store', () => {
+  round.trace.lifecycle('old run');
+  const listener = vi.fn();
+  const unsubscribe = round.trace.subscribe(listener);
+
+  round.trace.clear();
+
+  expect(round.trace.lines()).toEqual([]);
+  expect(listener).toHaveBeenCalledTimes(1);
+  unsubscribe();
+});
+
 /* The two cases below are what keeps the one above from passing on a detector
    that never fires. The call form is the one part of a line the game code
    asserts rather than smocket observing it, so the check that catches a drifting
    assertion has to be shown working. */
 
 it('a declared room the adapter was never asked about is flagged', () => {
-  round.trace.deliver({ to: ['room-2'] }, () => round.io.to(ROOM).emit('chat', { text: 'hi' }));
+  round.trace.deliver({ to: ['room-2'] }, () =>
+    round.io!.to(ROOM).emit('chat', { from: 'B', text: 'hi' }),
+  );
 
   expect(only(deliveries('chat')).mismatch).toBe('declared to [room-2], routed [room-1]');
 });
 
 it('a declared sender the routing never excluded is flagged', () => {
   round.trace.deliver({ from: 'B', to: [ROOM] }, () =>
-    round.io.to(ROOM).emit('chat', { text: 'hi' }),
+    round.io!.to(ROOM).emit('chat', { from: 'B', text: 'hi' }),
   );
 
   expect(only(deliveries('chat')).mismatch).toBe('declared from [B], excluded []');

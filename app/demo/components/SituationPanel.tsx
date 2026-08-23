@@ -11,22 +11,6 @@ import {
 } from '@/app/components/icons';
 import styles from './SituationPanel.module.css';
 
-/* The situation panel (기획 v2 §5). Controls that act on the round, kept off the
- * two views themselves so a view stays about the game and this stays about the
- * knobs. The word toggle and the delay slider are the observer's alone — the
- * drawer has no word to hide and no B on screen to slow — so they are not shown
- * there rather than greyed, because a dead control only asks "why won't this
- * work" (기획 5단계 §2).
- *
- * They are discs now rather than the small text pills they were. On a page whose
- * subject is what is happening on it, the things that change what happens were
- * the least visible marks on screen. `IconButton` is the landing's replay button,
- * the same component, so a control looks like a control on both pages.
- *
- * The eye only ever means the word. The viewpoint button shows where it goes, and
- * where it goes from the observer is the pen — so an eye and a viewpoint eye are
- * never on screen together. */
-
 type Viewpoint = 'drawer' | 'observer';
 
 interface Props {
@@ -53,7 +37,7 @@ export default function SituationPanel({
   const observing = viewpoint === 'observer';
 
   return (
-    <aside className={styles.panel} aria-label="Controls">
+    <aside className={styles.panel} aria-label="Single tab controls">
       {observing && (
         <>
           <IconButton
@@ -64,22 +48,9 @@ export default function SituationPanel({
             onClick={() => onReveal(!revealed)}
           />
 
-          {/* The one control that is not a button, and stays one: what it is for
-              is watching order hold as the delay grows, and a stepped button
-              would only ever show the steps someone chose in advance. Sized to
-              the discs so the labels sit on one line. */}
           <div className={styles.control}>
             <div className={`${styles.pill}${delayMs > 0 ? ` ${styles.on}` : ''}`}>
-              <svg
-                className={styles.pillIcon}
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
+              <svg className={styles.pillIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 {ClockIcon}
               </svg>
               <input

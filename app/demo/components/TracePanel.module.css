@@ -26,6 +26,27 @@
   font-size: 0.66rem;
 }
 
+.scope {
+  color: var(--scope);
+  font-weight: 700;
+}
+
+.scope[data-socket='ALL'] {
+  --scope: var(--accent);
+}
+
+.scope[data-socket='A'] {
+  --scope: var(--sock-a);
+}
+
+.scope[data-socket='B'] {
+  --scope: var(--sock-b);
+}
+
+.scope[data-socket='C'] {
+  --scope: var(--sock-c);
+}
+
 .legend {
   display: flex;
   gap: 6px;

@@ -55,6 +55,23 @@ export const PencilIcon = (
   </>
 );
 
+/** The implementation behind the drawing round. */
+export const CodeIcon = (
+  <>
+    <polyline points="8.5,7.5 4,12 8.5,16.5" />
+    <polyline points="15.5,7.5 20,12 15.5,16.5" />
+    <path d="m13.5 5-3 14" />
+  </>
+);
+
+/** The implementation behind the chat exchange. */
+export const ChatIcon = (
+  <>
+    <path d="M4 4.5h16v11H9l-5 4v-15Z" />
+    <path d="M8 10h.01M12 10h.01M16 10h.01" strokeWidth="2.8" />
+  </>
+);
+
 /** Delay, which is the one control measured in time. */
 export const ClockIcon = (
   <>
@@ -81,5 +98,25 @@ export const RepeatIcon = (
     <polygon points="15,4.2 15,9.8 19,7" fill="currentColor" stroke="none" />
     <path d="M18 9.5V14a3 3 0 0 1-3 3H8.5" />
     <polygon points="9,14.2 9,19.8 5,17" fill="currentColor" stroke="none" />
+  </>
+);
+
+/** One page containing every scripted participant. */
+export const SingleTabIcon = (
+  <>
+    <rect x="3" y="4" width="18" height="16" rx="2.5" />
+    <path d="M3 8h18" />
+    <circle cx="6" cy="6" r=".6" fill="currentColor" stroke="none" />
+    <path d="M8 13h8M8 16h5" />
+  </>
+);
+
+/** Several real browser tabs sharing one in-browser server. */
+export const MultiTabIcon = (
+  <>
+    <path d="M8 4h11a2 2 0 0 1 2 2v10" />
+    <path d="M6 7h11a2 2 0 0 1 2 2v9" />
+    <rect x="3" y="10" width="14" height="10" rx="2" />
+    <path d="M3 13h14" />
   </>
 );

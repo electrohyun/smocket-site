@@ -59,6 +59,14 @@ export interface InboundLine {
   args: unknown[];
 }
 
+/** An event this page actually received from its server-side socket. */
+export interface ReceivedLine {
+  kind: 'received';
+  to: SocketLabel;
+  event: string;
+  args: unknown[];
+}
+
 export interface AckLine {
   kind: 'ack';
   to: SocketLabel;
@@ -70,7 +78,13 @@ export interface LifecycleLine {
   text: string;
 }
 
-export type TraceLine = DeliveryLine | InboundLine | MembershipLine | AckLine | LifecycleLine;
+export type TraceLine =
+  | DeliveryLine
+  | InboundLine
+  | ReceivedLine
+  | MembershipLine
+  | AckLine
+  | LifecycleLine;
 
 /** One `socketsIn` call: the rooms it was asked about and the sids it answered. */
 interface Routed {
@@ -126,6 +140,14 @@ export class TraceStore implements TraceSink {
     return () => this.listeners.delete(listener);
   }
 
+  /** Start a fresh visible run while keeping the same subscribed store instance. */
+  clear(): void {
+    if (this.rows.length === 0) return;
+    this.rows.length = 0;
+    this.stale = true;
+    for (const listener of this.listeners) listener();
+  }
+
   /** Give a sid its display label, so every line can read `A` rather than a sid. */
   name(sid: string, label: SocketLabel): void {
     this.labels.set(sid, label);
@@ -152,8 +174,18 @@ export class TraceStore implements TraceSink {
    */
   watchClient(label: SocketLabel, socket: Outgoing): void {
     socket.onAnyOutgoing((event, ...args) => {
-      this.push({ kind: 'inbound', from: label, event: String(event), args });
+      this.inbound(label, String(event), args);
     });
+  }
+
+  /** Record a real page-to-server call when the client facade has no outgoing catch-all. */
+  inbound(from: SocketLabel, event: string, args: unknown[] = []): void {
+    this.push({ kind: 'inbound', from, event, args });
+  }
+
+  /** Record a real server event observed by one page-side socket facade. */
+  received(to: SocketLabel, event: string, args: unknown[] = []): void {
+    this.push({ kind: 'received', to, event, args });
   }
 
   /**
@@ -305,6 +337,12 @@ export function formatAck(line: AckLine): string {
 export function formatInbound(line: InboundLine, options: FormatOptions = {}): string {
   const payload = line.args.map((arg) => formatArg(arg, line.event, options));
   return `client_${line.from}.emit(${["'" + line.event + "'", ...payload].join(', ')})`;
+}
+
+/** What one real page socket received: `socket_B.on('stroke', {…})`. */
+export function formatReceived(line: ReceivedLine, options: FormatOptions = {}): string {
+  const payload = line.args.map((arg) => formatArg(arg, line.event, options));
+  return `socket_${line.to}.on(${["'" + line.event + "'", ...payload].join(', ')})`;
 }
 
 export function formatMembership(line: MembershipLine): string {

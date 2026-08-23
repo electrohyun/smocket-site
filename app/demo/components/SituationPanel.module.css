@@ -8,7 +8,6 @@
   gap: 14px;
 }
 
-/* The slider's column, so its pill and label line up with the discs beside it. */
 .control {
   display: flex;
   flex-direction: column;
@@ -17,7 +16,6 @@
   color: var(--text-dim);
 }
 
-/* Disc height, so the row of labels is one line rather than a stagger. */
 .pill {
   display: flex;
   align-items: center;
@@ -29,7 +27,6 @@
   background: var(--code-bg);
 }
 
-/* A delay in effect is an engaged control, and wears the accent like one. */
 .on {
   color: var(--accent);
   border-color: var(--accent);
@@ -55,7 +52,6 @@
 
 .label {
   font-size: 0.68rem;
-  letter-spacing: 0.01em;
   line-height: 1;
   white-space: nowrap;
 }
@@ -68,14 +64,20 @@
 @media (max-width: 900px) {
   .panel {
     top: auto;
-    bottom: 12px;
     right: 12px;
+    bottom: 12px;
+    left: 12px;
     flex-wrap: wrap;
     justify-content: flex-end;
+    gap: 10px;
   }
 
-  /* The number is the part that has to survive; the track can give up width. */
   .range {
-    width: 68px;
+    width: 60px;
+  }
+
+  .pill {
+    gap: 8px;
+    padding: 0 10px;
   }
 }
