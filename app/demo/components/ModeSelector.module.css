@@ -19,6 +19,7 @@
 }
 
 .mode {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -29,6 +30,116 @@
   color: var(--text-dim);
   font: inherit;
   cursor: pointer;
+}
+
+.tooltip {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  z-index: 1;
+  display: grid;
+  width: 210px;
+  justify-items: center;
+  gap: 8px;
+  padding: 12px 14px 11px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--code-bg);
+  box-shadow: var(--shadow-md);
+  color: var(--text);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -4px);
+  transition: opacity 120ms ease, transform 120ms ease, visibility 120ms;
+  visibility: hidden;
+}
+
+.tooltip::before {
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  width: 9px;
+  height: 9px;
+  border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+  background: var(--code-bg);
+  content: '';
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.mode:hover .tooltip,
+.mode:focus-visible .tooltip {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  visibility: visible;
+}
+
+.equation {
+  display: flex;
+  height: 30px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+.actor,
+.tabGlyph {
+  --socket: var(--text-dim);
+  position: relative;
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  color: var(--socket);
+}
+
+.actor[data-socket='A'],
+.tabGlyph[data-socket='A'] {
+  --socket: var(--sock-a);
+}
+
+.actor[data-socket='B'],
+.tabGlyph[data-socket='B'] {
+  --socket: var(--sock-b);
+}
+
+.actor[data-socket='C'],
+.tabGlyph[data-socket='C'] {
+  --socket: var(--sock-c);
+}
+
+.actor svg,
+.tabGlyph svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.tabGlyph strong {
+  position: absolute;
+  top: 9px;
+  left: 50%;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.56rem;
+  transform: translateX(-50%);
+}
+
+.plus {
+  color: var(--text-dim);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.8rem;
+}
+
+.tooltipText {
+  color: var(--text-dim);
+  font-size: 0.69rem;
+  font-weight: 650;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 
 .disc {
@@ -103,7 +214,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .disc {
+  .disc,
+  .tooltip {
     transition: none;
   }
 }

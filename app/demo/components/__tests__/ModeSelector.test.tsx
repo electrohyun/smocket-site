@@ -16,19 +16,23 @@ afterEach(() => {
 });
 
 describe('demo mode selector', () => {
-  it('names both modes without a visible description and exposes pressed state', () => {
+  it('names both modes and exposes their visual play-model descriptions', () => {
     render(<ModeSelector active="single" />);
 
-    expect(screen.getByRole('button', { name: /Single tab/ })).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('button', { name: /Single tab/ }))
+      .toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('button', { name: /Single tab/ }))
+      .toHaveAccessibleDescription('You with scripted players');
     expect(screen.getByRole('button', { name: /Multi tab/ })).toHaveAttribute('aria-pressed', 'false');
-    expect(screen.queryByText('Play with scripted players in one page.')).not.toBeInTheDocument();
+    expect(screen.getByRole('tooltip', { name: 'You with scripted players' })).toBeInTheDocument();
+    expect(screen.getByRole('tooltip', { name: 'Play across browser tabs' })).toBeInTheDocument();
   });
 
   it('navigates to the other route from a keyboard-operable button', async () => {
     const user = userEvent.setup();
     render(<ModeSelector active="single" />);
 
-    const multi = screen.getByRole('button', { name: /Open player tabs/ });
+    const multi = screen.getByRole('button', { name: 'Multi tab' });
     multi.focus();
     await user.keyboard('{Enter}');
 
