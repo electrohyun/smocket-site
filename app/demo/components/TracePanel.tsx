@@ -8,6 +8,7 @@ import {
   formatCall,
   formatInbound,
   formatMembership,
+  formatReceived,
   type TraceStore,
 } from '../lib/trace';
 import styles from './TracePanel.module.css';
@@ -101,6 +102,18 @@ function Row({
           {count > 1 && <span className={styles.count}> ×{count}</span>}
         </div>
         <div className={styles.reach}>→ server</div>
+      </div>
+    );
+  }
+
+  if (line.kind === 'received') {
+    return (
+      <div className={styles.row}>
+        <div className={styles.call}>
+          <EventCall code={formatReceived(line, { maskWord })} />
+          {count > 1 && <span className={styles.count}> ×{count}</span>}
+        </div>
+        <div className={styles.reach}>← server</div>
       </div>
     );
   }

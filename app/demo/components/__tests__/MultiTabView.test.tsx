@@ -62,6 +62,12 @@ describe('MultiTabView connection lifecycle', () => {
     );
 
     await waitFor(() => expect(emitWithAck).toHaveBeenCalledTimes(1));
+    expect(screen.getByRole('button', { name: 'Open Player 2' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Open Player 3' })).toBeVisible();
+    expect(screen.getByLabelText('Real player tabs')).toHaveTextContent('B · waiting');
+    expect(screen.getByLabelText('Real player tabs')).toHaveTextContent('C · waiting');
+    expect(screen.getByLabelText('Delivery record')).toHaveTextContent("client_A.emit('join-session')");
+    expect(screen.getByLabelText('Delivery record')).toHaveTextContent('← ack A');
     listeners.get('connect')?.();
     await waitFor(() => expect(emitWithAck).toHaveBeenCalledTimes(2));
   });

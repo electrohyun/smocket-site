@@ -2,19 +2,31 @@
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import Canvas, { type CanvasHandle } from './Canvas';
+import Character from './Character';
+import Countdown from './Countdown';
+import Fanfare from './Fanfare';
 import ModeSelector from './ModeSelector';
+import TracePanel from './TracePanel';
 import { createMultiTabClient, supportsSharedWorker, type MultiTabSocket } from '../lib/multi-client';
 import {
   type MultiChatMessage,
   type MultiJoinResult,
+  type MultiPlayer,
   type MultiRoundResult,
   type MultiSeat,
   type MultiSessionState,
 } from '../lib/multi-events';
+import type { Label } from '../lib/room';
 import type { StrokePayload } from '../lib/stroke';
+import { TraceStore } from '../lib/trace';
 import styles from './MultiTabView.module.css';
 
 const NO_SEGMENTS = () => {};
+const BUBBLE_MS = 3400;
+
+function labelForSeat(seat: MultiSeat): Label {
+  return seat === 1 ? 'A' : seat === 2 ? 'B' : 'C';
+}
 
 function randomId(prefix: string): string {
   const id = typeof crypto.randomUUID === 'function'
@@ -36,28 +48,95 @@ function presenceFor(session: string, seat: MultiSeat): string {
   }
 }
 
-function SharedCountdown({ endsAt }: { endsAt: number }) {
-  const [remaining, setRemaining] = useState(() => Math.max(1, Math.ceil((endsAt - Date.now()) / 1000)));
-
-  useEffect(() => {
-    const update = () => setRemaining(Math.max(1, Math.ceil((endsAt - Date.now()) / 1000)));
-    update();
-    const timer = window.setInterval(update, 100);
-    return () => window.clearInterval(timer);
-  }, [endsAt]);
-
-  return (
-    <div className={styles.countdown} role="timer" aria-live="assertive" aria-label={`Round starts in ${remaining} ${remaining === 1 ? 'second' : 'seconds'}`}>
-      <span>{remaining}</span>
-    </div>
-  );
-}
-
 function admissionMessage(result: MultiJoinResult | null): string | null {
   if (!result || result.accepted) return null;
   if (result.reason === 'seat-occupied') return 'This seat is already open in another tab. Close it there, then retry.';
   if (result.reason === 'invalid-session') return 'This session link is invalid. Return to Multi tab to create a new one.';
   return 'This player seat is invalid. Open the player from the setup controls.';
+}
+
+function MultiStatus({
+  connected,
+  admitted,
+  label,
+  role,
+  session,
+  socketId,
+  showSupport,
+}: {
+  connected: boolean;
+  admitted: boolean;
+  label: Label;
+  role: 'drawer' | 'guesser';
+  session: string;
+  socketId: string | null;
+  showSupport: boolean;
+}) {
+  const online = connected && admitted;
+  return (
+    <aside className={styles.statusPanel} aria-label="Current real tab">
+      <div className={styles.statusControl}>
+        <div className={styles.statusPill} data-online={online}>
+          <span className={styles.statusDot} aria-hidden="true" />
+          <strong data-socket={label}>{label}</strong>
+          <code>{online ? socketId?.slice(0, 8) : 'connecting'}</code>
+        </div>
+        <span className={styles.statusLabel}>{role} · real tab · {session}</span>
+      </div>
+      {showSupport && (
+        <details className={styles.statusSupport}>
+          <summary>same-browser preview</summary>
+          <p>3 browser tabs · 1 in-browser Smocket server · 0 separate Socket.IO backend processes.</p>
+          <p>Same origin, profile, worker URL, and worker name only. Worker restarts clear memory; production integration still belongs to a real Socket.IO target.</p>
+        </details>
+      )}
+    </aside>
+  );
+}
+
+function PlayerSlot({
+  playerSeat,
+  currentSeat,
+  player,
+  bubble,
+  winnerSeat,
+  onOpen,
+}: {
+  playerSeat: 2 | 3;
+  currentSeat: MultiSeat;
+  player: MultiPlayer | undefined;
+  bubble: string | null;
+  winnerSeat: MultiSeat | undefined;
+  onOpen: (seat: 2 | 3) => void;
+}) {
+  const label = labelForSeat(playerSeat);
+  const ready = Boolean(player);
+  const current = playerSeat === currentSeat;
+  const role = current ? 'you · real tab' : ready ? 'real tab' : 'waiting';
+
+  return (
+    <div className={styles.playerSlot} data-ready={ready} data-current={current}>
+      <Character label={label} role={role} bubble={bubble} highlight={winnerSeat === playerSeat} />
+      {ready ? (
+        <span className={styles.playerState}>ready</span>
+      ) : currentSeat === 1 ? (
+        <button type="button" className={styles.openPlayer} onClick={() => onOpen(playerSeat)}>
+          Open Player {playerSeat}
+        </button>
+      ) : (
+        <span className={styles.waitingPlayer}>Waiting for Player {playerSeat}</span>
+      )}
+    </div>
+  );
+}
+
+function hintFor(phase: MultiSessionState['phase'] | 'waiting', isDrawer: boolean): string {
+  if (phase === 'ended') return 'One developer just reproduced a three-player realtime UI without a Socket.IO backend.';
+  if (phase === 'active') return isDrawer
+    ? 'Draw. The delivery record shows the real events observed by this tab.'
+    : 'Guess from the drawing. The delivery record shows the real events observed by this tab.';
+  if (phase === 'countdown') return 'Three real tabs are ready. The round starts together.';
+  return 'Build and preview a three-player realtime UI before the backend is ready.';
 }
 
 export default function MultiTabView({
@@ -77,19 +156,37 @@ export default function MultiTabView({
   const [joinResult, setJoinResult] = useState<MultiJoinResult | null>(null);
   const [state, setState] = useState<MultiSessionState | null>(null);
   const [word, setWord] = useState<string | null>(null);
-  const [messages, setMessages] = useState<MultiChatMessage[]>([]);
+  const [bubbles, setBubbles] = useState<Partial<Record<Label, string>>>({});
   const [ended, setEnded] = useState<MultiRoundResult | null>(null);
+  const [showFanfare, setShowFanfare] = useState(false);
   const [input, setInput] = useState('');
   const [guessAck, setGuessAck] = useState<'idle' | 'wrong' | 'correct' | 'rejected'>('idle');
   const [receivedStrokes, setReceivedStrokes] = useState(0);
   const [connectionError, setConnectionError] = useState<string | null>(null);
   const canvasRef = useRef<CanvasHandle>(null);
   const socketRef = useRef<MultiTabSocket | null>(null);
+  const bubbleTimers = useRef<Partial<Record<Label, number>>>({});
+  const [trace] = useState(() => new TraceStore());
+  const socketLabel = labelForSeat(seat);
   const sharedWorkerSupported = useSyncExternalStore(
     () => () => {},
     supportsSharedWorker,
     () => true,
   );
+
+  const showBubble = useCallback((message: MultiChatMessage) => {
+    const label = labelForSeat(message.from);
+    setBubbles((current) => ({ ...current, [label]: message.text }));
+    window.clearTimeout(bubbleTimers.current[label]);
+    bubbleTimers.current[label] = window.setTimeout(
+      () => setBubbles((current) => ({ ...current, [label]: undefined })),
+      BUBBLE_MS,
+    );
+  }, []);
+
+  useEffect(() => () => {
+    for (const timer of Object.values(bubbleTimers.current)) window.clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     if (!updateSessionUrl) return;
@@ -110,6 +207,9 @@ export default function MultiTabView({
       presenceId: presenceFor(session, seat),
     });
     socketRef.current = socket;
+    // Fast Refresh can preserve a store instance created by the previous module shape.
+    trace.clear?.();
+    trace.lifecycle(`${socketLabel} connecting`);
 
     const applyState = (next: MultiSessionState) => {
       if (!live) return;
@@ -122,59 +222,82 @@ export default function MultiTabView({
     const join = async () => {
       if (!live || joining) return;
       joining = true;
+      trace.inbound(socketLabel, 'join-session');
       try {
         const result = await socket.emitWithAck('join-session');
+        trace.ack(socketLabel, result);
         if (!live) return;
         setJoinResult(result);
         if (result.state) applyState(result.state);
         if (result.word) setWord(result.word);
         for (const segment of result.strokes ?? []) canvasRef.current?.draw(segment);
       } catch (error) {
-        if (live) setConnectionError(error instanceof Error ? error.message : String(error));
+        const message = error instanceof Error ? error.message : String(error);
+        trace.lifecycle(`${socketLabel} join failed · ${message}`);
+        if (live) setConnectionError(message);
       } finally {
         joining = false;
       }
     };
 
-    socket.on('connect', () => {
+    const markConnected = () => {
       if (!live) return;
       setConnected(true);
       setSocketId(socket.id ?? null);
+      trace.lifecycle(`${socketLabel} connected · ${socket.id?.slice(0, 8) ?? 'socket'}`);
       void join();
-    });
+    };
+
+    socket.on('connect', markConnected);
     socket.on('connect_error', (error) => {
+      trace.lifecycle(`${socketLabel} connect error · ${error.message}`);
       if (live) setConnectionError(error.message);
     });
     socket.on('bridge_error', (error) => {
+      trace.lifecycle(`${socketLabel} bridge error · ${error.message}`);
       if (live) setConnectionError(error.message);
     });
-    socket.on('disconnect', () => {
+    socket.on('disconnect', (reason) => {
+      trace.lifecycle(`${socketLabel} disconnected · ${reason}`);
       if (!live) return;
       setConnected(false);
       setSocketId(null);
     });
-    socket.on('session-state', applyState);
-    socket.on('round-started', () => setGuessAck('idle'));
-    socket.on('word', setWord);
+    socket.on('session-state', (next) => {
+      trace.received(socketLabel, 'session-state', [next]);
+      applyState(next);
+    });
+    socket.on('round-started', (result) => {
+      trace.received(socketLabel, 'round-started', [result]);
+      setGuessAck('idle');
+    });
+    socket.on('word', (nextWord) => {
+      trace.received(socketLabel, 'word', [nextWord]);
+      setWord(nextWord);
+    });
     socket.on('stroke', (segment: StrokePayload) => {
+      trace.received(socketLabel, 'stroke', [segment]);
       canvasRef.current?.draw(segment);
       setReceivedStrokes((count) => count + 1);
     });
-    socket.on('chat', (message) => setMessages((current) => [...current, message]));
-    socket.on('round-ended', (result) => setEnded(result));
+    socket.on('chat', (message) => {
+      trace.received(socketLabel, 'chat', [message]);
+      showBubble(message);
+    });
+    socket.on('round-ended', (result) => {
+      trace.received(socketLabel, 'round-ended', [result]);
+      setEnded(result);
+      setShowFanfare(true);
+    });
 
-    if (socket.connected) {
-      setConnected(true);
-      setSocketId(socket.id ?? null);
-      void join();
-    }
+    if (socket.connected) markConnected();
 
     return () => {
       live = false;
       socket.disconnect();
       if (socketRef.current === socket) socketRef.current = null;
     };
-  }, [connectionKey, seat, session, sharedWorkerSupported]);
+  }, [connectionKey, seat, session, sharedWorkerSupported, showBubble, socketLabel, trace]);
 
   const admitted = joinResult?.accepted === true;
   const phase = state?.phase ?? 'waiting';
@@ -188,8 +311,10 @@ export default function MultiTabView({
       : null);
 
   const commit = useCallback((segment: StrokePayload | null) => {
-    if (segment) socketRef.current?.emit('stroke', segment);
-  }, []);
+    if (!segment) return;
+    trace.inbound('A', 'stroke', [segment]);
+    socketRef.current?.emit('stroke', segment);
+  }, [trace]);
 
   const submit = useCallback(async (event: React.FormEvent) => {
     event.preventDefault();
@@ -197,6 +322,7 @@ export default function MultiTabView({
     const socket = socketRef.current;
     if (!text || !socket || !canGuess) return;
     setInput('');
+    trace.inbound(socketLabel, 'guess', [text]);
     let acknowledgementTimeout: number | undefined;
     try {
       const result = await Promise.race([
@@ -208,178 +334,158 @@ export default function MultiTabView({
           );
         }),
       ]);
+      trace.ack(socketLabel, result);
       setGuessAck(result.accepted ? (result.correct ? 'correct' : 'wrong') : 'rejected');
     } catch (error) {
-      setConnectionError(error instanceof Error ? error.message : String(error));
+      const message = error instanceof Error ? error.message : String(error);
+      trace.lifecycle(`${socketLabel} guess failed · ${message}`);
+      setConnectionError(message);
     } finally {
       if (acknowledgementTimeout !== undefined) window.clearTimeout(acknowledgementTimeout);
     }
-  }, [canGuess, input]);
+  }, [canGuess, input, socketLabel, trace]);
 
-  const openSeat = (targetSeat: 2 | 3) => {
+  const openSeat = useCallback((targetSeat: 2 | 3) => {
     const url = new URL('/demo/multi', window.location.origin);
     url.searchParams.set('session', session);
     url.searchParams.set('seat', String(targetSeat));
     if (recording) url.searchParams.set('recording', '1');
+    trace.lifecycle(`opening ${labelForSeat(targetSeat)} in a real tab`);
     window.open(url, '_blank', 'noopener');
-  };
+  }, [recording, session, trace]);
 
   const retry = () => {
+    trace.lifecycle(`${socketLabel} retrying`);
     setConnected(false);
     setSocketId(null);
     setJoinResult(null);
     setState(null);
     setWord(null);
-    setMessages([]);
+    setBubbles({});
     setEnded(null);
+    setShowFanfare(false);
     setGuessAck('idle');
     setReceivedStrokes(0);
     setConnectionError(null);
     setConnectionKey((key) => key + 1);
   };
 
+  const players = state?.players ?? [];
+  const winnerLabel = ended ? labelForSeat(ended.winnerSeat) : null;
+
   return (
     <>
       <ModeSelector active="multi" compact={recording} />
+      <MultiStatus
+        connected={connected}
+        admitted={admitted}
+        label={socketLabel}
+        role={isDrawer ? 'drawer' : 'guesser'}
+        session={session}
+        socketId={socketId}
+        showSupport={!recording}
+      />
+
       <main
-        className={styles.page}
+        className={styles.stage}
         data-testid="multi-tab-demo"
         data-session={session}
         data-seat={seat}
         data-socket-id={socketId ?? ''}
         data-connected={connected}
         data-admitted={admitted}
-        data-player-count={state?.players.length ?? 0}
+        data-player-count={players.length}
         data-phase={phase}
         data-stroke-count={receivedStrokes}
         data-guess-ack={guessAck}
         data-ended={ended !== null}
       >
-        <header className={styles.intro}>
-          <p className={styles.promise}>Build and preview a three-player realtime UI before the backend is ready.</p>
-          <dl className={styles.facts} aria-label="Preview environment">
-            <div><dt>3</dt><dd>browser tabs</dd></div>
-            <div><dt>1</dt><dd>in-browser Smocket server</dd></div>
-            <div><dt>0</dt><dd>separate Socket.IO backend processes</dd></div>
-          </dl>
-        </header>
-
-        <div className={styles.workspace}>
-          <section className={styles.game} aria-labelledby="multi-role-title">
-            <header className={styles.gameHeader}>
-              <div>
-                <span className={styles.eyebrow}>Player {seat}</span>
-                <h1 id="multi-role-title">{isDrawer ? 'Drawer' : 'Guesser'}</h1>
-              </div>
-              <p className={styles.connection} data-online={connected && admitted}>
-                <span aria-hidden="true" />
-                {connected && admitted ? `Connected · ${socketId?.slice(0, 8)}` : 'Connecting'}
-              </p>
-            </header>
-
+        <section className={styles.board} aria-label={`${socketLabel} · ${isDrawer ? 'Drawer' : 'Guesser'}`}>
+          {isDrawer && (
             <p className={styles.word}>
-              <span>word</span>
-              <strong>{isDrawer ? (word ?? (phase === 'active' ? '…' : 'revealed when the round starts')) : (ended?.word ?? 'kept for the drawer')}</strong>
+              <span className={styles.wordLabel}>word</span>
+              <span className={styles.wordValue} data-socket="A">{word ?? '…'}</span>
             </p>
+          )}
 
-            <div className={styles.surface}>
-              <Canvas
-                key={connectionKey}
-                ref={canvasRef}
-                onSegment={isDrawer ? commit : NO_SEGMENTS}
-                disabled={!canDraw}
+          <div className={styles.surface}>
+            <Canvas
+              key={connectionKey}
+              ref={canvasRef}
+              onSegment={isDrawer ? commit : NO_SEGMENTS}
+              disabled={!canDraw}
+            />
+            {phase === 'countdown' && state?.countdownEndsAt && <Countdown endsAt={state.countdownEndsAt} />}
+            {phase === 'waiting' && !error && (
+              <div className={styles.waiting} role="status">
+                <strong>{players.length} / 3 real tabs connected</strong>
+                <span>Open the empty player desks below. The round starts when A, B, and C are ready.</span>
+              </div>
+            )}
+            {error && (
+              <div className={styles.error} role="alert">
+                <strong>Could not take {socketLabel}</strong>
+                <span>{error}</span>
+                <button type="button" onClick={retry}>Retry this player</button>
+              </div>
+            )}
+            {showFanfare && ended && winnerLabel && (
+              <Fanfare
+                word={ended.word}
+                socket={winnerLabel}
+                eyebrow={ended.winnerSeat === seat ? 'You got it' : `${winnerLabel} guessed it`}
+                onDone={() => setShowFanfare(false)}
               />
-              {phase === 'countdown' && state?.countdownEndsAt && <SharedCountdown endsAt={state.countdownEndsAt} />}
-              {phase === 'waiting' && !error && (
-                <div className={styles.waiting} role="status">
-                  <strong>{state?.players.length ?? 0} / 3 players connected</strong>
-                  <span>The round starts together when every real tab is ready.</span>
-                </div>
-              )}
-              {error && (
-                <div className={styles.error} role="alert">
-                  <strong>Could not take Player {seat}</strong>
-                  <span>{error}</span>
-                  <button type="button" onClick={retry}>Retry this seat</button>
-                </div>
-              )}
-              {ended && (
-                <div className={styles.result} role="status">
-                  <span>Player {ended.winnerSeat} got it</span>
-                  <strong>{ended.word}</strong>
-                </div>
-              )}
-            </div>
-
-            {!isDrawer && (
-              <form className={styles.chat} onSubmit={submit}>
-                <input
-                  value={input}
-                  onChange={(event) => setInput(event.target.value)}
-                  placeholder={ended ? `Round over · ${ended.word}` : 'Guess from the drawing'}
-                  aria-label="Guess"
-                  disabled={!canGuess}
-                />
-                <button type="submit" disabled={!canGuess || !input.trim()}>Send</button>
-                <output className={styles.ack} aria-live="polite">
-                  {guessAck === 'wrong' ? 'Guess acknowledged — keep trying.' : guessAck === 'correct' ? 'Correct guess acknowledged.' : guessAck === 'rejected' ? 'The round is not accepting guesses.' : ''}
-                </output>
-              </form>
             )}
-
-            {messages.length > 0 && (
-              <div className={styles.feed} aria-label="Guesses">
-                {messages.map((message, index) => <p key={`${message.from}-${index}`}><strong>Player {message.from}</strong>{' '}{message.text}</p>)}
+            {ended && !showFanfare && winnerLabel && (
+              <div className={styles.result} role="status">
+                <span className={styles.resultName} data-socket={winnerLabel}>{winnerLabel}</span>
+                {' guessed it — '}
+                <span className={styles.resultWord} data-socket="A">{ended.word}</span>
               </div>
             )}
-          </section>
+          </div>
 
-          <aside className={styles.setup} aria-label="Session setup">
-            <div className={styles.sessionHeading}>
-              <span>session</span>
-              <code>{session}</code>
-            </div>
-            <ol className={styles.seats}>
-              {([1, 2, 3] as const).map((playerSeat) => {
-                const player = state?.players.find((item) => item.seat === playerSeat);
-                const current = playerSeat === seat;
-                return (
-                  <li key={playerSeat} data-ready={Boolean(player)} data-current={current}>
-                    <span className={styles.seatNumber}>{playerSeat}</span>
-                    <span><strong>Player {playerSeat}</strong><small>{playerSeat === 1 ? 'Drawer' : 'Guesser'}{current ? ' · this tab' : ''}</small></span>
-                    <b>{player ? 'Ready' : 'Waiting'}</b>
-                  </li>
-                );
-              })}
-            </ol>
+          <div className={styles.players} aria-label="Real player tabs">
+            {([2, 3] as const).map((playerSeat) => (
+              <PlayerSlot
+                key={playerSeat}
+                playerSeat={playerSeat}
+                currentSeat={seat}
+                player={players.find((player) => player.seat === playerSeat)}
+                bubble={bubbles[labelForSeat(playerSeat)] ?? null}
+                winnerSeat={ended?.winnerSeat}
+                onOpen={openSeat}
+              />
+            ))}
+          </div>
 
-            {seat === 1 && (
-              <div className={styles.openers}>
-                <button type="button" onClick={() => openSeat(2)} disabled={Boolean(state?.players.some((player) => player.seat === 2))}>Open Player 2</button>
-                <button type="button" onClick={() => openSeat(3)} disabled={Boolean(state?.players.some((player) => player.seat === 3))}>Open Player 3</button>
-              </div>
-            )}
+          {!isDrawer && (
+            <form className={styles.chat} onSubmit={submit}>
+              <input
+                className={styles.input}
+                value={input}
+                onChange={(event) => setInput(event.target.value)}
+                placeholder={ended ? `Round over · the word was ${ended.word}` : 'Guess from the drawing'}
+                aria-label="Guess"
+                disabled={!canGuess}
+              />
+              <button type="submit" className={styles.send} disabled={!canGuess || !input.trim()}>Send</button>
+              <output className={styles.ack} aria-live="polite">
+                {guessAck === 'wrong' ? 'Guess acknowledged — keep trying.' : guessAck === 'correct' ? 'Correct guess acknowledged.' : guessAck === 'rejected' ? 'The round is not accepting guesses.' : ''}
+              </output>
+            </form>
+          )}
 
-            <p className={styles.scope}>Shared only by the same origin, browser profile, worker URL, and worker name.</p>
-          </aside>
-        </div>
+          <footer className={styles.footer}>
+            <p className={styles.hint}>{hintFor(phase, isDrawer)}</p>
+            <code className={styles.session} title={session}>{session}</code>
+          </footer>
+        </section>
 
-        {ended && (
-          <section className={styles.summary} aria-labelledby="multi-summary-title">
-            <h2 id="multi-summary-title">One developer just reproduced a three-player realtime UI without a Socket.IO backend.</h2>
-            <ul>
-              <li>Scripted players in one page</li>
-              <li>Real participants across browser tabs</li>
-              <li>Socket.IO-shaped event code</li>
-            </ul>
-          </section>
-        )}
-
-        <details className={styles.support}>
-          <summary>How it works and what this preview does not prove</summary>
-          <p>One Smocket server lives in a SharedWorker for this browser profile and origin. Worker restarts clear its in-memory state. Different browsers and devices do not join this session. Production transport, authentication, databases, persistence, and reconnect behavior still belong to a real Socket.IO integration.</p>
-        </details>
+        <TracePanel store={trace} maskWord={!isDrawer && !ended} />
       </main>
+
     </>
   );
 }

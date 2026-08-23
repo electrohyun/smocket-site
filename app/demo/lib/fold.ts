@@ -15,7 +15,7 @@
  * panel exists to show.
  */
 
-import type { DeliveryLine, InboundLine, TraceLine } from './trace';
+import type { DeliveryLine, InboundLine, ReceivedLine, TraceLine } from './trace';
 
 /** Only the flood folds. Everything else is the game, and the game stays open. */
 const FOLDABLE = new Set(['stroke']);
@@ -89,6 +89,9 @@ function foldsInto(previous: TraceLine, next: TraceLine): boolean {
   if (isDeliveryStroke(previous) && isDeliveryStroke(next)) {
     return sameSockets(previous, next);
   }
+  if (isReceivedStroke(previous) && isReceivedStroke(next)) {
+    return previous.to === next.to;
+  }
   return false;
 }
 
@@ -98,6 +101,10 @@ function isInboundStroke(line: TraceLine | undefined): line is InboundLine {
 
 function isDeliveryStroke(line: TraceLine | undefined): line is DeliveryLine {
   return line?.kind === 'delivery' && FOLDABLE.has(line.event);
+}
+
+function isReceivedStroke(line: TraceLine | undefined): line is ReceivedLine {
+  return line?.kind === 'received' && FOLDABLE.has(line.event);
 }
 
 function sameInbound(a: InboundLine, b: InboundLine): boolean {
