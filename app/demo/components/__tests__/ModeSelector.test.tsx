@@ -28,7 +28,7 @@ describe('demo mode selector', () => {
     const user = userEvent.setup();
     render(<ModeSelector active="single" />);
 
-    const multi = screen.getByRole('button', { name: /Open real tabs/ });
+    const multi = screen.getByRole('button', { name: /Open player tabs/ });
     multi.focus();
     await user.keyboard('{Enter}');
 

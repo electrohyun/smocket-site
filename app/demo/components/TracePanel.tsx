@@ -3,6 +3,7 @@
 import { useEffect, useRef, useSyncExternalStore } from 'react';
 import EventCall from '../../components/EventCall';
 import { fold, type FoldedLine } from '../lib/fold';
+import type { Label } from '../lib/room';
 import {
   formatAck,
   formatCall,
@@ -21,11 +22,13 @@ import styles from './TracePanel.module.css';
 
 interface Props {
   store: TraceStore;
+  /** Omit for the one-page global record; pass a label for one player's view. */
+  scope?: Label;
   /** Hide the word in `emit('word', …)` — the observer is not supposed to know it. */
   maskWord?: boolean;
 }
 
-export default function TracePanel({ store, maskWord = false }: Props) {
+export default function TracePanel({ store, scope, maskWord = false }: Props) {
   const lines = useSyncExternalStore(
     (onChange) => store.subscribe(onChange),
     () => store.lines(),
@@ -39,13 +42,19 @@ export default function TracePanel({ store, maskWord = false }: Props) {
   }, [lines]);
 
   const folded = fold(lines);
+  const legend = scope ? [scope] : (['A', 'B', 'C'] as const);
 
   return (
     <aside className={styles.panel} aria-label="Delivery record">
       <header className={styles.head}>
-        <span className={styles.title}>delivery</span>
+        <span className={styles.title}>
+          delivery{' '}
+          <span className={styles.scope} data-socket={scope ?? 'ALL'}>
+            ({scope ? `only ${scope}` : 'all'})
+          </span>
+        </span>
         <ul className={styles.legend}>
-          {(['A', 'B', 'C'] as const).map((label) => (
+          {legend.map((label) => (
             <li key={label} className={styles.chip} data-socket={label}>
               {label}
             </li>

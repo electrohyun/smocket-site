@@ -17,7 +17,7 @@ const MODES = [
   {
     id: 'multi' as const,
     label: 'Multi tab',
-    description: 'Open real tabs that share one in-browser Smocket server.',
+    description: 'Open player tabs that share one in-browser Smocket server.',
     href: '/demo/multi',
     icon: MultiTabIcon,
   },

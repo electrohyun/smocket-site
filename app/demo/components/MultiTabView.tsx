@@ -83,7 +83,7 @@ function PlayerSlot({
   const label = labelForSeat(playerSeat);
   const ready = Boolean(player);
   const current = playerSeat === currentSeat;
-  const role = current ? 'you · real tab' : ready ? 'real tab' : 'waiting';
+  const role = current ? 'you' : ready ? 'guesser' : 'waiting';
 
   return (
     <div className={styles.playerSlot} data-ready={ready} data-current={current}>
@@ -106,7 +106,7 @@ function hintFor(phase: MultiSessionState['phase'] | 'waiting', isDrawer: boolea
   if (phase === 'active') return isDrawer
     ? 'Draw. The delivery record shows the real events observed by this tab.'
     : 'Guess from the drawing. The delivery record shows the real events observed by this tab.';
-  if (phase === 'countdown') return 'Three real tabs are ready. The round starts together.';
+  if (phase === 'countdown') return 'Three players are ready. The round starts together.';
   return 'Build and preview a three-player realtime UI before the backend is ready.';
 }
 
@@ -321,7 +321,7 @@ export default function MultiTabView({
     url.searchParams.set('session', session);
     url.searchParams.set('seat', String(targetSeat));
     if (recording) url.searchParams.set('recording', '1');
-    trace.lifecycle(`opening ${labelForSeat(targetSeat)} in a real tab`);
+    trace.lifecycle(`opening ${labelForSeat(targetSeat)}`);
     window.open(url, '_blank', 'noopener');
   }, [recording, session, trace]);
 
@@ -381,7 +381,7 @@ export default function MultiTabView({
             {phase === 'countdown' && state?.countdownEndsAt && <Countdown endsAt={state.countdownEndsAt} />}
             {phase === 'waiting' && !error && (
               <div className={styles.waiting} role="status">
-                <strong>{players.length} / 3 real tabs connected</strong>
+                <strong>{players.length} / 3 players connected</strong>
                 <span>Open the empty player desks below. The round starts when A, B, and C are ready.</span>
               </div>
             )}
@@ -409,7 +409,7 @@ export default function MultiTabView({
             )}
           </div>
 
-          <div className={styles.players} aria-label="Real player tabs">
+          <div className={styles.players} aria-label="Player tabs">
             {([2, 3] as const).map((playerSeat) => (
               <PlayerSlot
                 key={playerSeat}
@@ -446,7 +446,7 @@ export default function MultiTabView({
           </footer>
         </section>
 
-        <TracePanel store={trace} maskWord={!isDrawer && !ended} />
+        <TracePanel store={trace} scope={socketLabel} maskWord={!isDrawer && !ended} />
       </main>
 
     </>
