@@ -55,36 +55,6 @@ function admissionMessage(result: MultiJoinResult | null): string | null {
   return 'This player seat is invalid. Open the player from the setup controls.';
 }
 
-function MultiStatus({
-  connected,
-  admitted,
-  label,
-  role,
-  session,
-  socketId,
-}: {
-  connected: boolean;
-  admitted: boolean;
-  label: Label;
-  role: 'drawer' | 'guesser';
-  session: string;
-  socketId: string | null;
-}) {
-  const online = connected && admitted;
-  return (
-    <aside className={styles.statusPanel} aria-label="Current real tab">
-      <div className={styles.statusControl}>
-        <div className={styles.statusPill} data-online={online}>
-          <span className={styles.statusDot} aria-hidden="true" />
-          <strong data-socket={label}>{label}</strong>
-          <code>{online ? socketId?.slice(0, 8) : 'connecting'}</code>
-        </div>
-        <span className={styles.statusLabel}>{role} · real tab · {session}</span>
-      </div>
-    </aside>
-  );
-}
-
 function PlayerSlot({
   playerSeat,
   currentSeat,
@@ -367,14 +337,6 @@ export default function MultiTabView({
   return (
     <>
       <ModeSelector active="multi" compact={recording} />
-      <MultiStatus
-        connected={connected}
-        admitted={admitted}
-        label={socketLabel}
-        role={isDrawer ? 'drawer' : 'guesser'}
-        session={session}
-        socketId={socketId}
-      />
 
       <main
         className={styles.stage}

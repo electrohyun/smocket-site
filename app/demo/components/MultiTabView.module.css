@@ -13,94 +13,24 @@
   gap: 10px;
 }
 
-.statusPanel {
-  position: fixed;
-  top: 12px;
-  right: 20px;
-  z-index: 20;
-}
-
-.statusControl {
-  display: flex;
-  max-width: min(320px, 32vw);
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
-  color: var(--text-dim);
-}
-
-.statusPill {
-  display: flex;
-  width: 100%;
-  height: 48px;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 0 14px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: var(--code-bg);
-}
-
-.statusDot {
-  width: 8px;
-  height: 8px;
-  flex: none;
-  border-radius: 50%;
-  background: var(--text-dim);
-}
-
-.statusPill[data-online='true'] .statusDot {
-  background: #63e59d;
-  box-shadow: 0 0 10px color-mix(in srgb, #63e59d 70%, transparent);
-}
-
-.statusPill strong {
-  color: var(--socket);
-  font-family: var(--font-mono), ui-monospace, monospace;
-}
-
-.statusPill strong,
 .resultName,
 .resultWord {
   --socket: var(--text-dim);
 }
 
-.statusPill strong[data-socket='A'],
 .resultName[data-socket='A'],
 .resultWord[data-socket='A'] {
   --socket: var(--sock-a);
 }
 
-.statusPill strong[data-socket='B'],
 .resultName[data-socket='B'],
 .resultWord[data-socket='B'] {
   --socket: var(--sock-b);
 }
 
-.statusPill strong[data-socket='C'],
 .resultName[data-socket='C'],
 .resultWord[data-socket='C'] {
   --socket: var(--sock-c);
-}
-
-.statusPill code {
-  min-width: 0;
-  overflow: hidden;
-  color: var(--text-dim);
-  font-size: 0.7rem;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.statusLabel {
-  width: 100%;
-  overflow: hidden;
-  font-size: 0.68rem;
-  line-height: 1;
-  text-align: center;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .word {
@@ -363,31 +293,9 @@
     grid-template-rows: minmax(0, 1fr) 40dvh;
   }
 
-  .statusPanel {
-    top: auto;
-    right: 12px;
-    bottom: 12px;
-  }
-
-  .statusControl {
-    max-width: min(300px, 62vw);
-  }
-
 }
 
 @media (max-width: 560px) {
-  .statusPill {
-    padding: 0 11px;
-  }
-
-  .statusPill code {
-    max-width: 10ch;
-  }
-
-  .statusLabel {
-    max-width: 38vw;
-  }
-
   .playerSlot > [data-socket] {
     padding-right: 8px;
     padding-left: 8px;
@@ -405,10 +313,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .statusPill[data-online='true'] .statusDot {
-    box-shadow: none;
-  }
-
   .playerSlot > [data-socket] {
     transition: none;
   }
