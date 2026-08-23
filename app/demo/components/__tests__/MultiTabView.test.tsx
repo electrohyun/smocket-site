@@ -70,6 +70,7 @@ describe('MultiTabView connection lifecycle', () => {
     expect(screen.getByLabelText('Delivery record')).toHaveTextContent('delivery (only A)');
     expect(screen.getByLabelText('Delivery record')).toHaveTextContent("client_A.emit('join-session')");
     expect(screen.getByLabelText('Delivery record')).toHaveTextContent('← ack A');
+    expect(screen.getByTitle('reconnect-test')).toHaveTextContent('SESSION ID: reconnect-test');
     listeners.get('connect')?.();
     await waitFor(() => expect(emitWithAck).toHaveBeenCalledTimes(2));
   });

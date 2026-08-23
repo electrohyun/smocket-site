@@ -442,7 +442,7 @@ export default function MultiTabView({
 
           <footer className={styles.footer}>
             <p className={styles.hint}>{hintFor(phase, isDrawer)}</p>
-            <code className={styles.session} title={session}>{session}</code>
+            <code className={styles.session} title={session}>SESSION ID: {session}</code>
           </footer>
         </section>
 
