@@ -22,8 +22,8 @@
     "next": "16.2.12",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "smocket": "0.5.0",
-    "smocket-client": "0.5.0",
+    "smocket": "0.5.1",
+    "smocket-client": "0.5.1",
     "socket.io": "4.8.3",
     "socket.io-client": "4.8.3"
   },

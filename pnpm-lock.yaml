@@ -18,11 +18,11 @@ importers:
         specifier: 19.2.4
         version: 19.2.4(react@19.2.4)
       smocket:
-        specifier: 0.5.0
-        version: 0.5.0
+        specifier: 0.5.1
+        version: 0.5.1
       smocket-client:
-        specifier: 0.5.0
-        version: 0.5.0(smocket@0.5.0)
+        specifier: 0.5.1
+        version: 0.5.1(smocket@0.5.1)
       socket.io:
         specifier: 4.8.3
         version: 4.8.3(supports-color@7.2.0)
@@ -2305,14 +2305,14 @@ packages:
   siginfo@2.0.0:
     resolution: {integrity: sha512-ybx0WO1/8bSBLEWXZvEd7gMW3Sn3JFlW3TvX1nREbDLRNQNaeNN8WK0meBwPdAaOI7TtRRRJn/Es1zhrrCHu7g==}
 
-  smocket-client@0.5.0:
-    resolution: {integrity: sha512-dm0R5WOTxwK9OhtPJSK876njCVvBuMVyys9KRWGY7PoIymfXHNHCL03ZOlrQ0EDWsCuNGiReQce0ge/Tc3+SfA==}
+  smocket-client@0.5.1:
+    resolution: {integrity: sha512-kwh4eFVoJqKVmmFOyl1IuBHmZjy6isUuu9XlxyEMxCvGFjEj1thyR+j1YoVQww3UrqJRNoeMmImNaEJcKER1CQ==}
     engines: {node: '>=20'}
     peerDependencies:
-      smocket: 0.5.0
+      smocket: 0.5.1
 
-  smocket@0.5.0:
-    resolution: {integrity: sha512-PyNvCRx4fQRzdCUhv6Ft1GP/3NbEzzav4gipRVIU6uWbNlFBsPMFbhWnhxsGNq63tyrLABmrQZeH242AOELnPg==}
+  smocket@0.5.1:
+    resolution: {integrity: sha512-MPlruOtqWEAE9ki887fn9lHbrau4lYDOFFhsD6M6pvb3/6g41x0SDtxplWz4PT/nAgsQT7wqWCqYQokvTTmS6g==}
     engines: {node: '>=20'}
 
   socket.io-adapter@2.5.8:
@@ -5007,11 +5007,11 @@ snapshots:
 
   siginfo@2.0.0: {}
 
-  smocket-client@0.5.0(smocket@0.5.0):
+  smocket-client@0.5.1(smocket@0.5.1):
     dependencies:
-      smocket: 0.5.0
+      smocket: 0.5.1
 
-  smocket@0.5.0: {}
+  smocket@0.5.1: {}
 
   socket.io-adapter@2.5.8(supports-color@7.2.0):
     dependencies:
