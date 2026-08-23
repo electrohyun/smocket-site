@@ -197,11 +197,22 @@ export default function MultiTabView({
     const socket = socketRef.current;
     if (!text || !socket || !canGuess) return;
     setInput('');
+    let acknowledgementTimeout: number | undefined;
     try {
-      const result = await socket.emitWithAck('guess', text);
+      const result = await Promise.race([
+        socket.emitWithAck('guess', text),
+        new Promise<never>((_, reject) => {
+          acknowledgementTimeout = window.setTimeout(
+            () => reject(new Error('Guess acknowledgement timed out.')),
+            5_000,
+          );
+        }),
+      ]);
       setGuessAck(result.accepted ? (result.correct ? 'correct' : 'wrong') : 'rejected');
     } catch (error) {
       setConnectionError(error instanceof Error ? error.message : String(error));
+    } finally {
+      if (acknowledgementTimeout !== undefined) window.clearTimeout(acknowledgementTimeout);
     }
   }, [canGuess, input]);
 

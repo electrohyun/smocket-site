@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import '@testing-library/jest-dom/vitest';
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { forwardRef, useImperativeHandle } from 'react';
 import { hydrateRoot } from 'react-dom/client';
 import { renderToString } from 'react-dom/server';
@@ -47,6 +47,7 @@ afterEach(() => {
   socket.on.mockClear();
   socket.disconnect.mockClear();
   browserSupport.value = true;
+  vi.useRealTimers();
 });
 
 describe('MultiTabView connection lifecycle', () => {
@@ -101,7 +102,7 @@ describe('MultiTabView connection lifecycle', () => {
         },
         strokes: [],
       })
-      .mockRejectedValueOnce(new Error('Guess acknowledgement timed out'));
+      .mockImplementationOnce(() => new Promise(() => {}));
 
     render(
       <MultiTabView
@@ -125,7 +126,7 @@ describe('MultiTabView connection lifecycle', () => {
     } as never);
     expect(await screen.findByRole('timer')).toHaveAccessibleName(/Round starts in \d seconds/);
 
-    listeners.get('session-state')?.({
+    act(() => listeners.get('session-state')?.({
       session: 'ack-test',
       phase: 'active',
       players: [
@@ -133,10 +134,12 @@ describe('MultiTabView connection lifecycle', () => {
         { seat: 2, role: 'guesser', socketId: 'socket-one' },
         { seat: 3, role: 'guesser', socketId: 'socket-three' },
       ],
-    } as never);
+    } as never));
     fireEvent.change(screen.getByRole('textbox', { name: 'Guess' }), { target: { value: 'giraffe' } });
+    vi.useFakeTimers();
     fireEvent.click(screen.getByRole('button', { name: 'Send' }));
+    await act(async () => vi.advanceTimersByTimeAsync(5_000));
 
-    expect(await screen.findByRole('alert')).toHaveTextContent('Guess acknowledgement timed out');
+    expect(screen.getByRole('alert')).toHaveTextContent('Guess acknowledgement timed out');
   });
 });
