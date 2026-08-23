@@ -46,7 +46,7 @@
      little air. Both views reserve it rather than guessing at 60px, which is
      what they did when the panel was text pills and what left the labels lying
      over the delivery record once it was not. */
-  --stage-top: 88px;
+  --stage-top: 112px;
   /* At narrower desktop widths the panel drops to the bottom instead, so the
      reserve does too. */
   --stage-bottom: 20px;
@@ -69,14 +69,13 @@ a:hover {
    reserve swaps ends with it. */
 @media (max-width: 900px) {
   :root:root:root {
-    --stage-top: 88px;
+    --stage-top: 112px;
     --stage-bottom: 88px;
   }
 }
 
 @media (max-width: 600px) {
   :root:root:root {
-    /* The centred code prompt moves below the brand at phone widths. */
-    --stage-top: 116px;
+    --stage-top: 108px;
   }
 }

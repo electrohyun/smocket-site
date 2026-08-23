@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import DrawerView from './DrawerView';
 import ObserverView from './ObserverView';
 import SituationPanel from './SituationPanel';
+import ModeSelector from './ModeSelector';
 
 /* Holds which viewpoint is on screen and the panel's knobs, and swaps the two
  * views. Switching unmounts one view and mounts the other, and each view builds
@@ -41,6 +42,7 @@ export default function Stage({
 
   return (
     <>
+      <ModeSelector active="single" />
       {viewpoint === 'drawer' ? (
         <DrawerView replay={replay} />
       ) : (

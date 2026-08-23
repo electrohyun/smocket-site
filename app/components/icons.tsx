@@ -100,3 +100,23 @@ export const RepeatIcon = (
     <polygon points="9,14.2 9,19.8 5,17" fill="currentColor" stroke="none" />
   </>
 );
+
+/** One page containing every scripted participant. */
+export const SingleTabIcon = (
+  <>
+    <rect x="3" y="4" width="18" height="16" rx="2.5" />
+    <path d="M3 8h18" />
+    <circle cx="6" cy="6" r=".6" fill="currentColor" stroke="none" />
+    <path d="M8 13h8M8 16h5" />
+  </>
+);
+
+/** Several real browser tabs sharing one in-browser server. */
+export const MultiTabIcon = (
+  <>
+    <path d="M8 4h11a2 2 0 0 1 2 2v10" />
+    <path d="M6 7h11a2 2 0 0 1 2 2v9" />
+    <rect x="3" y="10" width="14" height="10" rx="2" />
+    <path d="M3 13h14" />
+  </>
+);

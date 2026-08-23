@@ -1,6 +1,5 @@
-import { page } from '@/content/demo';
+import DemoBrand from './components/DemoBrand';
 import Stage from './components/Stage';
-import styles from './page.module.css';
 
 /* Stage 2 builds the drawer's viewpoint. The observer's, the recording engine,
    and the control panel come after it.
@@ -29,17 +28,7 @@ export default async function DemoPage({
 
   return (
     <>
-      <header className={styles.brand}>
-        <img
-          className={styles.mascot}
-          src={page.mascot.src}
-          alt={page.mascot.alt}
-          width={26}
-          height={26}
-        />
-        <span className={styles.wordmark}>{page.wordmark}</span>
-      </header>
-
+      <DemoBrand />
       <Stage initial={initial} replay={replay} initialDelay={initialDelay} />
     </>
   );

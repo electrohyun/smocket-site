@@ -1,0 +1,123 @@
+.selector,
+.compact {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  z-index: 24;
+  transform: translateX(-50%);
+}
+
+.selector {
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+}
+
+.buttons {
+  display: flex;
+  gap: 18px;
+}
+
+.mode {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-dim);
+  font: inherit;
+  cursor: pointer;
+}
+
+.disc {
+  display: grid;
+  width: 46px;
+  height: 46px;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--code-bg) 92%, transparent);
+  transition: color 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+}
+
+.disc svg {
+  width: 23px;
+  height: 23px;
+}
+
+.label {
+  font-size: 0.68rem;
+  font-weight: 720;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.mode:hover,
+.mode:focus-visible,
+.mode[aria-pressed='true'] {
+  color: var(--accent);
+}
+
+.mode:focus-visible {
+  outline: none;
+}
+
+.mode:hover .disc,
+.mode:focus-visible .disc,
+.mode[aria-pressed='true'] .disc {
+  border-color: var(--accent);
+}
+
+.mode:focus-visible .disc {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 34%, transparent);
+}
+
+.mode[aria-pressed='true'] .disc {
+  background: color-mix(in srgb, var(--accent) 13%, var(--code-bg));
+}
+
+.description {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 0.7rem;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.compact {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: var(--code-bg);
+  color: var(--accent);
+  font-size: 0.74rem;
+  font-weight: 750;
+}
+
+.compact svg {
+  width: 18px;
+  height: 18px;
+}
+
+@media (max-width: 620px) {
+  .selector {
+    top: 8px;
+  }
+
+  .description {
+    max-width: 66vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .disc {
+    transition: none;
+  }
+}
