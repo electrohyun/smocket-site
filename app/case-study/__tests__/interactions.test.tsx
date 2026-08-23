@@ -1,115 +1,48 @@
 // @vitest-environment jsdom
 
 import '@testing-library/jest-dom/vitest';
-import { cleanup, render, screen, within } from '@testing-library/react';
+import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it } from 'vitest';
-import observations from '../../../content/case-study-observations.json';
-import ApproachEvidence from '../components/ApproachEvidence';
-import BehaviorMatrix from '../components/BehaviorMatrix';
-import ObservationExplorer from '../components/ObservationExplorer';
-import { createCaseStudyModel } from '../lib/model';
-import { loadCaseStudySources } from '../lib/source-evidence';
-
-const model = createCaseStudyModel(observations, loadCaseStudySources());
+import ArchitectureComparison from '../components/ArchitectureComparison';
+import ScenarioStepper from '../components/ScenarioStepper';
 
 afterEach(cleanup);
 
-describe('case study DOM interactions', () => {
-  it('changes real target setup, files, source, and boundaries with click and keyboard', async () => {
+describe('interactive report controls', () => {
+  it('changes the architecture explanation with native keyboard controls', async () => {
     const user = userEvent.setup();
-    render(<ApproachEvidence model={model} />);
+    render(<ArchitectureComparison />);
 
-    const real = screen.getByRole('button', { name: 'Select Real Socket.IO evidence' });
-    const smocket = screen.getByRole('button', { name: 'Select Exact published Smocket evidence' });
-    const handwritten = screen.getByRole('button', { name: 'Select Handwritten mock evidence' });
-
+    const real = screen.getByRole('button', { name: 'Real Socket.IO' });
+    const smocket = screen.getByRole('button', { name: 'Smocket preview' });
     expect(real).toHaveAttribute('aria-pressed', 'true');
-    expect(screen.getByText('Real Socket.IO bootstrap')).toBeInTheDocument();
-    expect(screen.getByText(/createServer/, { selector: 'code' })).toBeInTheDocument();
+    expect(screen.getByText(/external Node HTTP and Socket.IO server/)).toBeInTheDocument();
 
-    await user.click(smocket);
+    await user.tab();
+    expect(real).toHaveFocus();
+    await user.tab();
+    expect(smocket).toHaveFocus();
+    await user.keyboard(' ');
+
     expect(smocket).toHaveAttribute('aria-pressed', 'true');
-    expect(screen.getByText('smocket@0.4.2')).toBeInTheDocument();
-    expect(screen.getByText('Published Smocket bootstrap')).toBeInTheDocument();
-
-    handwritten.focus();
-    await user.keyboard('{Enter}');
-    expect(handwritten).toHaveFocus();
-    expect(handwritten).toHaveAttribute('aria-pressed', 'true');
-    expect(screen.getAllByText('handwritten-socket-io.js', { exact: false }).length).toBeGreaterThan(0);
-    expect(screen.getByText('Namespaces')).toBeInTheDocument();
-    expect(screen.getByText('Room membership and joins')).toBeInTheDocument();
-
-    const routing = screen.getByRole('button', { name: 'Room routing and sender exclusion' });
-    routing.focus();
-    await user.keyboard(' ');
-    expect(routing).toHaveAttribute('aria-pressed', 'true');
-    expect(screen.getByText(/excludedSocketIds/, { selector: 'code' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Open pinned source ↗' })).toHaveAttribute(
-      'href',
-      expect.stringContaining('fa90e07e272c7fd0db64ebfd73cbb104664ddb81'),
-    );
+    expect(real).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByText(/caller-owned SharedWorker/)).toBeInTheDocument();
   });
 
-  it('opens behavior-specific structured, assertion, application, and mock evidence', async () => {
+  it('lets a reader inspect each drawing-game event step', async () => {
     const user = userEvent.setup();
-    render(<BehaviorMatrix model={model} />);
+    render(<ScenarioStepper />);
 
-    const join = screen.getByRole('button', { name: 'Acknowledged joins' });
-    const authorization = screen.getByRole('button', { name: 'Authorization rejection' });
-    expect(join).toHaveAttribute('aria-pressed', 'true');
-    expect(screen.getByText(/"participantId": "alice"/, { selector: 'code' })).toBeInTheDocument();
+    const connect = screen.getByRole('button', { name: /CONNECT ×3/ });
+    const stroke = screen.getByRole('button', { name: /STROKE ×N/ });
+    expect(connect).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('heading', { name: 'Open three player tabs' })).toBeInTheDocument();
 
-    await user.click(authorization);
-    expect(authorization).toHaveAttribute('aria-pressed', 'true');
-    const panel = document.getElementById('behavior-evidence')!;
-    expect(within(panel).getByText(/"reason": "moderator-only"/, { selector: 'code' })).toBeInTheDocument();
-    expect(within(panel).getByText(/moderator-announcement/, { selector: 'code' })).toBeInTheDocument();
-    expect(within(panel).getByText('Acknowledgements')).toBeInTheDocument();
-
-    const disconnect = screen.getByRole('button', { name: 'Disconnect notification' });
-    disconnect.focus();
-    await user.keyboard('{Enter}');
-    expect(disconnect).toHaveFocus();
-    expect(disconnect).toHaveAttribute('aria-pressed', 'true');
-    expect(within(panel).getAllByText(/disconnecting/, { selector: 'code' })).toHaveLength(2);
-  });
-
-  it('uses a keyboard-reachable disclosure and filters the shared transcript without a target control', async () => {
-    const user = userEvent.setup();
-    render(<ObservationExplorer model={model} />);
-
-    expect(screen.queryByText('Inspect Real Socket.IO')).not.toBeInTheDocument();
-    const summary = screen.getByText('Supporting evidence: shared transcript', { exact: false });
-    const details = summary.closest('details')!;
-    expect(details).not.toHaveAttribute('open');
-
-    summary.focus();
-    await user.keyboard('{Enter}');
-    expect(summary).toHaveFocus();
-    expect(details).toHaveAttribute('open');
-
-    await user.click(screen.getByRole('button', { name: 'Carol' }));
-    await user.click(screen.getByRole('button', { name: /^Message$/ }));
-    expect(screen.getByText('No recorded line matches both filters.')).toBeInTheDocument();
-
-    const reset = screen.getByRole('button', { name: 'Show all transcript lines' });
-    reset.focus();
-    await user.keyboard(' ');
-    expect(screen.getByText('Showing 10 of 10 shared lines.')).toBeInTheDocument();
-    expect(screen.getByText('[alice] Welcome to #general.')).toBeInTheDocument();
-  });
-
-  it('places focus through the primary approach controls in document order', async () => {
-    const user = userEvent.setup();
-    render(<ApproachEvidence model={model} />);
-
-    await user.tab();
-    expect(screen.getByRole('button', { name: 'Select Real Socket.IO evidence' })).toHaveFocus();
-    await user.tab();
-    expect(screen.getByRole('button', { name: 'Select Exact published Smocket evidence' })).toHaveFocus();
-    await user.tab();
-    expect(screen.getByRole('button', { name: 'Select Handwritten mock evidence' })).toHaveFocus();
+    await user.click(stroke);
+    expect(stroke).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('heading', { name: 'Draw in Player A' })).toBeInTheDocument();
+    expect(screen.getByText(/without echoing back to A/)).toBeInTheDocument();
+    expect(screen.getByText(/socket.to\(session\)/)).toBeInTheDocument();
   });
 });
