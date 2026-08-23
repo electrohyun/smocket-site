@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest';
 import { fold } from '../fold';
-import type { DeliveryLine, InboundLine, TraceLine } from '../trace';
+import type { DeliveryLine, InboundLine, ReceivedLine, TraceLine } from '../trace';
 
 /* Folding is the one place the panel is allowed to show fewer lines than the
    record holds, so what it may and may not swallow is worth pinning down. */
@@ -25,6 +25,13 @@ const counts = (lines: TraceLine[]) => fold(lines).map((f) => [f.line.kind, f.co
 const inbound = (event: string, from = 'A', args: unknown[] = []): InboundLine => ({
   kind: 'inbound',
   from,
+  event,
+  args,
+});
+
+const received = (event: string, to = 'B', args: unknown[] = []): ReceivedLine => ({
+  kind: 'received',
+  to,
   event,
   args,
 });
@@ -91,6 +98,20 @@ it('a run of strokes to the same sockets becomes one line', () => {
   const folded = fold(strokes);
   expect(folded).toHaveLength(1);
   expect(folded[0].count).toBe(47);
+});
+
+it('a page-side run of received strokes folds by recipient', () => {
+  const folded = fold([
+    received('stroke', 'B', [{ id: 1 }]),
+    received('stroke', 'B', [{ id: 2 }]),
+    received('stroke', 'C', [{ id: 3 }]),
+  ]);
+
+  expect(folded.map((entry) => [entry.line.kind, entry.count])).toEqual([
+    ['received', 2],
+    ['received', 1],
+  ]);
+  expect((folded[0].line as ReceivedLine).args).toEqual([{ id: 2 }]);
 });
 
 it('the game keeps its own lines, however many arrive in a row', () => {

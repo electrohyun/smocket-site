@@ -1,0 +1,363 @@
+.stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  gap: 16px;
+  height: 100dvh;
+  padding: var(--stage-top) var(--pad) var(--stage-bottom);
+}
+
+.board {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.playerBadge {
+  position: fixed;
+  top: 12px;
+  right: 20px;
+  z-index: 20;
+  display: flex;
+  min-width: 150px;
+  height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 18px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--code-bg);
+  color: var(--text-dim);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.playerBadge strong {
+  color: var(--socket);
+  font-size: 0.86rem;
+}
+
+.playerBadge strong[data-socket='A'] {
+  --socket: var(--sock-a);
+}
+
+.playerBadge strong[data-socket='B'] {
+  --socket: var(--sock-b);
+}
+
+.playerBadge strong[data-socket='C'] {
+  --socket: var(--sock-c);
+}
+
+.resultName,
+.resultWord {
+  --socket: var(--text-dim);
+}
+
+.resultName[data-socket='A'],
+.resultWord[data-socket='A'] {
+  --socket: var(--sock-a);
+}
+
+.resultName[data-socket='B'],
+.resultWord[data-socket='B'] {
+  --socket: var(--sock-b);
+}
+
+.resultName[data-socket='C'],
+.resultWord[data-socket='C'] {
+  --socket: var(--sock-c);
+}
+
+.word {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.wordLabel {
+  color: var(--text-dim);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.wordValue {
+  color: var(--sock-a);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.surface {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.waiting,
+.error {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  padding: 24px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--bg) 62%, transparent);
+  text-align: center;
+  backdrop-filter: blur(3px);
+}
+
+.waiting strong,
+.error strong {
+  color: var(--text);
+  font-size: 0.94rem;
+}
+
+.waiting span,
+.error span {
+  max-width: 46ch;
+  color: var(--text-dim);
+  font-size: 0.78rem;
+}
+
+.error button {
+  margin-top: 4px;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--panel);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.error button:hover,
+.error button:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.result {
+  position: absolute;
+  left: 50%;
+  bottom: 16px;
+  z-index: 3;
+  display: flex;
+  align-items: baseline;
+  gap: 0.35ch;
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--panel);
+  box-shadow: var(--shadow-md);
+  color: var(--text-dim);
+  font-size: 0.82rem;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.resultName,
+.resultWord {
+  color: var(--socket);
+  font-weight: 700;
+}
+
+.resultWord {
+  font-family: var(--font-mono), ui-monospace, monospace;
+}
+
+.players {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.playerSlot {
+  position: relative;
+  min-width: 0;
+}
+
+.playerSlot > [data-socket] {
+  height: 100%;
+  transition: opacity 0.18s ease, border-color 0.18s ease;
+}
+
+.playerSlot[data-ready='false'] > [data-socket] {
+  opacity: 0.42;
+}
+
+.playerSlot[data-current='true'] > [data-socket] {
+  border-color: var(--accent);
+}
+
+.playerState {
+  position: absolute;
+  top: 9px;
+  right: 10px;
+  color: #63e59d;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.openPlayer,
+.waitingPlayer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  padding: 9px 16px;
+  border-radius: 999px;
+  backdrop-filter: blur(3px);
+  text-align: center;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+}
+
+.openPlayer {
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--code-bg) 78%, transparent);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.openPlayer:hover,
+.openPlayer:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.waitingPlayer {
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--code-bg) 72%, transparent);
+  color: var(--text-dim);
+  font-size: 0.7rem;
+  pointer-events: none;
+}
+
+.chat {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.input {
+  min-width: 0;
+  padding: 9px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-tint);
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.input::placeholder {
+  color: var(--text-dim);
+}
+
+.input:focus {
+  border-color: var(--text-dim);
+}
+
+.send {
+  flex: none;
+  padding: 9px 18px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.send:hover:not(:disabled) {
+  color: var(--text);
+  border-color: var(--text-dim);
+}
+
+.send:disabled,
+.input:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.ack {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.footer {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.hint {
+  min-width: 0;
+  color: var(--text-dim);
+  font-size: 0.82rem;
+}
+
+.session {
+  max-width: 24ch;
+  flex: none;
+  overflow: hidden;
+  color: var(--text-dim);
+  font-size: 0.66rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .stage {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) 40dvh;
+  }
+
+  .playerBadge {
+    top: auto;
+    right: 12px;
+    bottom: 12px;
+  }
+}
+
+@media (max-width: 560px) {
+  .playerSlot > [data-socket] {
+    padding-right: 8px;
+    padding-left: 8px;
+  }
+
+  .footer {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .session {
+    max-width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .playerSlot > [data-socket] {
+    transition: none;
+  }
+}

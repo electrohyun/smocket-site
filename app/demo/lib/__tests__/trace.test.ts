@@ -5,10 +5,12 @@ import {
   formatAck,
   formatCall,
   formatMembership,
+  formatReceived,
   formatReach,
   type AckLine,
   type DeliveryLine,
   type MembershipLine,
+  type ReceivedLine,
   type TraceLine,
 } from '../trace';
 import { createRound, ROOM, WORD, type Round } from '../room';
@@ -141,6 +143,15 @@ it('what the user fires is recorded too', async () => {
   expect(inbound).toHaveLength(1);
 });
 
+it('a page-side event keeps the same code-shaped delivery record', () => {
+  round.trace.received('B', 'stroke', [{ id: 7 }]);
+
+  const received = only(
+    lines().filter((line): line is ReceivedLine => line.kind === 'received'),
+  );
+  expect(formatReceived(received)).toBe("socket_B.on('stroke', {…})");
+});
+
 it('no line claims a call the adapter did not route', async () => {
   round.word();
   round.stroke({ id: 1, pts: [[0.1, 0.2]] });
@@ -168,6 +179,18 @@ it('the snapshot changes identity when a line is added, and only then', () => {
   const after = lines();
   expect(after).not.toBe(before);
   expect(lines()).toBe(after);
+});
+
+it('a visible trace run can reset without replacing its subscribed store', () => {
+  round.trace.lifecycle('old run');
+  const listener = vi.fn();
+  const unsubscribe = round.trace.subscribe(listener);
+
+  round.trace.clear();
+
+  expect(round.trace.lines()).toEqual([]);
+  expect(listener).toHaveBeenCalledTimes(1);
+  unsubscribe();
 });
 
 /* The two cases below are what keeps the one above from passing on a detector

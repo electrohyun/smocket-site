@@ -9,20 +9,35 @@ import styles from './Countdown.module.css';
  * the demo's. When it reaches zero it hands over, and the caller begins the round
  * proper (the drawing, or the replay). */
 
-export default function Countdown({ onDone }: { onDone: () => void }) {
-  const [n, setN] = useState(3);
+export default function Countdown({
+  onDone,
+  endsAt,
+}: {
+  onDone?: () => void;
+  endsAt?: number;
+}) {
+  const [n, setN] = useState(() => endsAt === undefined ? 3 : Math.max(1, Math.ceil((endsAt - Date.now()) / 1000)));
 
   useEffect(() => {
+    if (endsAt === undefined) return;
+    const update = () => setN(Math.max(1, Math.ceil((endsAt - Date.now()) / 1000)));
+    update();
+    const timer = window.setInterval(update, 100);
+    return () => window.clearInterval(timer);
+  }, [endsAt]);
+
+  useEffect(() => {
+    if (endsAt !== undefined) return;
     if (n === 0) {
-      const timer = window.setTimeout(onDone, 600);
+      const timer = window.setTimeout(() => onDone?.(), 600);
       return () => window.clearTimeout(timer);
     }
     const timer = window.setTimeout(() => setN((value) => value - 1), 800);
     return () => window.clearTimeout(timer);
-  }, [n, onDone]);
+  }, [endsAt, n, onDone]);
 
   return (
-    <div className={styles.overlay} role="status" aria-label="countdown">
+    <div className={styles.overlay} role="timer" aria-live="assertive" aria-label={n === 0 ? 'Round starting' : `Round starts in ${n} ${n === 1 ? 'second' : 'seconds'}`}>
       <span key={n} className={styles.num}>
         {n === 0 ? 'start' : n}
       </span>
