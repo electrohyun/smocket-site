@@ -1,16 +1,15 @@
 import type { Metadata } from 'next';
 
+const title = 'Smocket interactive report';
+const description =
+  'How SharedWorker Smocket supports multi-user frontend previews before a backend is ready, where Real Socket.IO still fits, and what the three-tab drawing game verified.';
+
 export const metadata: Metadata = {
-  title: 'Application case study',
-  description:
-    'A pinned comparison of test-support approaches for one selected moderated chat-room workflow.',
+  title,
+  description,
   alternates: { canonical: '/case-study' },
-  openGraph: {
-    url: '/case-study',
-    title: 'Application case study',
-    description:
-      'Real Socket.IO, published Smocket, and a handwritten mock in one selected workflow.',
-  },
+  openGraph: { type: 'article', url: '/case-study', title, description },
+  twitter: { card: 'summary_large_image', title, description },
 };
 
 export default function CaseStudyLayout({ children }: Readonly<{ children: React.ReactNode }>) {

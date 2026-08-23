@@ -18,6 +18,7 @@ The landing page and interactive demo for [smocket](https://github.com/electrohy
 - A responsive product landing page with light, dark, and system themes
 - A self-playing preview backed by a real in-memory smocket round
 - An interactive `/demo` with drawer and observer viewpoints
+- A four-section `/case-study` report about SharedWorker previews, Real Socket.IO, verified results, and limits
 - A delivery trace that exposes rooms, recipients, exclusions, and acknowledgements
 - Metadata, social images, a web manifest, robots.txt, and a sitemap
 
@@ -32,7 +33,10 @@ pnpm install
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) for the landing page or [http://localhost:3000/demo](http://localhost:3000/demo) for the interactive demo.
+Open [http://localhost:3000](http://localhost:3000) for the landing page,
+[http://localhost:3000/demo](http://localhost:3000/demo) for the interactive demo,
+or [http://localhost:3000/case-study](http://localhost:3000/case-study) for the
+interactive report.
 
 The default development build runs the demo in memory by resolving
 `socket.io-client` to `smocket-client`. To run the same UI against Real Socket.IO,
@@ -71,11 +75,13 @@ integration tests use an ephemeral port instead.
 ```text
 app/
 ├── components/       Landing page sections and shared UI
+├── case-study/       Four-section interactive report
 ├── demo/             Interactive demo, playback, trace, and tests
 ├── layout.tsx        Site metadata, fonts, and theme bootstrap
 └── page.tsx          Landing page composition
 content/
-└── landing.ts        Landing copy and code samples
+├── interactive-report.ts  Report copy, verified values, links, and provenance
+└── landing.ts             Landing copy and code samples
 public/               Static images and icons
 scripts/              Drawing seed tooling
 ```
