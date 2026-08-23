@@ -103,31 +103,6 @@
   white-space: nowrap;
 }
 
-.statusSupport {
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  width: min(320px, 72vw);
-  padding: 8px 11px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--code-bg);
-  box-shadow: var(--shadow-md);
-  color: var(--text-dim);
-  font-size: 0.66rem;
-}
-
-.statusSupport summary {
-  color: var(--text);
-  cursor: pointer;
-  text-align: right;
-}
-
-.statusSupport p {
-  margin: 8px 0 0;
-  line-height: 1.45;
-}
-
 .word {
   display: flex;
   align-items: baseline;
@@ -398,10 +373,6 @@
     max-width: min(300px, 62vw);
   }
 
-  .statusSupport {
-    top: auto;
-    bottom: calc(100% + 8px);
-  }
 }
 
 @media (max-width: 560px) {

@@ -62,7 +62,6 @@ function MultiStatus({
   role,
   session,
   socketId,
-  showSupport,
 }: {
   connected: boolean;
   admitted: boolean;
@@ -70,7 +69,6 @@ function MultiStatus({
   role: 'drawer' | 'guesser';
   session: string;
   socketId: string | null;
-  showSupport: boolean;
 }) {
   const online = connected && admitted;
   return (
@@ -83,13 +81,6 @@ function MultiStatus({
         </div>
         <span className={styles.statusLabel}>{role} · real tab · {session}</span>
       </div>
-      {showSupport && (
-        <details className={styles.statusSupport}>
-          <summary>same-browser preview</summary>
-          <p>3 browser tabs · 1 in-browser Smocket server · 0 separate Socket.IO backend processes.</p>
-          <p>Same origin, profile, worker URL, and worker name only. Worker restarts clear memory; production integration still belongs to a real Socket.IO target.</p>
-        </details>
-      )}
     </aside>
   );
 }
@@ -383,7 +374,6 @@ export default function MultiTabView({
         role={isDrawer ? 'drawer' : 'guesser'}
         session={session}
         socketId={socketId}
-        showSupport={!recording}
       />
 
       <main
