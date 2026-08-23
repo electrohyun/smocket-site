@@ -47,7 +47,7 @@ function SharedCountdown({ endsAt }: { endsAt: number }) {
   }, [endsAt]);
 
   return (
-    <div className={styles.countdown} role="timer" aria-live="assertive" aria-label={`Round starts in ${remaining}`}>
+    <div className={styles.countdown} role="timer" aria-live="assertive" aria-label={`Round starts in ${remaining} ${remaining === 1 ? 'second' : 'seconds'}`}>
       <span>{remaining}</span>
     </div>
   );
@@ -163,7 +163,11 @@ export default function MultiTabView({
     socket.on('chat', (message) => setMessages((current) => [...current, message]));
     socket.on('round-ended', (result) => setEnded(result));
 
-    if (socket.connected) void join();
+    if (socket.connected) {
+      setConnected(true);
+      setSocketId(socket.id ?? null);
+      void join();
+    }
 
     return () => {
       live = false;
@@ -193,8 +197,12 @@ export default function MultiTabView({
     const socket = socketRef.current;
     if (!text || !socket || !canGuess) return;
     setInput('');
-    const result = await socket.emitWithAck('guess', text);
-    setGuessAck(result.accepted ? (result.correct ? 'correct' : 'wrong') : 'rejected');
+    try {
+      const result = await socket.emitWithAck('guess', text);
+      setGuessAck(result.accepted ? (result.correct ? 'correct' : 'wrong') : 'rejected');
+    } catch (error) {
+      setConnectionError(error instanceof Error ? error.message : String(error));
+    }
   }, [canGuess, input]);
 
   const openSeat = (targetSeat: 2 | 3) => {

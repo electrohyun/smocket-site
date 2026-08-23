@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import '@testing-library/jest-dom/vitest';
-import { cleanup, render, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { forwardRef, useImperativeHandle } from 'react';
 import { hydrateRoot } from 'react-dom/client';
 import { renderToString } from 'react-dom/server';
@@ -85,5 +85,58 @@ describe('MultiTabView connection lifecycle', () => {
     root.unmount();
     consoleError.mockRestore();
     container.remove();
+  });
+
+  it('announces countdown seconds and surfaces a failed guess acknowledgement', async () => {
+    emitWithAck
+      .mockResolvedValueOnce({
+        accepted: true,
+        state: {
+          session: 'ack-test',
+          phase: 'active',
+          players: [
+            { seat: 1, role: 'drawer', socketId: 'socket-drawer' },
+            { seat: 2, role: 'guesser', socketId: 'socket-one' },
+          ],
+        },
+        strokes: [],
+      })
+      .mockRejectedValueOnce(new Error('Guess acknowledgement timed out'));
+
+    render(
+      <MultiTabView
+        session="ack-test"
+        updateSessionUrl={false}
+        seat={2}
+        recording={false}
+      />,
+    );
+
+    await waitFor(() => expect(screen.getByRole('textbox', { name: 'Guess' })).toBeEnabled());
+    listeners.get('session-state')?.({
+      session: 'ack-test',
+      phase: 'countdown',
+      players: [
+        { seat: 1, role: 'drawer', socketId: 'socket-drawer' },
+        { seat: 2, role: 'guesser', socketId: 'socket-one' },
+        { seat: 3, role: 'guesser', socketId: 'socket-three' },
+      ],
+      countdownEndsAt: Date.now() + 3_000,
+    } as never);
+    expect(await screen.findByRole('timer')).toHaveAccessibleName(/Round starts in \d seconds/);
+
+    listeners.get('session-state')?.({
+      session: 'ack-test',
+      phase: 'active',
+      players: [
+        { seat: 1, role: 'drawer', socketId: 'socket-drawer' },
+        { seat: 2, role: 'guesser', socketId: 'socket-one' },
+        { seat: 3, role: 'guesser', socketId: 'socket-three' },
+      ],
+    } as never);
+    fireEvent.change(screen.getByRole('textbox', { name: 'Guess' }), { target: { value: 'giraffe' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Send' }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Guess acknowledgement timed out');
   });
 });
