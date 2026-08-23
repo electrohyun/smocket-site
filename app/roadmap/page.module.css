@@ -1,0 +1,1631 @@
+.pageShell {
+  padding: 72px var(--pad) 96px;
+}
+
+.report {
+  width: min(1120px, 100%);
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--panel) 96%, transparent);
+  box-shadow: var(--shadow-md);
+}
+
+.reportHeader {
+  padding: 42px clamp(24px, 6vw, 68px) 36px;
+}
+
+.brandRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+  font: 800 1.05rem/1 var(--font-mono), monospace;
+}
+
+.brand img {
+  display: block;
+  border-radius: 50%;
+}
+
+.reportLabel {
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-dim);
+  font: 700 0.68rem/1 var(--font-mono), monospace;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.kicker,
+.overline {
+  color: var(--accent-ink);
+  font: 750 0.7rem/1.3 var(--font-mono), monospace;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.kicker {
+  margin-top: 42px;
+}
+
+.reportHeader h1 {
+  max-width: 780px;
+  margin-top: 10px;
+  font-size: clamp(2.4rem, 5vw, 4.35rem);
+  font-weight: 850;
+  letter-spacing: -0.05em;
+  line-height: 1;
+}
+
+.summary {
+  max-width: 760px;
+  margin-top: 22px;
+  color: var(--text-dim);
+  font-size: clamp(1rem, 2vw, 1.18rem);
+}
+
+.sourceNote {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 26px;
+  align-items: center;
+  margin-top: 30px;
+  padding: 17px 18px;
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--accent) 10%, var(--panel));
+}
+
+.sourceNote p {
+  max-width: 66ch;
+  color: var(--text-dim);
+  font-size: 0.86rem;
+}
+
+.sourceNote a {
+  font-size: 0.82rem;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.sectionNav {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 10px clamp(24px, 6vw, 68px);
+  border-block: 1px solid var(--border);
+  background: var(--bg-tint);
+}
+
+.sectionNav::-webkit-scrollbar {
+  display: none;
+}
+
+.sectionNav a {
+  display: inline-flex;
+  flex: none;
+  min-height: 40px;
+  align-items: center;
+  padding: 0 10px;
+  color: var(--text-dim);
+  font: 700 0.68rem/1 var(--font-mono), monospace;
+}
+
+.section {
+  padding: 58px clamp(24px, 6vw, 68px);
+  scroll-margin-top: 20px;
+}
+
+.section + .section {
+  border-top: 1px solid var(--border);
+}
+
+.sectionHeading {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr);
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+.sectionHeading > p {
+  padding-top: 7px;
+  color: var(--accent-ink);
+  font: 750 0.72rem/1 var(--font-mono), monospace;
+}
+
+.sectionHeading h2 {
+  font-size: clamp(1.55rem, 3vw, 2.15rem);
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+}
+
+.sectionHeading div > p {
+  max-width: 72ch;
+  margin-top: 7px;
+  color: var(--text-dim);
+  font-size: 0.95rem;
+}
+
+.guaranteeStatement {
+  max-width: 850px;
+  padding: 22px 0 22px 22px;
+  border-left: 4px solid var(--accent);
+  font-size: clamp(1.15rem, 2.4vw, 1.5rem);
+  font-weight: 720;
+  line-height: 1.45;
+}
+
+.boundaryGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 28px;
+}
+
+.boundaryPanel {
+  padding: 22px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.boundaryPanel > ul {
+  margin: 16px 0 0;
+  padding-left: 19px;
+  color: var(--text-dim);
+  font-size: 0.86rem;
+}
+
+.boundaryPanel li + li {
+  margin-top: 10px;
+}
+
+.nonGoals {
+  background: var(--bg-tint);
+}
+
+.boundaryPanel li strong,
+.boundaryPanel li span {
+  display: block;
+}
+
+.boundaryPanel li strong {
+  color: var(--text);
+}
+
+.boundaryPanel li span {
+  margin-top: 2px;
+}
+
+.inlineLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin-top: 18px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.disclosureGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.disclosure {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel);
+}
+
+.disclosure summary {
+  display: flex;
+  min-height: 72px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 15px 17px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.disclosure summary::-webkit-details-marker,
+.stageDisclosure summary::-webkit-details-marker {
+  display: none;
+}
+
+.disclosure summary > span:first-child {
+  min-width: 0;
+}
+
+.disclosure summary strong,
+.disclosure summary small {
+  display: block;
+}
+
+.disclosure summary strong {
+  font-size: 0.91rem;
+}
+
+.disclosure summary small {
+  margin-top: 4px;
+  color: var(--text-dim);
+  font-size: 0.76rem;
+  line-height: 1.45;
+}
+
+.disclosureMark {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  flex: none;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--accent-ink);
+  font: 800 1rem/1 var(--font-mono), monospace;
+  transition: transform 0.16s ease;
+}
+
+.disclosure[open] .disclosureMark {
+  transform: rotate(45deg);
+}
+
+.disclosure[open] summary {
+  background: color-mix(in srgb, var(--accent) 8%, var(--panel));
+}
+
+.disclosureBody {
+  padding: 16px 17px 18px;
+  border-top: 1px solid var(--border);
+}
+
+.disclosureBody > p {
+  color: var(--text-dim);
+  font-size: 0.82rem;
+}
+
+.boundaryNote {
+  margin-top: 20px;
+  padding: 16px 18px;
+  border-left: 3px solid var(--accent);
+  background: var(--bg-tint);
+  color: var(--text-dim);
+  font-size: 0.84rem;
+}
+
+.releaseFigure {
+  margin: 0;
+}
+
+.releaseFlow {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.releaseFlow > li {
+  position: relative;
+  min-width: 0;
+}
+
+.releaseFlow > li::before {
+  content: attr(data-step);
+  display: block;
+  margin-bottom: 7px;
+  color: var(--accent-ink);
+  font: 750 0.64rem/1 var(--font-mono), monospace;
+}
+
+.releaseFlow > li:not(:last-child)::after {
+  content: '→';
+  position: absolute;
+  top: 50%;
+  right: -10px;
+  z-index: 2;
+  width: 8px;
+  color: var(--accent-ink);
+  font: 750 0.8rem/1 var(--font-mono), monospace;
+}
+
+.stageCard,
+.stageDisclosure {
+  height: calc(100% - 19px);
+  min-height: 182px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel);
+}
+
+.stageCard,
+.stageDisclosure summary {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 16px 14px;
+}
+
+.stageDisclosure summary {
+  min-height: 180px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.stageDisclosure[open] summary {
+  min-height: 0;
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--accent) 8%, var(--panel));
+}
+
+.stageDisclosure > p {
+  padding: 14px;
+  color: var(--text-dim);
+  font-size: 0.72rem;
+}
+
+.stageEyebrow {
+  color: var(--accent-ink);
+  font: 750 0.61rem/1.3 var(--font-mono), monospace;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.stageCard strong,
+.stageDisclosure strong {
+  display: block;
+  margin-top: 12px;
+  font-size: 0.88rem;
+  line-height: 1.3;
+}
+
+.stageCard small,
+.stageDisclosure small {
+  display: block;
+  margin-top: 8px;
+  color: var(--text-dim);
+  font-size: 0.69rem;
+  line-height: 1.45;
+}
+
+.stagePrompt {
+  margin-top: auto;
+  padding-top: 12px;
+  color: var(--accent-ink);
+  font: 700 0.61rem/1.3 var(--font-mono), monospace;
+}
+
+.conditionalStage .stageDisclosure {
+  border-style: dashed;
+  background: var(--bg-tint);
+}
+
+.releaseFigure figcaption {
+  max-width: 84ch;
+  margin-top: 18px;
+  color: var(--text-dim);
+  font-size: 0.78rem;
+}
+
+.releaseRule {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 20px;
+  align-items: center;
+  margin-top: 24px;
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-tint);
+}
+
+.releaseRule > span {
+  color: var(--accent-ink);
+  font: 750 0.66rem/1.2 var(--font-mono), monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.releaseRule p,
+.releaseRule a {
+  font-size: 0.78rem;
+}
+
+.releaseRule p {
+  color: var(--text-dim);
+}
+
+.releaseRule a {
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.dependencyList {
+  border-block: 1px solid var(--border);
+}
+
+.dependencyList .disclosure {
+  border: 0;
+  border-radius: 0;
+}
+
+.dependencyList .disclosure + .disclosure {
+  border-top: 1px solid var(--border);
+}
+
+.changeSteps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.changeSteps li {
+  min-height: 138px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel);
+}
+
+.changeSteps span {
+  color: var(--accent-ink);
+  font: 750 0.68rem/1 var(--font-mono), monospace;
+}
+
+.changeSteps p {
+  margin-top: 18px;
+  color: var(--text-dim);
+  font-size: 0.82rem;
+}
+
+.sourcePanel {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 34px;
+  margin-top: 30px;
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-tint);
+}
+
+.sourcePanel h3 {
+  margin-top: 7px;
+  font-size: 1.05rem;
+}
+
+.sourcePanel > div > p:last-child {
+  margin-top: 8px;
+  color: var(--text-dim);
+  font-size: 0.82rem;
+}
+
+.sourceLinks {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 18px;
+  align-content: start;
+}
+
+.sourceLinks a {
+  padding-bottom: 7px;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+@media (max-width: 960px) {
+  .releaseFlow {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .releaseFlow > li:nth-child(4)::after {
+    display: none;
+  }
+
+  .stageCard,
+  .stageDisclosure {
+    min-height: 160px;
+  }
+
+  .stageDisclosure summary {
+    min-height: 158px;
+  }
+
+  .changeSteps {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .pageShell {
+    padding: 54px 8px 72px;
+  }
+
+  .report {
+    border-radius: 12px;
+  }
+
+  .reportHeader,
+  .section {
+    padding-inline: 18px;
+  }
+
+  .reportHeader {
+    padding-top: 26px;
+  }
+
+  .kicker {
+    margin-top: 30px;
+  }
+
+  .reportHeader h1 {
+    font-size: 2.55rem;
+  }
+
+  .sourceNote {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .sourceNote a {
+    white-space: normal;
+  }
+
+  .sectionNav {
+    padding-inline: 12px;
+  }
+
+  .section {
+    padding-block: 44px;
+  }
+
+  .sectionHeading {
+    grid-template-columns: 32px minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .boundaryGrid,
+  .disclosureGrid,
+  .sourcePanel,
+  .sourceLinks,
+  .changeSteps {
+    grid-template-columns: 1fr;
+  }
+
+  .guaranteeStatement {
+    padding-block: 12px;
+    padding-left: 16px;
+  }
+
+  .releaseFlow {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .releaseFlow > li {
+    display: grid;
+    grid-template-columns: 30px minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .releaseFlow > li::before {
+    padding-top: 18px;
+  }
+
+  .releaseFlow > li:not(:last-child)::after {
+    content: '↓';
+    top: auto;
+    right: auto;
+    bottom: -9px;
+    left: 10px;
+  }
+
+  .releaseFlow > li:nth-child(4)::after {
+    display: block;
+  }
+
+  .stageCard,
+  .stageDisclosure {
+    min-height: 0;
+    height: auto;
+  }
+
+  .stageDisclosure summary {
+    min-height: 154px;
+  }
+
+  .stageCard {
+    min-height: 154px;
+  }
+
+  .releaseRule {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .releaseRule a {
+    white-space: normal;
+  }
+
+  .changeSteps li {
+    min-height: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :global(body)::before {
+    animation: none !important;
+  }
+
+  .report *,
+  .report *::before,
+  .report *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* Vertical journey revision -------------------------------------------------
+   The report has one route now. The original compact cards remain as the
+   component vocabulary; these rules give them distance, direction, and a
+   shared rail without changing the canonical content they carry. */
+
+.report {
+  width: min(1180px, 100%);
+  overflow: clip;
+}
+
+.journeyLayout {
+  position: relative;
+  display: block;
+  border-top: 1px solid var(--border);
+}
+
+.journeyNav {
+  position: sticky;
+  top: 12px;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: minmax(150px, 0.7fr) minmax(0, 2fr);
+  gap: 20px;
+  width: calc(100% - 32px);
+  align-items: center;
+  margin: 0 auto;
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--panel) 94%, transparent);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(16px);
+  transform: translateY(18px);
+}
+
+.journeyNavHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-right: 18px;
+  border-right: 1px solid var(--border);
+}
+
+.journeyNavHeader p,
+.journeyNavHeader span {
+  font-family: var(--font-mono), monospace;
+}
+
+.journeyNavHeader p {
+  max-width: none;
+  color: var(--text);
+  font-size: 0.69rem;
+  font-weight: 800;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.journeyNavHeader span {
+  color: var(--accent-ink);
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.journeyNavTrack {
+  position: absolute;
+  right: 16px;
+  bottom: -1px;
+  left: 16px;
+  height: 2px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--border);
+}
+
+.journeyNavTrack span {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc(var(--journey-progress) * 100%);
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width 0.18s linear;
+}
+
+.journeyNav ol {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.journeyNav a {
+  position: relative;
+  display: inline-flex;
+  gap: 8px;
+  min-height: 42px;
+  align-items: center;
+  padding: 0 11px;
+  border-radius: 999px;
+  color: var(--text-dim);
+  font: 700 0.69rem/1.25 var(--font-mono), monospace;
+}
+
+.journeyNav a::before {
+  display: none;
+}
+
+.journeyNav a span {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  padding-left: 0;
+  color: var(--text-dim);
+  font-size: 0.61rem;
+  transition:
+    color 0.3s ease,
+    transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.journeyNav a span::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border: 1.5px solid var(--accent);
+  border-radius: 50%;
+  opacity: 0;
+}
+
+.journeyNav a[data-reached='true'] span {
+  color: var(--accent-ink);
+  transform: scale(1.15);
+}
+
+.journeyNav a[data-reached='true'] span::after {
+  animation: journeyPing 0.6s ease-out;
+}
+
+.journeyNav a[aria-current='step'] {
+  background: color-mix(in srgb, var(--accent) 15%, var(--panel));
+  color: var(--text);
+}
+
+.journeyNav a:hover {
+  background: color-mix(in srgb, var(--accent) 22%, var(--panel));
+  color: var(--text);
+}
+
+@keyframes journeyPing {
+  0% {
+    opacity: 0.8;
+    transform: scale(0.6);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(2.2);
+  }
+}
+
+.journeyFinale {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transform-origin: top right;
+  animation: journeyPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.journeySpark {
+  font-size: 12px;
+}
+
+.journeyToast {
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--panel);
+  box-shadow: var(--shadow-sm);
+  color: var(--accent-ink);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.journeyCat {
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 50%;
+  animation: journeyCheer 0.9s ease-in-out 0.35s;
+}
+
+.journeyNav[data-done='true'] {
+  animation: journeyDock 0.7s ease;
+}
+
+@keyframes journeyPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.6) translateY(6px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes journeyCheer {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0);
+  }
+
+  30% {
+    transform: translateY(-4px) rotate(-8deg);
+  }
+
+  60% {
+    transform: translateY(-2px) rotate(6deg);
+  }
+}
+
+@keyframes journeyDock {
+  0%,
+  100% {
+    box-shadow: var(--shadow-md);
+  }
+
+  45% {
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 18%, transparent), var(--shadow-md);
+  }
+}
+
+.journeyRoute {
+  position: relative;
+  min-width: 0;
+}
+
+.journeyRoute::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 34px;
+  width: 2px;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    var(--border) 2%,
+    var(--accent) 52%,
+    var(--border) 94%,
+    transparent
+  );
+}
+
+.section {
+  position: relative;
+  min-height: 0;
+  padding: 92px clamp(28px, 5vw, 68px) 104px 68px;
+}
+
+.section + .section {
+  border-top: 0;
+}
+
+.section::before {
+  content: '';
+  position: absolute;
+  top: 127px;
+  left: 25px;
+  z-index: 1;
+  width: 20px;
+  height: 20px;
+  border: 5px solid var(--panel);
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow:
+    0 0 0 1px var(--accent-ink),
+    0 0 0 8px color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.section::after {
+  display: none;
+}
+
+.sectionHeading {
+  display: block;
+  margin-bottom: 30px;
+}
+
+.sectionHeading > p {
+  margin-bottom: 12px;
+  padding-top: 0;
+}
+
+.sectionHeading h2 {
+  font-size: clamp(1.8rem, 3vw, 2.55rem);
+}
+
+.sectionHeading div > p {
+  max-width: 66ch;
+  margin-top: 8px;
+  font-size: 1rem;
+}
+
+.guaranteeStatement {
+  max-width: 790px;
+  padding-block: 20px;
+  font-size: clamp(1.25rem, 2.5vw, 1.72rem);
+}
+
+.boundaryGrid {
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.boundaryPanel {
+  padding: 24px;
+  background: var(--panel);
+  box-shadow: var(--shadow-sm);
+}
+
+.nonGoals {
+  background: var(--panel);
+}
+
+.disclosureGrid {
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.disclosure summary {
+  min-height: 82px;
+  padding: 17px 19px;
+}
+
+.disclosure summary strong {
+  font-size: 1rem;
+}
+
+.disclosure summary small {
+  max-width: 70ch;
+  margin-top: 7px;
+  font-size: 0.82rem;
+}
+
+.disclosureBody {
+  padding: 18px 20px 21px;
+}
+
+.disclosureBody > p {
+  max-width: 72ch;
+  font-size: 0.88rem;
+}
+
+.boundaryNote {
+  margin-top: 22px;
+  padding: 17px 19px;
+  font-size: 0.89rem;
+}
+
+.releaseFlow {
+  position: relative;
+  display: block;
+  margin: 0;
+  padding: 34px 0 8px;
+}
+
+.releaseFlow::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  background: var(--border);
+  transform: translateX(-50%);
+}
+
+.releaseFlow > li {
+  position: relative;
+  display: block;
+  width: calc(50% - 54px);
+  min-height: 210px;
+  margin: 0 auto 64px 0;
+}
+
+.releaseFlow > li:nth-child(even),
+.releaseFlow > .conditionalStage {
+  margin-right: 0;
+  margin-left: auto;
+}
+
+.releaseFlow > li[data-route-stage='stabilization'] {
+  margin-right: auto;
+  margin-left: 0;
+}
+
+.releaseFlow > li::before {
+  display: none;
+}
+
+.releaseFlow > li:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 54px;
+  right: -54px;
+  width: 54px;
+  border-top: 1px solid var(--accent);
+}
+
+.releaseFlow > li:nth-child(even)::after,
+.releaseFlow > .conditionalStage::after {
+  right: auto;
+  left: -54px;
+}
+
+.releaseFlow > li[data-route-stage='stabilization']::after {
+  right: -54px;
+  left: auto;
+}
+
+.routeNode {
+  position: absolute;
+  top: 40px;
+  right: -69px;
+  z-index: 2;
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border: 2px solid var(--accent-ink);
+  border-radius: 50%;
+  background: var(--panel);
+  color: var(--accent-ink);
+  font: 800 0.62rem/1 var(--font-mono), monospace;
+  box-shadow: 0 0 0 7px color-mix(in srgb, var(--panel) 92%, transparent);
+}
+
+.releaseFlow > li:nth-child(even) .routeNode,
+.releaseFlow > .conditionalStage .routeNode {
+  right: auto;
+  left: -69px;
+}
+
+.releaseFlow > li[data-route-stage='stabilization'] .routeNode {
+  right: -69px;
+  left: auto;
+}
+
+.stageCard,
+.stageDisclosure {
+  min-height: 210px;
+  height: auto;
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
+}
+
+.stageCard,
+.stageDisclosure summary {
+  min-height: 210px;
+  padding: 23px;
+}
+
+.stageDisclosure[open] summary {
+  min-height: 0;
+}
+
+.stageDisclosure > p {
+  padding: 19px 23px 23px;
+  font-size: 0.8rem;
+}
+
+.stageCard strong,
+.stageDisclosure strong {
+  margin-top: 16px;
+  font-size: 1.2rem;
+}
+
+.stageCard small,
+.stageDisclosure small {
+  margin-top: 12px;
+  font-size: 0.8rem;
+  line-height: 1.55;
+}
+
+.nextRoute {
+  display: block;
+  margin-top: auto;
+  padding-top: 18px;
+  color: var(--text-dim);
+  font: 650 0.7rem/1.45 var(--font-mono), monospace;
+}
+
+.nextRoute b {
+  color: var(--accent-ink);
+  font-weight: 800;
+}
+
+.stagePrompt {
+  margin-top: 13px;
+  padding-top: 0;
+}
+
+.conditionalStage .stageDisclosure {
+  border: 2px dashed var(--accent);
+  background: color-mix(in srgb, var(--accent) 7%, var(--bg-tint));
+}
+
+.branchLabel,
+.rejoinLabel {
+  position: absolute;
+  left: 0;
+  color: var(--accent-ink);
+  font: 800 0.61rem/1.3 var(--font-mono), monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.branchLabel {
+  top: -27px;
+}
+
+.rejoinLabel {
+  bottom: -30px;
+}
+
+.releaseFigure figcaption {
+  margin-top: 2px;
+  padding: 18px 22px;
+  border-left: 3px solid var(--accent);
+  background: var(--bg-tint);
+  font-size: 0.84rem;
+}
+
+.releaseRule {
+  margin-top: 20px;
+  padding: 20px 22px;
+}
+
+.dependencyList {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  border-block: 0;
+}
+
+.dependencyList .disclosure {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.dependencyList .disclosure + .disclosure {
+  border-top: 1px solid var(--border);
+}
+
+.dependencyList .disclosure:nth-child(4) {
+  margin-left: 0;
+  border-style: dashed;
+  background: var(--bg-tint);
+}
+
+.changeSteps {
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.changeSteps li {
+  min-height: 146px;
+  padding: 21px;
+}
+
+.changeSteps p {
+  margin-top: 18px;
+  font-size: 0.9rem;
+}
+
+.sourcePanel {
+  margin-top: 28px;
+  padding: 26px;
+}
+
+.boundaryPanel,
+.disclosure,
+.stageCard,
+.stageDisclosure,
+.changeSteps li,
+.sourcePanel,
+.sourceNote {
+  box-shadow: var(--shadow-sm);
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease;
+}
+
+.boundaryPanel:hover,
+.disclosure:hover,
+.stageCard:hover,
+.stageDisclosure:hover,
+.changeSteps li:hover,
+.sourcePanel:hover,
+.sourceNote:hover {
+  border-color: color-mix(in srgb, var(--accent) 70%, var(--border));
+  box-shadow: var(--shadow-md);
+  background: color-mix(in srgb, var(--accent) 22%, var(--panel));
+}
+
+.disclosure:focus-within,
+.stageDisclosure:focus-within {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-md);
+}
+
+.journeyNav a:focus-visible,
+.disclosure summary:focus-visible,
+.stageDisclosure summary:focus-visible,
+.inlineLinks a:focus-visible,
+.sourceLinks a:focus-visible,
+.releaseRule a:focus-visible {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: 3px;
+}
+
+.inlineLinks a,
+.sourceLinks a,
+.releaseRule a {
+  transition: color 0.16s ease;
+}
+
+.inlineLinks a:hover,
+.sourceLinks a:hover,
+.releaseRule a:hover {
+  color: var(--text);
+}
+
+@media (min-width: 1360px) {
+  .journeyNav {
+    position: fixed;
+    top: 50%;
+    right: max(18px, calc((100vw - 1180px) / 2 - 178px));
+    display: block;
+    width: 160px;
+    margin: 0;
+    padding: 14px 12px;
+    border-radius: 18px;
+    transform: translateY(-50%);
+  }
+
+  .journeyNavHeader {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    padding: 0 2px 12px;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .journeyNavHeader p {
+    font-size: 0.59rem;
+    line-height: 1.35;
+  }
+
+  .journeyNavTrack {
+    top: 66px;
+    right: auto;
+    bottom: 18px;
+    left: 10px;
+    width: 2px;
+    height: auto;
+  }
+
+  .journeyNavTrack span {
+    inset: 0 0 auto;
+    width: 100%;
+    height: calc(var(--journey-progress) * 100%);
+    transition-property: height;
+  }
+
+  .journeyNav ol {
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 3px;
+    margin-top: 8px;
+    padding-left: 6px;
+  }
+
+  .journeyNav a {
+    display: flex;
+    width: 100%;
+    min-height: 42px;
+    gap: 7px;
+    padding: 0 9px;
+    border-radius: 10px;
+    font-size: 0.64rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .journeyNav {
+    grid-template-columns: minmax(130px, 0.6fr) minmax(0, 2fr);
+    gap: 10px;
+    width: calc(100% - 24px);
+    margin-inline: auto;
+    padding-inline: 12px;
+  }
+
+  .journeyNav a {
+    gap: 5px;
+    padding-inline: 7px;
+    font-size: 0.64rem;
+  }
+
+  .section {
+    padding-right: 34px;
+    padding-left: 68px;
+  }
+
+  .boundaryGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .journeyLayout {
+    display: block;
+  }
+
+  .journeyNav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 10px 14px 9px;
+    border-width: 0 0 1px;
+    border-radius: 0;
+    background: color-mix(in srgb, var(--panel) 94%, transparent);
+    transform: none;
+  }
+
+  .journeyFinale {
+    right: 14px;
+  }
+
+  .journeyNavHeader {
+    align-items: center;
+    padding-right: 0;
+    padding-bottom: 7px;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .journeyNavHeader p {
+    max-width: none;
+    font-size: 0.61rem;
+  }
+
+  .journeyNavTrack {
+    top: auto;
+    right: 14px;
+    bottom: 0;
+    left: 14px;
+    width: auto;
+    height: 2px;
+  }
+
+  .journeyNavTrack span {
+    width: calc(var(--journey-progress) * 100%);
+    height: 100%;
+    transition-property: width;
+  }
+
+  .journeyNav ol {
+    display: flex;
+    justify-content: flex-start;
+    gap: 2px;
+    margin-top: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .journeyNav ol::-webkit-scrollbar {
+    display: none;
+  }
+
+  .journeyNav li {
+    flex: none;
+  }
+
+  .journeyNav a {
+    display: inline-flex;
+    grid-template-columns: none;
+    gap: 6px;
+    min-height: 38px;
+    padding: 0 9px;
+    font-size: 0.63rem;
+  }
+
+  .journeyNav a::before {
+    display: none;
+  }
+
+  .journeyNav a span {
+    padding-left: 0;
+  }
+
+  .journeyNav a[aria-current='step'] {
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--accent) 15%, var(--panel));
+    color: var(--accent-ink);
+  }
+
+  .journeyRoute::before {
+    left: 25px;
+  }
+
+  .section {
+    min-height: 0;
+    padding: 72px 18px 88px 64px;
+  }
+
+  .section::before {
+    top: 101px;
+    left: 16px;
+  }
+
+  .section::after {
+    display: none;
+  }
+
+  .sectionHeading {
+    margin-bottom: 24px;
+  }
+
+  .sectionHeading > p {
+    padding-top: 0;
+  }
+
+  .sectionHeading h2 {
+    font-size: 1.72rem;
+  }
+
+  .boundaryPanel {
+    padding: 22px;
+  }
+
+  .disclosure summary {
+    min-height: 82px;
+    padding: 17px;
+  }
+
+  .releaseFlow {
+    padding-left: 0;
+  }
+
+  .releaseFlow::before {
+    left: 15px;
+  }
+
+  .releaseFlow > li,
+  .releaseFlow > li:nth-child(even),
+  .releaseFlow > .conditionalStage,
+  .releaseFlow > li[data-route-stage='stabilization'] {
+    display: block;
+    width: calc(100% - 50px);
+    min-height: 0;
+    margin: 0 0 54px 50px;
+  }
+
+  .releaseFlow > li:not(:last-child)::after,
+  .releaseFlow > li:nth-child(even)::after,
+  .releaseFlow > .conditionalStage::after,
+  .releaseFlow > li[data-route-stage='stabilization']::after {
+    top: 48px;
+    right: auto;
+    left: -35px;
+    width: 35px;
+  }
+
+  .routeNode,
+  .releaseFlow > li:nth-child(even) .routeNode,
+  .releaseFlow > .conditionalStage .routeNode,
+  .releaseFlow > li[data-route-stage='stabilization'] .routeNode {
+    top: 34px;
+    right: auto;
+    left: -50px;
+  }
+
+  .stageCard,
+  .stageDisclosure,
+  .stageDisclosure summary {
+    min-height: 196px;
+  }
+
+  .stageCard,
+  .stageDisclosure summary {
+    padding: 22px;
+  }
+
+  .branchLabel,
+  .rejoinLabel {
+    font-size: 0.57rem;
+  }
+
+  .dependencyList .disclosure:nth-child(4) {
+    margin-left: 0;
+  }
+
+  .disclosureGrid,
+  .dependencyList,
+  .changeSteps,
+  .sourcePanel,
+  .sourceLinks {
+    grid-template-columns: 1fr;
+  }
+
+  .changeSteps li {
+    min-height: 148px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .journeyNavTrack span,
+  .journeyNav a::before,
+  .boundaryPanel,
+  .disclosure,
+  .stageCard,
+  .stageDisclosure,
+  .changeSteps li,
+  .sourcePanel,
+  .sourceNote,
+  .inlineLinks a,
+  .sourceLinks a,
+  .releaseRule a {
+    transition: none !important;
+    transform: none !important;
+  }
+}
