@@ -32,7 +32,15 @@
   letter-spacing: .01em;
 }
 
-.eyebrow { margin-top: clamp(46px, 8vw, 92px); }
+.heroLead {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 250px;
+  gap: clamp(32px, 5vw, 64px);
+  align-items: end;
+  margin-top: clamp(30px, 3vw, 40px);
+}
+
+.eyebrow { margin: 0; }
 
 .hero h1 {
   max-width: 780px;
@@ -44,10 +52,35 @@
 }
 
 .introduction {
-  max-width: 740px;
+  max-width: 650px;
   margin-top: 26px;
   color: var(--text-dim);
   font-size: clamp(1rem, 2vw, 1.18rem);
+}
+
+.heroFacts {
+  display: grid;
+  gap: 15px;
+  margin: 0;
+  padding-left: 24px;
+  border-left: 1px solid var(--border);
+}
+
+.heroFacts div + div {
+  padding-top: 15px;
+  border-top: 1px solid var(--border);
+}
+
+.heroFacts dt {
+  color: var(--text-dim);
+  font-size: .72rem;
+}
+
+.heroFacts dd {
+  margin: 3px 0 0;
+  font-size: .9rem;
+  font-weight: 700;
+  line-height: 1.4;
 }
 
 .heroStatement {
@@ -422,6 +455,9 @@
 .resourceLinks a:hover { background: var(--bg-tint); }
 
 @media (max-width: 900px) {
+  .heroLead { grid-template-columns: 1fr; gap: 24px; }
+  .heroFacts { grid-template-columns: repeat(3, 1fr); padding: 20px 0 0; border-top: 1px solid var(--border); border-left: 0; }
+  .heroFacts div + div { padding: 0 0 0 15px; border-top: 0; border-left: 1px solid var(--border); }
   .heroStatement { grid-template-columns: 110px minmax(0, 1fr); }
   .heroStatement p { grid-column: 2; }
   .architectureGrid { grid-template-columns: 1fr; }
@@ -435,7 +471,8 @@
 @media (max-width: 680px) {
   .pageShell { width: min(100% - 16px, 1180px); padding-top: 52px; }
   .hero { padding: 26px 18px 34px; border-radius: 14px 14px 0 0; }
-  .eyebrow { margin-top: 44px; }
+  .heroLead { margin-top: 34px; }
+  .heroFacts { display: none; }
   .hero h1 { font-size: clamp(2.1rem, 9.6vw, 2.5rem); }
   .heroStatement { grid-template-columns: 1fr; gap: 9px; margin-top: 38px; }
   .heroStatement p { grid-column: auto; margin-top: 6px; }
