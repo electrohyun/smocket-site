@@ -15,10 +15,10 @@ describe('/case-study interactive report', () => {
     expect(markup).toContain('id="scenario"');
     expect(markup).toContain('id="results"');
     expect(markup.match(/class="[^\"]*sectionHeading/g)).toHaveLength(4);
-    expect(markup).toContain('The problem is the handoff, not the real server.');
-    expect(markup).toContain('Two architectures for two moments.');
-    expect(markup).toContain('One round across three real tabs.');
-    expect(markup).toContain('What the drawing-game run actually confirmed.');
+    expect(markup).toContain('The preview handoff');
+    expect(markup).toContain('Architecture by development stage');
+    expect(markup).toContain('A three-tab drawing round');
+    expect(markup).toContain('Drawing-game verification results');
   });
 
   it('separates Real Socket.IO and SharedWorker Smocket without ranking them', () => {
@@ -50,8 +50,8 @@ describe('/case-study interactive report', () => {
     }
     expect(markup).toContain(report.provenance.sourceCommit);
     expect(markup).toContain(report.provenance.command);
-    expect(markup).toContain('not Socket.IO-wide compatibility');
-    expect(markup).toContain('does not invent a fixed total');
+    expect(markup).toContain('Socket.IO-wide compatibility is outside this measurement');
+    expect(markup).toContain('stroke totals vary by gesture');
     expect(markup).not.toContain('28 + 212');
     expect(markup).not.toContain('Handwritten mock');
     expect(markup).not.toContain('mock-socket');

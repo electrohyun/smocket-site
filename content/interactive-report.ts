@@ -4,7 +4,7 @@ export const report = {
   eyebrow: 'Interactive report · August 2026',
   title: 'Build the multi-user UI before the backend is ready.',
   introduction:
-    'Smocket gives several same-origin browser tabs one in-browser server for frontend development. Real Socket.IO remains the path for integration, network, and production behavior.',
+    'Smocket gives same-origin browser tabs one in-browser server for frontend development. Use Socket.IO to verify integration, network, and production behavior.',
   thesis:
     'Verify real behavior with Socket.IO. Build multi-user UI and share static previews before the backend is ready with Smocket.',
   supportingLine: 'Multiple tabs, one in-browser Smocket server, no separate Socket.IO backend.',
@@ -16,28 +16,28 @@ export const report = {
   ],
   problem: {
     intro:
-      'When the event contract exists but the backend is still being built, frontend work needs a temporary place for the server-side event flow.',
+      'A shared event contract lets frontend work continue while the backend is being built. The server-side event flow needs a temporary runtime.',
     paths: [
       {
         id: 'real',
         label: 'Real Socket.IO',
-        title: 'Run the real server when you need real integration behavior.',
+        title: 'Use the real server for integration checks.',
         body:
-          'A small node:http process with Socket.IO is straightforward and is the right way to check transport, integration, and production behavior. It also brings a Node process, a listening port, and start/stop lifecycle alongside the frontend.',
+          'A node:http process with Socket.IO checks transport, integration, and production behavior. It runs beside the frontend with its own process, port, and lifecycle.',
       },
       {
         id: 'preview',
         label: 'Static preview gap',
-        title: 'A static PR Preview does not carry that backend with it.',
+        title: 'The frontend and real backend deploy separately.',
         body:
-          'A teammate can open a static preview URL, but the link alone cannot start a separate Socket.IO server environment. That environment needs its own setup or deployment.',
+          'A preview URL delivers the frontend. Sharing the complete experience also requires a separately configured or deployed Socket.IO server.',
       },
       {
         id: 'smocket',
         label: 'SharedWorker Smocket',
-        title: 'Keep the preview self-contained inside one browser profile.',
+        title: 'Run the preview server inside the browser.',
         body:
-          'Same-origin tabs connect through MessagePorts to one caller-owned SharedWorker running Smocket. The team can review a multi-user frontend flow from a static URL before the real backend is ready.',
+          'Same-origin tabs connect through MessagePorts to one SharedWorker running Smocket. A static URL can then carry the multi-user frontend flow while the backend is in progress.',
       },
     ],
   },
@@ -65,7 +65,7 @@ export const report = {
   ],
   scenario: {
     intro:
-      'The report explains the visible flow and its Socket.IO-shaped events. The existing demo owns the actual drawing and guessing experience.',
+      'Follow the visible flow and the Socket.IO-shaped events behind it. Continue to the demo for the drawing and guessing experience.',
     steps: [
       {
         id: 'connect',
@@ -92,7 +92,7 @@ export const report = {
         id: 'stroke',
         event: 'STROKE ×N',
         label: 'Draw in Player A',
-        experience: 'A draws once; the lines appear in B and C without echoing back to A.',
+        experience: 'A draws once. B and C receive the lines while A keeps its local drawing.',
         exchange: 'A emits stroke. socket.to(session) broadcasts each segment to the other two sockets.',
       },
       {
@@ -114,20 +114,20 @@ export const report = {
   results: [
     { id: 'clients', value: '3', label: 'browser pages', note: 'A, B, and C use distinct socket IDs.' },
     { id: 'room', value: '1', label: 'shared game session', note: 'All three pages observe the same room state.' },
-    { id: 'stroke-recipients', value: '2', label: 'stroke recipient tabs', note: "B and C receive A's stroke; A is excluded." },
-    { id: 'backend-process', value: '0', label: 'separate Socket.IO backends', note: 'The Smocket run still uses a web server to serve static assets.' },
-    { id: 'socket-port', value: '0', label: 'Socket.IO listening ports', note: 'No separate real-time backend port exists in the Smocket run.' },
+    { id: 'stroke-recipients', value: '2', label: 'stroke recipient tabs', note: 'The room broadcast reaches B and C.' },
+    { id: 'backend-process', value: '0', label: 'separate Socket.IO backends', note: 'Static assets remain served over HTTP.' },
+    { id: 'socket-port', value: '0', label: 'Socket.IO listening ports', note: 'Real-time messages travel through MessagePorts.' },
     { id: 'targets', value: '2/2', label: 'browser targets completed', note: 'Smocket and Real Socket.IO completed the same selected workflow.' },
   ],
   resultBoundary:
-    'These values describe the selected drawing-game run, not Socket.IO-wide compatibility. Stroke totals vary with the drawing gesture, so this report does not invent a fixed total.',
+    'These values cover the selected drawing-game workflow. Socket.IO-wide compatibility is outside this measurement. The board contains stable counts; stroke totals vary by gesture.',
   limits: [
     'The current automated browser result is desktop Chromium; other browser engines remain unverified.',
     'Tabs must share the same browser profile, origin, worker script URL, and worker name.',
-    'State is not shared with another browser, browser profile, origin, or device.',
-    'A Real Socket.IO path is still required for integration, transport, authentication, persistence, and production checks.',
-    'Only the documented SharedWorker facade and the selected drawing-game workflow are compared here.',
-    'This report does not claim complete Socket.IO API compatibility.',
+    'State stays within one browser profile and origin; each browser or device has its own state.',
+    'Real Socket.IO remains the verification path for integration, transport, authentication, persistence, and production.',
+    'Comparison scope: the documented SharedWorker facade and selected drawing-game workflow.',
+    'Compatibility coverage is limited to the documented API and selected workflow.',
     'When the SharedWorker terminates or restarts, its in-memory sockets, rooms, state, and pending acknowledgements are lost.',
   ],
   provenance: {

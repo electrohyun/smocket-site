@@ -42,7 +42,7 @@ describe('interactive report controls', () => {
     await user.click(stroke);
     expect(stroke).toHaveAttribute('aria-pressed', 'true');
     expect(screen.getByRole('heading', { name: 'Draw in Player A' })).toBeInTheDocument();
-    expect(screen.getByText(/without echoing back to A/)).toBeInTheDocument();
+    expect(screen.getByText(/A keeps its local drawing/)).toBeInTheDocument();
     expect(screen.getByText(/socket.to\(session\)/)).toBeInTheDocument();
   });
 });
