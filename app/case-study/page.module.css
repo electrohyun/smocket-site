@@ -28,20 +28,19 @@
 .eyebrow,
 .monoLabel {
   color: var(--accent-ink);
-  font: 750 .7rem/1.4 var(--font-mono), monospace;
-  letter-spacing: .1em;
-  text-transform: uppercase;
+  font: 700 .76rem/1.4 var(--font-sans);
+  letter-spacing: .01em;
 }
 
 .eyebrow { margin-top: clamp(46px, 8vw, 92px); }
 
 .hero h1 {
-  max-width: 840px;
-  margin-top: 12px;
-  font-size: clamp(2.7rem, 6.5vw, 5.8rem);
-  font-weight: 850;
-  letter-spacing: -.055em;
-  line-height: .98;
+  max-width: 780px;
+  margin-top: 14px;
+  font-size: clamp(2.25rem, 4vw, 3.6rem);
+  font-weight: 800;
+  letter-spacing: -.04em;
+  line-height: 1.06;
 }
 
 .introduction {
@@ -64,12 +63,16 @@
 .heroStatement > span,
 .problemGrid article > span,
 .architectureCard footer span,
-.serverNode span,
 .demoCallout > div > span {
   color: var(--accent-ink);
+  font: 700 .75rem/1.4 var(--font-sans);
+  letter-spacing: .01em;
+}
+
+.serverNode span {
+  color: var(--accent);
   font: 750 .66rem/1.4 var(--font-mono), monospace;
   letter-spacing: .08em;
-  text-transform: uppercase;
 }
 
 .heroStatement strong { font-size: 1.03rem; line-height: 1.55; }
@@ -120,6 +123,13 @@
 .sectionHeading {
   max-width: 800px;
   margin-bottom: 34px;
+}
+
+.sectionNumber {
+  display: block;
+  margin-bottom: 12px;
+  color: var(--accent-ink);
+  font: 700 .75rem/1 var(--font-sans);
 }
 
 .sectionHeading h2 {
@@ -242,7 +252,6 @@
   background: var(--code-bg);
   color: var(--code-text);
 }
-.serverNode span { color: var(--accent); }
 .serverNode strong { margin-top: 8px; font-size: .9rem; line-height: 1.35; }
 
 .architectureCard footer {
@@ -427,7 +436,7 @@
   .pageShell { width: min(100% - 16px, 1180px); padding-top: 52px; }
   .hero { padding: 26px 18px 34px; border-radius: 14px 14px 0 0; }
   .eyebrow { margin-top: 44px; }
-  .hero h1 { font-size: clamp(2.55rem, 13vw, 4rem); }
+  .hero h1 { font-size: clamp(2.1rem, 9.6vw, 2.5rem); }
   .heroStatement { grid-template-columns: 1fr; gap: 9px; margin-top: 38px; }
   .heroStatement p { grid-column: auto; margin-top: 6px; }
   .reportNav { position: static; grid-template-columns: repeat(2, 1fr); }

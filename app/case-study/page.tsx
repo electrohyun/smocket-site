@@ -6,9 +6,10 @@ import ArchitectureComparison from './components/ArchitectureComparison';
 import ScenarioStepper from './components/ScenarioStepper';
 import styles from './page.module.css';
 
-function SectionHeading({ id, title, body }: { id: string; title: string; body: string }) {
+function SectionHeading({ id, number, title, body }: { id: string; number: string; title: string; body: string }) {
   return (
     <header className={styles.sectionHeading}>
+      <span className={styles.sectionNumber}>{number}</span>
       <h2 id={`${id}-title`}>{title}</h2>
       <p>{body}</p>
     </header>
@@ -30,7 +31,7 @@ export default function CaseStudyPage() {
           <h1>{report.title}</h1>
           <p className={styles.introduction}>{report.introduction}</p>
           <div className={styles.heroStatement}>
-            <span>WHEN TO USE EACH</span><strong>{report.thesis}</strong><p>{report.supportingLine}</p>
+            <span>Usage guide</span><strong>{report.thesis}</strong><p>{report.supportingLine}</p>
           </div>
         </header>
 
@@ -42,7 +43,7 @@ export default function CaseStudyPage() {
 
         <article className={styles.report}>
           <section id="problem" className={styles.section} aria-labelledby="problem-title">
-            <SectionHeading id="problem" title="The preview handoff" body={report.problem.intro} />
+            <SectionHeading id="problem" number="01" title="The preview handoff" body={report.problem.intro} />
             <div className={styles.problemGrid}>
               {report.problem.paths.map((path) => (
                 <article key={path.id}><span>{path.label}</span><h3>{path.title}</h3><p>{path.body}</p></article>
@@ -51,21 +52,21 @@ export default function CaseStudyPage() {
           </section>
 
           <section id="architecture" className={styles.section} aria-labelledby="architecture-title">
-            <SectionHeading id="architecture" title="Architecture by development stage" body="Select a path to see where the connection ends and what it verifies." />
+            <SectionHeading id="architecture" number="02" title="Architecture by development stage" body="Select a path to see where the connection ends and what it verifies." />
             <ArchitectureComparison />
           </section>
 
           <section id="scenario" className={styles.section} aria-labelledby="scenario-title">
-            <SectionHeading id="scenario" title="A three-tab drawing round" body={report.scenario.intro} />
+            <SectionHeading id="scenario" number="03" title="A three-tab drawing round" body={report.scenario.intro} />
             <ScenarioStepper />
             <div className={styles.demoCallout}>
-              <div><span>LIVE EXPERIENCE</span><strong>Draw in A. Guess in B or C. See the same result in all three.</strong><p>The demo opens a fresh session and asks you to open each additional player with a separate click.</p></div>
+              <div><span>Live demo</span><strong>Draw in A. Guess in B or C. See the same result in all three.</strong><p>The demo opens a fresh session and asks you to open each additional player with a separate click.</p></div>
               <a href="/demo/multi" target="_blank" rel="noreferrer">Open the 3-tab demo <span aria-hidden="true">↗</span></a>
             </div>
           </section>
 
           <section id="results" className={styles.section} aria-labelledby="results-title">
-            <SectionHeading id="results" title="Drawing-game verification results" body="The board shows reproducible observations from the selected browser workflow and its scope." />
+            <SectionHeading id="results" number="04" title="Drawing-game verification results" body="The board shows reproducible observations from the selected browser workflow and its scope." />
             <div className={styles.resultBoard}>
               {report.results.map((result) => (
                 <article key={result.id}><strong>{result.value}</strong><span>{result.label}</span><p>{result.note}</p></article>
@@ -74,12 +75,12 @@ export default function CaseStudyPage() {
             <p className={styles.resultBoundary}>{report.resultBoundary}</p>
 
             <div className={styles.limitGrid}>
-              <div><span className={styles.monoLabel}>SUPPORT BOUNDARY</span><h3>One browser profile, one origin, in-memory state.</h3></div>
+              <div><span className={styles.monoLabel}>Scope</span><h3>One browser profile, one origin, in-memory state.</h3></div>
               <ul>{report.limits.map((limit) => <li key={limit}>{limit}</li>)}</ul>
             </div>
 
             <aside className={styles.provenance} aria-label="Result provenance">
-              <div><span className={styles.monoLabel}>REPRODUCIBLE SOURCE</span><h3>Smocket {report.provenance.packageVersion} · {report.provenance.verifiedOn}</h3><p>{report.provenance.outcome}</p></div>
+              <div><span className={styles.monoLabel}>Source and reproduction</span><h3>Smocket {report.provenance.packageVersion} · {report.provenance.verifiedOn}</h3><p>{report.provenance.outcome}</p></div>
               <dl>
                 <div><dt>Commit</dt><dd><code>{report.provenance.sourceCommit}</code></dd></div>
                 <div><dt>Command</dt><dd><code>{report.provenance.command}</code></dd></div>

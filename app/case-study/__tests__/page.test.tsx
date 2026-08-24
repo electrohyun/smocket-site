@@ -15,6 +15,8 @@ describe('/case-study interactive report', () => {
     expect(markup).toContain('id="scenario"');
     expect(markup).toContain('id="results"');
     expect(markup.match(/class="[^\"]*sectionHeading/g)).toHaveLength(4);
+    expect(markup.match(/class="[^\"]*sectionNumber/g)).toHaveLength(4);
+    expect(markup).toContain('Smocket SharedWorker: a three-tab report');
     expect(markup).toContain('The preview handoff');
     expect(markup).toContain('Architecture by development stage');
     expect(markup).toContain('A three-tab drawing round');
