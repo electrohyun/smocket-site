@@ -6,11 +6,11 @@ import ArchitectureComparison from './components/ArchitectureComparison';
 import ScenarioStepper from './components/ScenarioStepper';
 import styles from './page.module.css';
 
-function SectionHeading({ id, number, title, body }: { id: string; number: string; title: string; body: string }) {
+function SectionHeading({ id, title, body }: { id: string; title: string; body: string }) {
   return (
     <header className={styles.sectionHeading}>
-      <span>{number}</span>
-      <div><h2 id={`${id}-title`}>{title}</h2><p>{body}</p></div>
+      <h2 id={`${id}-title`}>{title}</h2>
+      <p>{body}</p>
     </header>
   );
 }
@@ -30,7 +30,7 @@ export default function CaseStudyPage() {
           <h1>{report.title}</h1>
           <p className={styles.introduction}>{report.introduction}</p>
           <div className={styles.heroStatement}>
-            <span>THE ROLE SPLIT</span><strong>{report.thesis}</strong><p>{report.supportingLine}</p>
+            <span>WHEN TO USE EACH</span><strong>{report.thesis}</strong><p>{report.supportingLine}</p>
           </div>
         </header>
 
@@ -42,22 +42,21 @@ export default function CaseStudyPage() {
 
         <article className={styles.report}>
           <section id="problem" className={styles.section} aria-labelledby="problem-title">
-            <SectionHeading id="problem" number="01" title="The problem is the handoff, not the real server." body={report.problem.intro} />
+            <SectionHeading id="problem" title="The preview handoff" body={report.problem.intro} />
             <div className={styles.problemGrid}>
               {report.problem.paths.map((path) => (
                 <article key={path.id}><span>{path.label}</span><h3>{path.title}</h3><p>{path.body}</p></article>
               ))}
             </div>
-            <blockquote>{report.thesis}</blockquote>
           </section>
 
           <section id="architecture" className={styles.section} aria-labelledby="architecture-title">
-            <SectionHeading id="architecture" number="02" title="Two architectures for two moments." body="Inspect either path, then compare where the connection ends and what that path is meant to verify." />
+            <SectionHeading id="architecture" title="Architecture by development stage" body="Select a path to see where the connection ends and what it verifies." />
             <ArchitectureComparison />
           </section>
 
           <section id="scenario" className={styles.section} aria-labelledby="scenario-title">
-            <SectionHeading id="scenario" number="03" title="One round across three real tabs." body={report.scenario.intro} />
+            <SectionHeading id="scenario" title="A three-tab drawing round" body={report.scenario.intro} />
             <ScenarioStepper />
             <div className={styles.demoCallout}>
               <div><span>LIVE EXPERIENCE</span><strong>Draw in A. Guess in B or C. See the same result in all three.</strong><p>The demo opens a fresh session and asks you to open each additional player with a separate click.</p></div>
@@ -66,7 +65,7 @@ export default function CaseStudyPage() {
           </section>
 
           <section id="results" className={styles.section} aria-labelledby="results-title">
-            <SectionHeading id="results" number="04" title="What the drawing-game run actually confirmed." body="The board reports stable observations from the selected browser workflow, then states the boundary in the same view." />
+            <SectionHeading id="results" title="Drawing-game verification results" body="The board shows reproducible observations from the selected browser workflow and its scope." />
             <div className={styles.resultBoard}>
               {report.results.map((result) => (
                 <article key={result.id}><strong>{result.value}</strong><span>{result.label}</span><p>{result.note}</p></article>

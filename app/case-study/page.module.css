@@ -8,7 +8,7 @@
   padding: clamp(28px, 6vw, 72px);
   overflow: hidden;
   border: 1px solid var(--border);
-  border-radius: 24px 24px 0 0;
+  border-radius: 18px 18px 0 0;
   background:
     radial-gradient(circle at 92% 12%, color-mix(in srgb, var(--accent) 25%, transparent), transparent 30%),
     color-mix(in srgb, var(--panel) 95%, transparent);
@@ -36,12 +36,12 @@
 .eyebrow { margin-top: clamp(46px, 8vw, 92px); }
 
 .hero h1 {
-  max-width: 900px;
+  max-width: 840px;
   margin-top: 12px;
-  font-size: clamp(2.7rem, 7vw, 6.5rem);
-  font-weight: 880;
-  letter-spacing: -.065em;
-  line-height: .95;
+  font-size: clamp(2.7rem, 6.5vw, 5.8rem);
+  font-weight: 850;
+  letter-spacing: -.055em;
+  line-height: .98;
 }
 
 .introduction {
@@ -58,7 +58,7 @@
   align-items: start;
   margin-top: clamp(38px, 6vw, 70px);
   padding-top: 22px;
-  border-top: 2px solid var(--text);
+  border-top: 1px solid var(--border);
 }
 
 .heroStatement > span,
@@ -105,7 +105,7 @@
   overflow: hidden;
   border: 1px solid var(--border);
   border-top: 0;
-  border-radius: 0 0 24px 24px;
+  border-radius: 0 0 18px 18px;
   background: color-mix(in srgb, var(--panel) 96%, transparent);
   box-shadow: var(--shadow-md);
 }
@@ -118,23 +118,14 @@
 .section + .section { border-top: 1px solid var(--border); }
 
 .sectionHeading {
-  display: grid;
-  grid-template-columns: 52px minmax(0, 1fr);
-  gap: 18px;
-  margin-bottom: 38px;
-}
-
-.sectionHeading > span {
-  padding-top: 8px;
-  color: var(--accent-ink);
-  font: 800 .72rem/1 var(--font-mono), monospace;
+  max-width: 800px;
+  margin-bottom: 34px;
 }
 
 .sectionHeading h2 {
-  max-width: 800px;
-  font-size: clamp(1.9rem, 4vw, 3.4rem);
-  letter-spacing: -.045em;
-  line-height: 1.04;
+  font-size: clamp(1.9rem, 3.6vw, 3rem);
+  letter-spacing: -.038em;
+  line-height: 1.08;
 }
 
 .sectionHeading p {
@@ -156,17 +147,6 @@
 .problemGrid article:nth-child(2) { background: var(--bg-tint); }
 .problemGrid h3 { margin-top: 18px; font-size: 1.12rem; line-height: 1.28; }
 .problemGrid p { margin-top: 12px; color: var(--text-dim); font-size: .9rem; }
-
-.section blockquote {
-  margin: 26px 0 0;
-  padding: 22px 24px;
-  border: 1px solid var(--accent);
-  border-left-width: 4px;
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--accent) 9%, var(--panel));
-  font-size: clamp(1rem, 2vw, 1.24rem);
-  font-weight: 750;
-}
 
 .architectureTabs,
 .eventTimeline {
@@ -214,14 +194,13 @@
   border: 1px solid var(--border);
   border-radius: 14px;
   background: var(--bg-tint);
-  opacity: .7;
-  transition: opacity .2s ease, border-color .2s ease, transform .2s ease;
+  opacity: .78;
+  transition: opacity .2s ease, border-color .2s ease;
 }
 
 .architectureCard[data-selected='true'] {
   border-color: var(--accent);
   opacity: 1;
-  transform: translateY(-2px);
 }
 
 .browserStack { display: grid; gap: 12px; padding-left: 18px; }
@@ -456,7 +435,6 @@
   .reportNav a:nth-child(4) { border-top: 1px solid var(--border); }
   .report { border-radius: 0 0 14px 14px; }
   .section { padding: 48px 18px; scroll-margin-top: 12px; }
-  .sectionHeading { grid-template-columns: 34px minmax(0, 1fr); gap: 8px; }
   .sectionHeading h2 { font-size: 2rem; }
   .problemGrid { grid-template-columns: 1fr; }
   .problemGrid article + article { border-left: 0; border-top: 1px solid var(--border); }
