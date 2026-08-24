@@ -13,7 +13,7 @@ export const hero = {
   h1Accent: 'without a server.',
   sub: "smocket reimplements socket.io's rooms, broadcasts, and acknowledgements in memory — and every release is verified against the real library.",
   tagline: 'Sweet setup, rocket speed.',
-  chips: ['v0.4.1', 'dual-run CI', 'browser-tested'],
+  chips: ['v0.5.1', 'dual-run CI', 'browser-tested'],
   ctas: [
     { label: 'Read the docs', href: `${REPO_URL}#readme`, primary: true },
     { label: 'View on GitHub', href: REPO_URL, primary: false },
@@ -242,7 +242,7 @@ export const footer = {
   id: 'footer',
   tagline: 'Sweet setup, rocket speed.',
   links: [
-    { label: 'Docs', href: `${REPO_URL}#readme`, todo: null },
+    { label: 'Docs', href: '/docs', todo: null },
     { label: 'Interactive report', href: '/case-study', todo: null },
     { label: 'GitHub', href: REPO_URL, todo: null },
     { label: 'npm', href: 'https://www.npmjs.com/package/smocket', todo: null },
