@@ -2,9 +2,9 @@ const SMOCKET_REPOSITORY = 'https://github.com/electrohyun/smocket';
 
 export const report = {
   eyebrow: 'Interactive report · August 2026',
-  title: 'Build the multi-user UI before the backend is ready.',
+  title: 'Smocket SharedWorker: a three-tab report',
   introduction:
-    'Smocket gives same-origin browser tabs one in-browser server for frontend development. Use Socket.IO to verify integration, network, and production behavior.',
+    'An interactive report on frontend previews, event flow, and the boundary with real Socket.IO.',
   thesis:
     'Verify real behavior with Socket.IO. Build multi-user UI and share static previews before the backend is ready with Smocket.',
   supportingLine: 'Multiple tabs, one in-browser Smocket server, no separate Socket.IO backend.',

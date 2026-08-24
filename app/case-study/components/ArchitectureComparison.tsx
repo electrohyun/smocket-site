@@ -28,7 +28,7 @@ export default function ArchitectureComparison() {
               <span>{architecture.id === 'socket-io' ? 'NODE SERVER' : 'BROWSER WORKER'}</span>
               <strong>{architecture.title}</strong>
             </div>
-            <footer><span>ROLE</span><strong>{architecture.role}</strong></footer>
+            <footer><span>Role</span><strong>{architecture.role}</strong></footer>
           </article>
         ))}
       </div>
