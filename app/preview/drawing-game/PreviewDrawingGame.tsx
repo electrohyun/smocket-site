@@ -23,7 +23,7 @@ import type {
 import PreviewTargetBadge from './PreviewTargetBadge';
 
 const BUBBLE_MS = 3400;
-const JOIN_WAIT_MS = 1500;
+const WORKER_BOOTSTRAP_WAIT_MS = 1500;
 
 function seatForPlayer(player: PlayerLabel): MultiSeat {
   return player === 'A' ? 1 : player === 'B' ? 2 : 3;
@@ -65,7 +65,7 @@ function admissionMessage(result: JoinResult | null): string | null {
   return 'This player link is invalid.';
 }
 
-class HandlerUnavailableError extends Error {}
+class WorkerBootstrapUnavailableError extends Error {}
 
 export default function PreviewDrawingGame({
   session,
@@ -88,7 +88,7 @@ export default function PreviewDrawingGame({
   const [bubbles, setBubbles] = useState<Partial<Record<Label, string>>>({});
   const [receivedStrokes, setReceivedStrokes] = useState(0);
   const [connectionError, setConnectionError] = useState<string | null>(null);
-  const [handlerMissing, setHandlerMissing] = useState(false);
+  const [workerBootstrapMissing, setWorkerBootstrapMissing] = useState(false);
   const socketRef = useRef<GameClient | null>(null);
   const canvasRef = useRef<CanvasHandle>(null);
   const bubbleTimers = useRef<Partial<Record<Label, number>>>({});
@@ -130,17 +130,20 @@ export default function PreviewDrawingGame({
         const result = await Promise.race([
           socket.emitWithAck('join', session),
           new Promise<never>((_, reject) => {
-            timer = window.setTimeout(() => reject(new HandlerUnavailableError()), JOIN_WAIT_MS);
+            timer = window.setTimeout(
+              () => reject(new WorkerBootstrapUnavailableError()),
+              WORKER_BOOTSTRAP_WAIT_MS,
+            );
           }),
         ]);
         if (!live) return;
         trace.ack(player, result);
         setAdmission(result);
-        setHandlerMissing(false);
+        setWorkerBootstrapMissing(false);
       } catch (error) {
         if (!live) return;
-        if (error instanceof HandlerUnavailableError) {
-          setHandlerMissing(true);
+        if (error instanceof WorkerBootstrapUnavailableError) {
+          setWorkerBootstrapMissing(true);
         } else {
           const message = error instanceof Error ? error.message : String(error);
           trace.lifecycle(`${player} join failed · ${message}`);
@@ -275,7 +278,7 @@ export default function PreviewDrawingGame({
     setGuessAck('idle');
     setReceivedStrokes(0);
     setConnectionError(null);
-    setHandlerMissing(false);
+    setWorkerBootstrapMissing(false);
     setConnectionKey((key) => key + 1);
   };
 
@@ -300,9 +303,9 @@ export default function PreviewDrawingGame({
       canvasKey={connectionKey}
       canvasRef={canvasRef}
       trace={trace}
-      waitingTitle={handlerMissing ? 'Live-coded handler not connected' : undefined}
-      waitingDetail={handlerMissing
-        ? 'The page and SharedWorker are ready. Add the game handler to connect A, B, and C.'
+      waitingTitle={workerBootstrapMissing ? 'SharedWorker server not connected' : undefined}
+      waitingDetail={workerBootstrapMissing
+        ? 'Create the Smocket server, register the game handlers, and attach the SharedWorker port.'
         : undefined}
       onStroke={sendStroke}
       onSubmit={(event) => void submitGuess(event)}

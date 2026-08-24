@@ -5,7 +5,7 @@ import { PREVIEW_WORKER_VERSION_KEY } from './page-connection';
 
 const CHECK_MS = 1000;
 
-/** Recording-only dev aid: a changed handler gets a fresh worker name in every open tab. */
+/** Recording-only dev aid: changed worker code gets a fresh worker name in every open tab. */
 export function useHandlerReload(): void {
   useEffect(() => {
     if (process.env.NODE_ENV !== 'development') return;
