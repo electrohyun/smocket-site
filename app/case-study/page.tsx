@@ -27,9 +27,18 @@ export default function CaseStudyPage() {
           <Link className={styles.brand} href="/" aria-label="Smocket home">
             <img src="/cat.webp" alt="" width="46" height="46" /><span>smocket</span>
           </Link>
-          <p className={styles.eyebrow}>{report.eyebrow}</p>
-          <h1>{report.title}</h1>
-          <p className={styles.introduction}>{report.introduction}</p>
+          <div className={styles.heroLead}>
+            <div className={styles.heroCopy}>
+              <p className={styles.eyebrow}>{report.eyebrow}</p>
+              <h1>{report.title}</h1>
+              <p className={styles.introduction}>{report.introduction}</p>
+            </div>
+            <dl className={styles.heroFacts} aria-label="Report scope">
+              {report.coverFacts.map((fact) => (
+                <div key={fact.label}><dt>{fact.label}</dt><dd>{fact.value}</dd></div>
+              ))}
+            </dl>
+          </div>
           <div className={styles.heroStatement}>
             <span>Usage guide</span><strong>{report.thesis}</strong><p>{report.supportingLine}</p>
           </div>

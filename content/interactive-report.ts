@@ -8,6 +8,11 @@ export const report = {
   thesis:
     'Verify real behavior with Socket.IO. Build multi-user UI and share static previews before the backend is ready with Smocket.',
   supportingLine: 'Multiple tabs, one in-browser Smocket server, no separate Socket.IO backend.',
+  coverFacts: [
+    { label: 'Scope', value: 'Three same-origin browser tabs' },
+    { label: 'Runtime', value: 'SharedWorker + Smocket' },
+    { label: 'Reference', value: 'Real Socket.IO' },
+  ],
   navigation: [
     { number: '01', label: 'The preview gap', href: '#problem' },
     { number: '02', label: 'Two architectures', href: '#architecture' },
