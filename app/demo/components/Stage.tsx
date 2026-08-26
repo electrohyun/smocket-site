@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import DrawerView from './DrawerView';
 import ObserverView from './ObserverView';
 import SituationPanel from './SituationPanel';
@@ -12,9 +12,7 @@ import ModeSelector from './ModeSelector';
  * the registry, the previous round disposed in its teardown) that stage 3 verified.
  *
  * The word toggle and B's delay live here because the panel outlives a single
- * view; the observer reads them as props. Sound is muted by default and its asset
- * is loaded only on the first unmute (`preload="none"`), so a silent visit makes
- * no request the network tab has to explain (기획 §8). */
+ * view; the observer reads them as props. */
 
 type Viewpoint = 'drawer' | 'observer';
 
@@ -30,16 +28,6 @@ export default function Stage({
   const [viewpoint, setViewpoint] = useState<Viewpoint>(initial);
   const [revealed, setRevealed] = useState(false);
   const [delayMs, setDelayMs] = useState(initialDelay);
-  const [muted, setMuted] = useState(true);
-
-  const audioRef = useRef<HTMLAudioElement>(null);
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    if (muted) audio.pause();
-    else void audio.play().catch(() => {});
-  }, [muted]);
-
   return (
     <>
       <ModeSelector active="single" />
@@ -56,11 +44,7 @@ export default function Stage({
         onReveal={setRevealed}
         delayMs={delayMs}
         onDelay={setDelayMs}
-        muted={muted}
-        onMute={setMuted}
       />
-
-      <audio ref={audioRef} loop preload="none" src="/ambient.mp3" />
     </>
   );
 }
