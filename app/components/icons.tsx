@@ -29,24 +29,6 @@ export const EyeOffIcon = (
   </>
 );
 
-/** Sound is playing. */
-export const SoundOnIcon = (
-  <>
-    <path d="M4 9.3h3.3L12 5.2v13.6L7.3 14.7H4z" fill="currentColor" />
-    <path d="M15.6 9.3a4 4 0 0 1 0 5.4" />
-    <path d="M18.3 6.7a8 8 0 0 1 0 10.6" />
-  </>
-);
-
-/** Muted, which is how a visit starts. */
-export const SoundOffIcon = (
-  <>
-    <path d="M4 9.3h3.3L12 5.2v13.6L7.3 14.7H4z" fill="currentColor" />
-    <path d="m16.2 9.8 5 4.4" />
-    <path d="m21.2 9.8-5 4.4" />
-  </>
-);
-
 /** Take the pen — the drawer's seat. */
 export const PencilIcon = (
   <>

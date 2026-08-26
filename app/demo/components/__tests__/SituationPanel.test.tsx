@@ -16,8 +16,6 @@ function renderPanel(viewpoint: 'drawer' | 'observer' = 'drawer') {
     onReveal: vi.fn(),
     delayMs: 0,
     onDelay: vi.fn(),
-    muted: true,
-    onMute: vi.fn(),
   };
   render(<SituationPanel {...props} />);
   return props;
@@ -33,14 +31,13 @@ describe('Single tab controls', () => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
-  it('keeps the drawer viewpoint and sound controls working', async () => {
+  it('keeps the drawer viewpoint switch working without a dead sound control', async () => {
     const user = userEvent.setup();
     const props = renderPanel('drawer');
 
-    await user.click(screen.getByRole('button', { name: 'turn the sound on' }));
+    expect(screen.queryByRole('button', { name: /sound/i })).not.toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'switch to the observer' }));
 
-    expect(props.onMute).toHaveBeenCalledWith(false);
     expect(props.onSwitch).toHaveBeenCalledOnce();
   });
 

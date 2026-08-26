@@ -1,14 +1,7 @@
 'use client';
 
 import IconButton from '@/app/components/IconButton';
-import {
-  ClockIcon,
-  EyeIcon,
-  EyeOffIcon,
-  PencilIcon,
-  SoundOffIcon,
-  SoundOnIcon,
-} from '@/app/components/icons';
+import { ClockIcon, EyeIcon, EyeOffIcon, PencilIcon } from '@/app/components/icons';
 import styles from './SituationPanel.module.css';
 
 type Viewpoint = 'drawer' | 'observer';
@@ -20,8 +13,6 @@ interface Props {
   onReveal: (value: boolean) => void;
   delayMs: number;
   onDelay: (ms: number) => void;
-  muted: boolean;
-  onMute: (value: boolean) => void;
 }
 
 export default function SituationPanel({
@@ -31,8 +22,6 @@ export default function SituationPanel({
   onReveal,
   delayMs,
   onDelay,
-  muted,
-  onMute,
 }: Props) {
   const observing = viewpoint === 'observer';
 
@@ -71,14 +60,6 @@ export default function SituationPanel({
           </div>
         </>
       )}
-
-      <IconButton
-        icon={muted ? SoundOffIcon : SoundOnIcon}
-        label="sound"
-        title={muted ? 'turn the sound on' : 'turn the sound off'}
-        pressed={!muted}
-        onClick={() => onMute(!muted)}
-      />
 
       <IconButton
         icon={observing ? PencilIcon : EyeIcon}
