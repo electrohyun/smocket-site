@@ -9,9 +9,9 @@ export const hero = {
     src: '/cat.webp',
     alt: 'smocket mascot: a cool cat wearing sunglasses',
   },
-  h1: 'Test socket.io without a server.',
+  h1: 'Test Socket.IO without a server.',
   h1Accent: 'without a server.',
-  sub: "smocket reimplements socket.io's rooms, broadcasts, and acknowledgements in memory — and every release is verified against the real library.",
+  sub: "smocket reimplements Socket.IO's rooms, broadcasts, and acknowledgements in memory — and every release is verified against the real library.",
   tagline: 'Sweet setup, rocket speed.',
   chips: ['v0.5.1', 'dual-run CI', 'browser-tested'],
   ctas: [
@@ -28,7 +28,7 @@ export const hero = {
 export const trace = {
   id: 'trace',
   title: 'See who received what.',
-  desc: 'Rooms, exclusions, and targeted emits resolve exactly the way socket.io resolves them. Here is the delivery record.',
+  desc: 'Rooms, exclusions, and targeted emits follow the supported delivery semantics verified against Socket.IO. Here is the delivery record.',
   sockets: [
     { label: 'A' },
     { label: 'B' },
@@ -110,7 +110,7 @@ const c = connect('http://localhost:3000');`,
 
 export const features = {
   id: 'features',
-  title: 'Built to behave like socket.io.',
+  title: 'Built around Socket.IO behavior.',
   cards: [
     {
       title: 'Delivery fidelity',
@@ -118,7 +118,7 @@ export const features = {
     },
     {
       title: 'Checked against the real thing',
-      body: 'Every test runs twice: once against socket.io, once against smocket. A behavioural difference turns CI red.',
+      body: 'Oracle-backed conformance cases run against both Socket.IO and smocket. Browser, SharedWorker, and packaging checks cover smocket-specific behavior.',
     },
     {
       title: 'No server, no ports',
@@ -137,7 +137,7 @@ export const demo = {
   /* The delivery record is the section above this one's argument; saying it twice
      would make the demo a second Trace. What this section has that Trace does not
      is the other two people — so the copy is about them. */
-  desc: 'One person draws. The other two watch the lines arrive and say what they think it is. Every stroke and every guess is a socket.io event, routed here in the page.',
+  desc: 'One person draws. The other two watch the lines arrive and say what they think it is. Every stroke and every guess is a Socket.IO event, routed here in the page.',
   href: '/demo',
   cta: 'Take the pen',
   preview: {
@@ -163,7 +163,7 @@ export const quickstart = {
     {
       n: 1,
       title: 'Install',
-      code: 'npm install -D smocket',
+      code: 'npm install -D smocket smocket-client',
       isTodo: false,
     },
     {
@@ -174,7 +174,7 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   resolve: {
-    alias: { 'socket.io-client': 'smocket' },
+    alias: { 'socket.io-client': 'smocket-client' },
   },
 });`,
       isTodo: false,
