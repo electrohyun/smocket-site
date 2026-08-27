@@ -5,5 +5,5 @@ allowBuilds:
   sharp: false
   unrs-resolver: false
 minimumReleaseAgeExclude:
-  - smocket-client@0.5.1
-  - smocket@0.5.1
+  - smocket-client@1.0.0
+  - smocket@1.0.0
