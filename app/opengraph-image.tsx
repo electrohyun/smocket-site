@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { hero } from '@/content/landing';
 
-export const alt = 'smocket · Test socket.io without a server.';
+export const alt = `smocket · ${hero.h1}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 

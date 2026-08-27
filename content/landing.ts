@@ -2,6 +2,8 @@ export const REPO_URL = 'https://github.com/electrohyun/smocket';
 
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://smocket-site.vercel.app';
 
+export const SMOCKET_VERSION = '1.0.0';
+
 export const hero = {
   id: 'hero',
   wordmark: 'smocket',
@@ -9,11 +11,11 @@ export const hero = {
     src: '/cat.webp',
     alt: 'smocket mascot: a cool cat wearing sunglasses',
   },
-  h1: 'Test Socket.IO without a server.',
+  h1: 'Mock Socket.IO without a server.',
   h1Accent: 'without a server.',
   sub: "smocket reimplements Socket.IO's rooms, broadcasts, and acknowledgements in memory — and every release is verified against the real library.",
   tagline: 'Sweet setup, rocket speed.',
-  chips: ['v0.5.1', 'dual-run CI', 'browser-tested'],
+  chips: [`v${SMOCKET_VERSION}`, 'dual-run CI', 'browser-tested'],
   ctas: [
     { label: 'Read the docs', href: `${REPO_URL}#readme`, primary: true },
     { label: 'View on GitHub', href: REPO_URL, primary: false },
