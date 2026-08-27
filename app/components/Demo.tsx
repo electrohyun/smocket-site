@@ -27,12 +27,19 @@ export default function Demo() {
           <DemoPreview />
           <div className={styles.foot}>
             <span className={styles.note}>{demo.preview.note}</span>
-            <Link href={demo.href} className={styles.cta}>
-              {demo.cta}
-              <span className={styles.arrow} aria-hidden="true">
-                →
-              </span>
-            </Link>
+            <div className={styles.actions}>
+              <Link href={demo.href} className={styles.cta}>
+                {demo.cta}
+                <span className={styles.arrow} aria-hidden="true">→</span>
+              </Link>
+              <Link href="/preview/drawing-game" className={styles.previewCta}>
+                <span>
+                  <strong>Drawing Game Preview</strong>
+                  <small>Three tabs · One in-browser Smocket server</small>
+                </span>
+                <span className={styles.arrow} aria-hidden="true">→</span>
+              </Link>
+            </div>
           </div>
         </div>
       </div>
