@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { features, footer, hero, quickstart, trace } from '../landing';
+import { features, footer, hero, quickstart, SMOCKET_VERSION, trace } from '../landing';
 
 describe('landing publication links', () => {
   it('shows the current release and routes footer readers to the docs proxy', () => {
-    expect(hero.chips).toContain('v0.5.1');
-    expect(hero.chips).not.toContain('v0.4.1');
+    expect(SMOCKET_VERSION).toBe('1.0.0');
+    expect(hero.chips).toContain(`v${SMOCKET_VERSION}`);
+    expect(hero.h1).toBe('Mock Socket.IO without a server.');
     expect(footer.links).toContainEqual({ label: 'Docs', href: '/docs', todo: null });
   });
 
