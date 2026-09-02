@@ -5,9 +5,19 @@
   top: 20px;
   left: var(--pad);
   z-index: 1;
+}
+
+.homeLink {
   display: flex;
   align-items: center;
   gap: 8px;
+  border-radius: 7px;
+  color: inherit;
+}
+
+.homeLink:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 5px;
 }
 
 .mascot {
