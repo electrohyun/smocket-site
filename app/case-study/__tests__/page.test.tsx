@@ -15,7 +15,8 @@ describe('/case-study application case study', () => {
     }
     expect(markup.match(/class="[^\"]*sectionHeading/g)).toHaveLength(4);
     expect(markup.match(/class="[^\"]*sectionNumber/g)).toHaveLength(4);
-    expect(markup).toContain('One Socket.IO application, two ways to run it');
+    expect(markup).toContain('Socket.IO mocking without a separate Node.js server');
+    expect(markup).toContain('Smocket runs your Socket.IO server logic in memory.');
     expect(markup).toContain('Two jobs, one application');
     expect(markup).toContain('Where Smocket runs');
     expect(markup).toContain('One application, two bootstraps');

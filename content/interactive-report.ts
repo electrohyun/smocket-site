@@ -2,10 +2,10 @@ const SMOCKET_REPOSITORY = 'https://github.com/electrohyun/smocket';
 
 export const report = {
   eyebrow: 'Application case study · Smocket 1.0.0',
-  title: 'One Socket.IO application, two ways to run it',
+  title: 'Socket.IO mocking without a separate Node.js server',
   introduction:
     'The drawing game keeps one server-side event flow and runs it with either a Node.js mock server built with Socket.IO or Smocket.',
-  thesis: 'Keep the application logic. Change the runtime at the boundary.',
+  thesis: 'Smocket runs your Socket.IO server logic in memory.',
   supportingLine:
     'Use a Node.js mock server when the network connection belongs in the local setup. Use Smocket when the application flow is the work.',
   coverFacts: [
