@@ -18,7 +18,7 @@ The landing page and interactive demo for [smocket](https://github.com/electrohy
 - A responsive product landing page with light, dark, and system themes
 - A self-playing preview backed by a real in-memory smocket round
 - An interactive `/demo` with drawer and observer viewpoints
-- A four-section `/case-study` about the roles of Real Socket.IO and Smocket, their runtimes, shared application code, and boundaries
+- A four-section `/case-study` about a Node.js Socket.IO mock server, Smocket, shared application code, and the production boundary
 - A delivery trace that exposes rooms, recipients, exclusions, and acknowledgements
 - Metadata, social images, a web manifest, robots.txt, and a sitemap
 
@@ -39,7 +39,7 @@ or [http://localhost:3000/case-study](http://localhost:3000/case-study) for the
 interactive report.
 
 The default development build runs the demo in memory by resolving
-`socket.io-client` to `smocket-client`. To run the same UI against Real Socket.IO,
+`socket.io-client` to `smocket-client`. To run the same UI against a Node.js Socket.IO server,
 start the backend in one terminal:
 
 ```bash
@@ -61,7 +61,7 @@ integration tests use an ephemeral port instead.
 | Command | What it does |
 | --- | --- |
 | `pnpm dev` | Start the development server |
-| `pnpm demo:server` | Start the Real Socket.IO demo backend |
+| `pnpm demo:server` | Start the Node.js Socket.IO demo server |
 | `pnpm build` | Create a production build |
 | `pnpm start` | Serve the production build |
 | `pnpm lint` | Run ESLint |

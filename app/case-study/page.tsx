@@ -89,10 +89,10 @@ export default function CaseStudyPage() {
           </section>
 
           <section id="results" className={styles.section} aria-labelledby="results-title">
-            <SectionHeading id="results" number="04" title="Observed behavior and boundaries" body="The table covers the drawing-game workflow, then separates what still belongs to the real server." />
+            <SectionHeading id="results" number="04" title="Observed behavior and boundaries" body="The table covers the drawing-game workflow, then separates what still belongs to the production backend." />
             <div className={styles.behaviorTableWrap}>
               <table className={styles.behaviorTable}>
-                <thead><tr><th>Selected behavior</th><th>Real Socket.IO</th><th>Smocket</th></tr></thead>
+                <thead><tr><th>Selected behavior</th><th>Node.js Socket.IO mock server</th><th>Smocket</th></tr></thead>
                 <tbody>
                   {report.observedBehavior.map((row) => (
                     <tr key={row.behavior}><th scope="row">{row.behavior}</th><td>{row.socketIo}</td><td>{row.smocket}</td></tr>

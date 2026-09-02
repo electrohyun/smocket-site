@@ -22,16 +22,17 @@ describe('/case-study application case study', () => {
     expect(markup).toContain('Observed behavior and boundaries');
   });
 
-  it('gives Real Socket.IO and Smocket separate roles', () => {
-    expect(markup).toContain('Does the complete network path work?');
-    expect(markup).toContain('Does the frontend application flow work?');
-    expect(markup).toContain('Use for integration checks and production.');
+  it('gives the Node.js Socket.IO mock server and Smocket separate roles', () => {
+    expect(markup).toContain('Run a separate mock server process');
+    expect(markup).toContain('Run mock server behavior in memory');
+    expect(markup).toContain('Use when the network connection should remain part of the local setup.');
     expect(markup).toContain('Use for focused development and application tests.');
+    expect(markup).toContain('It does not replace the production backend.');
     expect(markup).not.toContain('always better');
     expect(markup).not.toContain('complete compatibility');
   });
 
-  it('shows Node, browser, SharedWorker, and real-server runtime contexts', () => {
+  it('shows Node tests, browser, SharedWorker, and Node server runtime contexts', () => {
     for (const runtime of report.runtimes) {
       expect(markup).toContain(runtime.tabLabel);
       expect(markup).toContain(runtime.title);
@@ -61,7 +62,7 @@ describe('/case-study application case study', () => {
     }
     expect(markup).toContain(report.source.commit);
     expect(markup).toContain(report.source.command);
-    expect(markup).toContain('Network and production behavior');
+    expect(markup).toContain('Production network and integration behavior');
     expect(markup).toContain('One browser profile and origin');
     expect(markup).not.toContain('Handwritten mock');
     expect(markup).not.toContain('mock-socket');
@@ -69,7 +70,7 @@ describe('/case-study application case study', () => {
 
   it('publishes current metadata and preserves discoverability', () => {
     expect(metadata.title).toBe('Smocket application case study');
-    expect(metadata.description).toContain('Real Socket.IO');
+    expect(metadata.description).toContain('Node.js mock server built with Socket.IO');
     expect(metadata.alternates).toEqual({ canonical: '/case-study' });
     expect(metadata.openGraph).toMatchObject({ url: '/case-study', title: 'Smocket application case study' });
     expect(footer.links).toContainEqual({ label: 'Interactive report', href: '/case-study', todo: null });
