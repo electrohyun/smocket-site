@@ -21,11 +21,11 @@ export default function Pain() {
               <span className={styles.headingCopy}>
                 <span className={styles.label}>{pain.before.label}</span>
                 <span className={`${styles.status} ${styles.limited}`}>
-                  <span aria-hidden="true">×</span>
+                  <span aria-hidden="true">−</span>
                   {pain.before.status}
                 </span>
               </span>
-              <SocketChips labels={['A']} />
+              <SocketChips labels={['A', 'B', 'C']} />
             </figcaption>
             {pain.before.code ? (
               <pre className="code">
