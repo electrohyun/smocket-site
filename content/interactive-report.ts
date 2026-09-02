@@ -222,11 +222,11 @@ workerScope.onconnect = ({ ports: [port] }) => {
     command: 'pnpm example:drawing-game:verify',
     note: 'The drawing-game check runs the selected three-client workflow with Smocket and the Socket.IO server package.',
     files: [
-      'examples/drawing-game/src/game/application.ts',
-      'examples/drawing-game/src/game/game-handler.ts',
-      'examples/drawing-game/src/real-server.ts',
-      'examples/drawing-game/src/shared-worker.ts',
-      'examples/drawing-game/verify.mjs',
+      { label: 'Application registration', path: 'examples/drawing-game/src/game/application.ts' },
+      { label: 'Game handler', path: 'examples/drawing-game/src/game/game-handler.ts' },
+      { label: 'Socket.IO server', path: 'examples/drawing-game/src/real-server.ts' },
+      { label: 'SharedWorker bootstrap', path: 'examples/drawing-game/src/shared-worker.ts' },
+      { label: 'Drawing-game check', path: 'examples/drawing-game/verify.mjs' },
     ],
   },
   links: [
