@@ -57,57 +57,48 @@ export const trace = {
 
 export const pain = {
   id: 'pain',
-  title: 'Before, a second player was out of reach.',
+  title: 'Use your Socket.IO handlers without starting a network server.',
   before: {
-    label: 'Hand-written mock',
-    status: 'Enough for one client.',
-    code: `// test/mock-socket.ts — before smocket
-// A stand-in for socket.io, grown one test at a time.
+    label: 'Node.js Socket.IO mock server',
+    status: 'HTTP server, listening port, and cleanup.',
+    code: `import { once } from 'node:events';
+import { createServer } from 'node:http';
+import type { AddressInfo } from 'node:net';
+import { Server } from 'socket.io';
+import { io as connect } from 'socket.io-client';
 
-type Handler = (...args: any[]) => void;
+const httpServer = createServer();
+const io = new Server(httpServer);
+registerApplication(io);
 
-class MockSocket {
-  id = 'socket-1';
-  private handlers: Record<string, Handler[]> = {};
+httpServer.listen(0, '127.0.0.1');
+await once(httpServer, 'listening');
 
-  on(event: string, fn: Handler) {
-    (this.handlers[event] ??= []).push(fn);
-  }
+const { port } = httpServer.address() as AddressInfo;
+const url = \`http://127.0.0.1:\${port}\`;
+const a = connect(url);
+const b = connect(url);
+const c = connect(url);
 
-  emit(event: string, ...args: any[]) {
-    // One socket means emit only calls its own handlers.
-    // Rooms never enter into it.
-    for (const fn of this.handlers[event] ?? []) {
-      fn(...args);
-    }
-  }
-
-  // Stored nowhere, read nowhere.
-  join(_room: string) {}
-
-  to(_room: string) {
-    // Returning \`this\` sends every broadcast
-    // back to this socket, whoever it was for.
-    return this;
-  }
-}
-
-// The harness assumes one client. A second MockSocket
-// shares no rooms, so B never sees A's strokes.
-const a = new MockSocket();`,
+// Then disconnect every client, close Socket.IO,
+// and close the HTTP server after the test.`,
     todo: null,
   },
   after: {
     label: 'smocket',
-    status: 'Built for rooms full of them.',
-    code: `import { connect, Server } from 'smocket';
+    status: 'The same handlers, no listening server.',
+    code: `import { Server } from 'smocket';
+import { connect } from 'smocket-client';
 
-const io = new Server('http://localhost:3000');
-const a = connect('http://localhost:3000');
-const b = connect('http://localhost:3000');
-const c = connect('http://localhost:3000');`,
+const url = 'http://localhost:3000';
+const io = new Server(url);
+registerApplication(io);
+
+const a = connect(url);
+const b = connect(url);
+const c = connect(url);`,
   },
-  caption: 'One handler map, and still nowhere for the second player to go.',
+  caption: 'registerApplication(io) stays the same.',
 } as const;
 
 export const features = {
