@@ -117,7 +117,7 @@ export default function CaseStudyPage() {
                 <div><dt>Command</dt><dd><code>{report.source.command}</code></dd></div>
               </dl>
               <div className={styles.sourceLinks}>
-                {report.source.files.map((file) => <a key={file} href={`${pinnedRoot}/${file}`}>{file.split('/').at(-1)} ↗</a>)}
+                {report.source.files.map((file) => <a key={file.path} href={`${pinnedRoot}/${file.path}`}>{file.label} ↗</a>)}
               </div>
             </aside>
 
