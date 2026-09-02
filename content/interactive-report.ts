@@ -1,90 +1,160 @@
 const SMOCKET_REPOSITORY = 'https://github.com/electrohyun/smocket';
 
 export const report = {
-  eyebrow: 'Interactive report · August 2026',
-  title: 'Smocket SharedWorker: a three-tab report',
+  eyebrow: 'Application case study · Smocket 1.0.0',
+  title: 'One Socket.IO application, two ways to run it',
   introduction:
-    'An interactive report on frontend previews, event flow, and the boundary with real Socket.IO.',
-  thesis:
-    'Verify real behavior with Socket.IO. Build multi-user UI and share static previews before the backend is ready with Smocket.',
-  supportingLine: 'Multiple tabs, one in-browser Smocket server, no separate Socket.IO backend.',
+    'The drawing game keeps one server-side event flow and runs it with either Real Socket.IO or Smocket.',
+  thesis: 'Keep the application logic. Change the runtime at the boundary.',
+  supportingLine:
+    'Use Real Socket.IO when the network matters. Use Smocket when the application flow is the work.',
   coverFacts: [
-    { label: 'Scope', value: 'Three same-origin browser tabs' },
-    { label: 'Runtime', value: 'SharedWorker + Smocket' },
-    { label: 'Reference', value: 'Real Socket.IO' },
+    { label: 'Application', value: 'Three-player drawing game' },
+    { label: 'Shared code', value: 'Server event handlers' },
+    { label: 'Runtimes', value: 'Socket.IO + Smocket' },
   ],
   navigation: [
-    { number: '01', label: 'The preview gap', href: '#problem' },
-    { number: '02', label: 'Two architectures', href: '#architecture' },
-    { number: '03', label: 'Three-tab flow', href: '#scenario' },
+    { number: '01', label: 'Roles', href: '#roles' },
+    { number: '02', label: 'Where it runs', href: '#runtimes' },
+    { number: '03', label: 'Shared application', href: '#application' },
     { number: '04', label: 'Results & limits', href: '#results' },
   ],
-  problem: {
+  roles: {
     intro:
-      'A shared event contract lets frontend work continue while the backend is being built. The server-side event flow needs a temporary runtime.',
-    paths: [
+      'Smocket does not replace the real server. Each runtime answers a different question while the application code stays shared.',
+    items: [
       {
-        id: 'real',
+        id: 'socket-io',
         label: 'Real Socket.IO',
-        title: 'Use the real server for integration checks.',
+        title: 'Does the complete network path work?',
         body:
-          'A node:http process with Socket.IO checks transport, integration, and production behavior. It runs beside the frontend with its own process, port, and lifecycle.',
-      },
-      {
-        id: 'preview',
-        label: 'Static preview gap',
-        title: 'The frontend and real backend deploy separately.',
-        body:
-          'A preview URL delivers the frontend. Sharing the complete experience also requires a separately configured or deployed Socket.IO server.',
+          'Run the Node server for transport, authentication, reconnection, persistence, deployment, and production integration.',
+        useWhen: 'Use for integration checks and production.',
       },
       {
         id: 'smocket',
-        label: 'SharedWorker Smocket',
-        title: 'Run the preview server inside the browser.',
+        label: 'Smocket',
+        title: 'Does the frontend application flow work?',
         body:
-          'Same-origin tabs connect through MessagePorts to one SharedWorker running Smocket. A static URL can then carry the multi-user frontend flow while the backend is in progress.',
+          'Run the same handlers in memory for server-driven UI, rooms, broadcasts, acknowledgements, and multi-client application tests.',
+        useWhen: 'Use for focused development and application tests.',
       },
     ],
   },
-  architectures: [
+  runtimes: [
     {
-      id: 'socket-io',
-      tabLabel: 'Real Socket.IO',
-      title: 'Node HTTP + Socket.IO Server',
-      transport: 'WebSocket',
-      role: 'Integration and production behavior',
-      timing: 'Use when the real backend path is available or the network path is the subject of the check.',
+      id: 'node-test',
+      tabLabel: 'Node tests',
+      title: 'Application tests in Node.js',
+      host: 'Vitest or another Node.js test runner',
+      connection: 'In-memory client and server',
       detail:
-        'Three browser tabs connect over the network to one external Node HTTP and Socket.IO server.',
+        'Create a Smocket server inside the test, connect multiple clients, and assert the application event flow without opening a port.',
+      timing: 'Best for repeatable tests of rooms, broadcasts, acknowledgements, and server-driven state.',
     },
     {
-      id: 'smocket',
-      tabLabel: 'Smocket preview',
-      title: 'SharedWorker + Smocket',
-      transport: 'MessagePort',
-      role: 'Pre-backend frontend development and static PR Preview',
-      timing: 'Use while building and sharing the multi-user UI before a real backend is ready.',
+      id: 'browser',
+      tabLabel: 'Browser page',
+      title: 'Frontend development in one page',
+      host: 'The browser page',
+      connection: 'In-memory Smocket client and server',
       detail:
-        'Three same-origin tabs connect to one caller-owned SharedWorker and share its in-memory Smocket server.',
+        'Run the server beside the frontend when a page or component needs realistic Socket.IO-shaped events during development.',
+      timing: 'Best for building UI states without starting a separate Node server.',
+    },
+    {
+      id: 'shared-worker',
+      tabLabel: 'SharedWorker tabs',
+      title: 'One browser server for several tabs',
+      host: 'A caller-owned SharedWorker',
+      connection: 'MessagePort through the SharedWorker adapter',
+      detail:
+        'Place Smocket in a SharedWorker when same-origin tabs need to share one in-memory server and application state.',
+      timing: 'Best for a multi-tab browser preview such as the drawing-game demo.',
+    },
+    {
+      id: 'real-server',
+      tabLabel: 'Real server',
+      title: 'The complete Socket.IO path',
+      host: 'Node HTTP + Socket.IO server',
+      connection: 'Socket.IO transport over the network',
+      detail:
+        'Attach the shared application to the real Socket.IO server when the network path and backend integration are part of the work.',
+      timing: 'Required before treating transport and production integration as complete.',
     },
   ],
+  application: {
+    intro:
+      'The drawing game registers one application function. Only the code that creates and connects the server changes.',
+    snippets: [
+      {
+        id: 'shared',
+        label: 'Shared application',
+        title: 'Register the drawing-game event flow once',
+        code: `export function registerDrawingGameApplication(io: GameServer) {
+  const state = new DrawingGameState();
+
+  io.on('connection', (socket) => {
+    const actions: GameActions = {
+      join(current, room) {
+        return state.join(current, room);
+      },
+      stroke(current, segment) {
+        return state.rememberStroke(current, segment);
+      },
+      // Chat, guess, and disconnect use the same state.
+    };
+
+    registerGameHandler(io, socket, actions);
+  });
+}`,
+        note: 'Join, stroke, chat, guess, room state, and disconnect rules live behind this boundary.',
+      },
+      {
+        id: 'socket-io',
+        label: 'Real Socket.IO bootstrap',
+        title: 'Attach the application to the Node HTTP server',
+        code: `const io = new SocketIoServer(httpServer);
+
+registerDrawingGameApplication(io, {
+  countdownMs,
+});`,
+        note: 'The real runtime owns the network transport and production integration.',
+      },
+      {
+        id: 'smocket',
+        label: 'Smocket bootstrap',
+        title: 'Attach the application to a SharedWorker',
+        code: `const io = new Server(GAME_URL);
+
+registerDrawingGameApplication(io, {
+  countdownMs,
+});
+
+workerScope.onconnect = ({ ports: [port] }) => {
+  if (port) attachSharedWorker(io, port);
+};`,
+        note: 'The demo uses this browser runtime so three tabs can share one in-memory server.',
+      },
+    ],
+  },
   scenario: {
     intro:
-      'Follow the visible flow and the Socket.IO-shaped events behind it. Continue to the demo for the drawing and guessing experience.',
+      'Follow the same selected workflow through either runtime, then open the browser demo to try the SharedWorker path.',
     steps: [
       {
         id: 'connect',
         event: 'CONNECT ×3',
         label: 'Open three player tabs',
         experience: 'Player A opens Players B and C. Each page receives a distinct socket ID.',
-        exchange: 'Three page connections enter one SharedWorker-hosted server.',
+        exchange: 'Three clients connect to the selected server runtime.',
       },
       {
         id: 'join',
         event: 'JOIN',
         label: 'Join one game session',
         experience: 'The three players appear in the same room and see the same participant state.',
-        exchange: 'Each page emits join-session and receives an acknowledgement plus session state.',
+        exchange: 'Each client emits join-session and receives an acknowledgement plus session state.',
       },
       {
         id: 'round',
@@ -116,46 +186,56 @@ export const report = {
       },
     ],
   },
-  results: [
-    { id: 'clients', value: '3', label: 'browser pages', note: 'A, B, and C use distinct socket IDs.' },
-    { id: 'room', value: '1', label: 'shared game session', note: 'All three pages observe the same room state.' },
-    { id: 'stroke-recipients', value: '2', label: 'stroke recipient tabs', note: 'The room broadcast reaches B and C.' },
-    { id: 'backend-process', value: '0', label: 'separate Socket.IO backends', note: 'Static assets remain served over HTTP.' },
-    { id: 'socket-port', value: '0', label: 'Socket.IO listening ports', note: 'Real-time messages travel through MessagePorts.' },
-    { id: 'targets', value: '2/2', label: 'browser targets completed', note: 'Smocket and Real Socket.IO completed the same selected workflow.' },
+  observedBehavior: [
+    { behavior: 'Three clients connect with distinct socket IDs', socketIo: 'Observed', smocket: 'Observed' },
+    { behavior: 'All clients join one room and receive shared state', socketIo: 'Observed', smocket: 'Observed' },
+    { behavior: 'A stroke reaches the other two clients, not its sender', socketIo: 'Observed', smocket: 'Observed' },
+    { behavior: 'Wrong and correct guesses return acknowledgements', socketIo: 'Observed', smocket: 'Observed' },
+    { behavior: 'A correct guess ends the round on all three clients', socketIo: 'Observed', smocket: 'Observed' },
+    { behavior: 'Closing a client removes it from the session', socketIo: 'Observed', smocket: 'Observed' },
   ],
-  resultBoundary:
-    'These values cover the selected drawing-game workflow. Socket.IO-wide compatibility is outside this measurement. The board contains stable counts; stroke totals vary by gesture.',
-  limits: [
-    'The current automated browser result is desktop Chromium; other browser engines remain unverified.',
-    'Tabs must share the same browser profile, origin, worker script URL, and worker name.',
-    'State stays within one browser profile and origin; each browser or device has its own state.',
-    'Real Socket.IO remains the verification path for integration, transport, authentication, persistence, and production.',
-    'Comparison scope: the documented SharedWorker facade and selected drawing-game workflow.',
-    'Compatibility coverage is limited to the documented API and selected workflow.',
-    'When the SharedWorker terminates or restarts, its in-memory sockets, rooms, state, and pending acknowledgements are lost.',
+  boundaries: [
+    {
+      label: 'Check with Real Socket.IO',
+      title: 'Network and production behavior',
+      items: [
+        'Transport, authentication, reconnection, and deployment',
+        'Persistence and integration with the real backend',
+        'Behavior outside Smocket’s documented API surface',
+      ],
+    },
+    {
+      label: 'SharedWorker conditions',
+      title: 'One browser profile and origin',
+      items: [
+        'Tabs share the same profile, origin, worker script URL, and worker name',
+        'Worker restarts clear its in-memory sockets, rooms, and application state',
+        'The automated browser run currently uses desktop Chromium',
+      ],
+    },
   ],
-  provenance: {
-    sourceRepository: SMOCKET_REPOSITORY,
-    sourceCommit: '5bf724876e79faba0883ec2c349c6c79baaae87e',
-    packageVersion: '0.5.1',
-    verifiedOn: '2026-08-24',
+  source: {
+    repository: SMOCKET_REPOSITORY,
+    commit: '91a9479416d7d84eaf19119171497cc20098ead6',
+    version: '1.0.0',
+    date: '2026-08-27',
     command: 'pnpm example:drawing-game:verify',
-    outcome: 'Drawing game passed the same three-page workflow with Smocket and Real Socket.IO.',
-    sourceFiles: [
-      'examples/drawing-game/verify.mjs',
+    note: 'The drawing-game check runs the selected three-client workflow with Smocket and Real Socket.IO.',
+    files: [
+      'examples/drawing-game/src/game/application.ts',
       'examples/drawing-game/src/game/game-handler.ts',
+      'examples/drawing-game/src/real-server.ts',
       'examples/drawing-game/src/shared-worker.ts',
-      'examples/drawing-game/src/connections/shared-worker-client.ts',
+      'examples/drawing-game/verify.mjs',
     ],
   },
   links: [
     { label: 'GitHub', href: SMOCKET_REPOSITORY },
     { label: 'README', href: `${SMOCKET_REPOSITORY}#readme` },
-    { label: 'Runnable Example', href: `${SMOCKET_REPOSITORY}/tree/main/examples/drawing-game` },
+    { label: 'Drawing-game source', href: `${SMOCKET_REPOSITORY}/tree/main/examples/drawing-game` },
     { label: 'Open the 3-tab demo', href: '/demo/multi' },
   ],
 } as const;
 
-export type ArchitectureId = (typeof report.architectures)[number]['id'];
+export type RuntimeId = (typeof report.runtimes)[number]['id'];
 export type ScenarioStepId = (typeof report.scenario.steps)[number]['id'];
