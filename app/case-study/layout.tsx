@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 
-const title = 'Smocket interactive report';
+const title = 'Smocket application case study';
 const description =
-  'How SharedWorker Smocket supports multi-user frontend previews before a backend is ready, where Real Socket.IO still fits, and what the three-tab drawing game verified.';
+  'How one Socket.IO drawing-game application runs with Real Socket.IO for the network path and Smocket for focused frontend development and application tests.';
 
 export const metadata: Metadata = {
   title,

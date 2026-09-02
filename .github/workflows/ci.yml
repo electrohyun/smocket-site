@@ -24,5 +24,4 @@ jobs:
       - run: pnpm test
       - run: pnpm typecheck
       - run: pnpm lint
-      - run: pnpm drawing-game:snapshot:validate
       - run: pnpm build

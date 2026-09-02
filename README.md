@@ -18,7 +18,7 @@ The landing page and interactive demo for [smocket](https://github.com/electrohy
 - A responsive product landing page with light, dark, and system themes
 - A self-playing preview backed by a real in-memory smocket round
 - An interactive `/demo` with drawer and observer viewpoints
-- A four-section `/case-study` report about SharedWorker previews, Real Socket.IO, verified results, and limits
+- A four-section `/case-study` about the roles of Real Socket.IO and Smocket, their runtimes, shared application code, and boundaries
 - A delivery trace that exposes rooms, recipients, exclusions, and acknowledgements
 - Metadata, social images, a web manifest, robots.txt, and a sitemap
 
@@ -80,7 +80,7 @@ app/
 ├── layout.tsx        Site metadata, fonts, and theme bootstrap
 └── page.tsx          Landing page composition
 content/
-├── interactive-report.ts  Report copy, verified values, links, and provenance
+├── interactive-report.ts  Case study copy, selected behavior, source links, and boundaries
 └── landing.ts             Landing copy and code samples
 public/               Static images and icons
 scripts/              Drawing seed tooling
