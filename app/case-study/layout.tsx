@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 
 const title = 'Smocket application case study';
 const description =
-  'How one Socket.IO drawing-game application runs with Real Socket.IO for the network path and Smocket for focused frontend development and application tests.';
+  'How one drawing-game application runs with a Node.js mock server built with Socket.IO or with Smocket, and where the production backend still fits.';
 
 export const metadata: Metadata = {
   title,

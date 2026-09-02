@@ -4,14 +4,14 @@ export const report = {
   eyebrow: 'Application case study · Smocket 1.0.0',
   title: 'One Socket.IO application, two ways to run it',
   introduction:
-    'The drawing game keeps one server-side event flow and runs it with either Real Socket.IO or Smocket.',
+    'The drawing game keeps one server-side event flow and runs it with either a Node.js mock server built with Socket.IO or Smocket.',
   thesis: 'Keep the application logic. Change the runtime at the boundary.',
   supportingLine:
-    'Use Real Socket.IO when the network matters. Use Smocket when the application flow is the work.',
+    'Use a Node.js mock server when the network connection belongs in the local setup. Use Smocket when the application flow is the work.',
   coverFacts: [
     { label: 'Application', value: 'Three-player drawing game' },
     { label: 'Shared code', value: 'Server event handlers' },
-    { label: 'Runtimes', value: 'Socket.IO + Smocket' },
+    { label: 'Runtimes', value: 'Node.js mock + Smocket' },
   ],
   navigation: [
     { number: '01', label: 'Roles', href: '#roles' },
@@ -21,20 +21,20 @@ export const report = {
   ],
   roles: {
     intro:
-      'Smocket does not replace the real server. Each runtime answers a different question while the application code stays shared.',
+      'Smocket replaces a separate Node.js mock server in focused frontend development and application tests. It does not replace the production backend.',
     items: [
       {
         id: 'socket-io',
-        label: 'Real Socket.IO',
-        title: 'Does the complete network path work?',
+        label: 'Node.js Socket.IO mock server',
+        title: 'Run a separate mock server process',
         body:
-          'Run the Node server for transport, authentication, reconnection, persistence, deployment, and production integration.',
-        useWhen: 'Use for integration checks and production.',
+          'Build backend-like events with the Socket.IO server package. The mock needs its own process, port, lifecycle, and browser network connection.',
+        useWhen: 'Use when the network connection should remain part of the local setup.',
       },
       {
         id: 'smocket',
         label: 'Smocket',
-        title: 'Does the frontend application flow work?',
+        title: 'Run mock server behavior in memory',
         body:
           'Run the same handlers in memory for server-driven UI, rooms, broadcasts, acknowledgements, and multi-client application tests.',
         useWhen: 'Use for focused development and application tests.',
@@ -73,14 +73,14 @@ export const report = {
       timing: 'Best for a multi-tab browser preview such as the drawing-game demo.',
     },
     {
-      id: 'real-server',
-      tabLabel: 'Real server',
-      title: 'The complete Socket.IO path',
+      id: 'node-server',
+      tabLabel: 'Node.js mock',
+      title: 'A separate Socket.IO mock server',
       host: 'Node HTTP + Socket.IO server',
       connection: 'Socket.IO transport over the network',
       detail:
-        'Attach the shared application to the real Socket.IO server when the network path and backend integration are part of the work.',
-      timing: 'Required before treating transport and production integration as complete.',
+        'Attach the shared application to the Socket.IO server package when the local mock should run as a separate networked process.',
+      timing: 'Best when the existing development setup already depends on a Node.js mock server.',
     },
   ],
   application: {
@@ -112,14 +112,14 @@ export const report = {
       },
       {
         id: 'socket-io',
-        label: 'Real Socket.IO bootstrap',
+        label: 'Node.js mock server bootstrap',
         title: 'Attach the application to the Node HTTP server',
         code: `const io = new SocketIoServer(httpServer);
 
 registerDrawingGameApplication(io, {
   countdownMs,
 });`,
-        note: 'The real runtime owns the network transport and production integration.',
+        note: 'The Node.js mock owns a separate process, port, and network connection.',
       },
       {
         id: 'smocket',
@@ -196,11 +196,11 @@ workerScope.onconnect = ({ ports: [port] }) => {
   ],
   boundaries: [
     {
-      label: 'Check with Real Socket.IO',
-      title: 'Network and production behavior',
+      label: 'Still use the production backend',
+      title: 'Production network and integration behavior',
       items: [
         'Transport, authentication, reconnection, and deployment',
-        'Persistence and integration with the real backend',
+        'Persistence and integration with the production backend',
         'Behavior outside Smocket’s documented API surface',
       ],
     },
@@ -220,7 +220,7 @@ workerScope.onconnect = ({ ports: [port] }) => {
     version: '1.0.0',
     date: '2026-08-27',
     command: 'pnpm example:drawing-game:verify',
-    note: 'The drawing-game check runs the selected three-client workflow with Smocket and Real Socket.IO.',
+    note: 'The drawing-game check runs the selected three-client workflow with Smocket and the Socket.IO server package.',
     files: [
       'examples/drawing-game/src/game/application.ts',
       'examples/drawing-game/src/game/game-handler.ts',
